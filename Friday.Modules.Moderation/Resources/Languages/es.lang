@@ -1,0 +1,15 @@
+﻿# Defaults
+moderation.defaults.reason=Ningun motivo especificado.
+
+# Commands
+moderation.commands.ban.embeds.ack.title=Miembro Baneado
+moderation.commands.ban.embeds.ack.field.expiration=Fecha de Expiración
+moderation.commands.ban.embeds.ack.field.member=Miembro
+moderation.commands.ban.embeds.dmAck.title=Has sido baneado
+moderation.commands.ban.embeds.ack.button.unban=Desbanear
+moderation.commands.ban.embeds.ack.button.unbanned=Desbaneado
+moderation.commands.ban.messages.checks.banBot=:cry: Perdon, no puedo hacer eso.
+moderation.commands.ban.messages.checks.banSelf=No te puedes banear a ti mismo.
+moderation.commands.ban.messages.checks.banMember=No puedes banear a ese miembro.
+moderation.commands.ban.messages.checks.cantBan=No puedo banear a ese miembro.
+moderation.commands.ban.messages.checks.banOwner=No puedes banear al owner del server.

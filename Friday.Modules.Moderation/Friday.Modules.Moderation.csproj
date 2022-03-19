@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Include="Resources\Languages\en.lang" />
+      <None Remove="Resources\Languages\es.lang" />
+      <EmbeddedResource Include="Resources\Languages\es.lang" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Friday.Common\Friday.Common.csproj" />
+    </ItemGroup>
+
+</Project>

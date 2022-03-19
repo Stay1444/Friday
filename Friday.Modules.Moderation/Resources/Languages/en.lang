@@ -1,0 +1,15 @@
+﻿# Defaults
+moderation.defaults.reason=No reason given.
+
+# Commands
+moderation.commands.ban.embeds.ack.title=Member Banned
+moderation.commands.ban.embeds.ack.field.expiration=Expiration Date
+moderation.commands.ban.embeds.ack.field.member=Member
+moderation.commands.ban.embeds.dmAck.title=You have been banned
+moderation.commands.ban.embeds.ack.button.unban=Unban
+moderation.commands.ban.embeds.ack.button.unbanned=Unbanned
+moderation.commands.ban.messages.checks.banBot=Ouch! Sorry, i can't do that.
+moderation.commands.ban.messages.checks.banSelf=You cannot ban yourself.
+moderation.commands.ban.messages.checks.banMember=You cannot ban this member.
+moderation.commands.ban.messages.checks.cantBan=I can't ban that member.
+moderation.commands.ban.messages.checks.banOwner=You cannot ban the server owner.
