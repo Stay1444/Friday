@@ -9,13 +9,13 @@ using VideoLibrary;
 
 namespace Friday.Modules.Music;
 
-public class MusicModule : IModule
+public class MusicModuleBase : ModuleBase
 {
     private Dictionary<ulong, GuildMusic> _musicPlayers = new Dictionary<ulong, GuildMusic>();
     private DiscordShardedClient _client;
     private MusicConfig? _config;
     public MusicConfig Config => _config ?? throw new InvalidOperationException("Config not loaded");
-    public MusicModule(DiscordShardedClient client)
+    public MusicModuleBase(DiscordShardedClient client)
     {
         _client = client;
     }

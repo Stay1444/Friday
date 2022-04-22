@@ -8,7 +8,7 @@ using Serilog;
 
 namespace Friday.Modules.Statistics;
 
-public class StatisticsModule : IModule
+public class StatisticsModuleBase : ModuleBase
 {
     public Task OnLoad()
     {

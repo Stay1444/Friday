@@ -9,14 +9,14 @@ using Timer = System.Timers.Timer;
 
 namespace Friday.Modules.Moderation;
 
-public class ModerationModule : IModule
+public class ModerationModuleBase : ModuleBase
 {
 
     private DatabaseProvider _db;
     private Timer _banTimer;
     private ModerationConfiguration? _config;
     private DiscordShardedClient _client;
-    public ModerationModule(DatabaseProvider db, DiscordShardedClient client)
+    public ModerationModuleBase(DatabaseProvider db, DiscordShardedClient client)
     {
         _db = db;
         _client = client;
