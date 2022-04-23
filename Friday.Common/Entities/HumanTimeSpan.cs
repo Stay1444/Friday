@@ -58,6 +58,8 @@ public struct HumanTimeSpan
                 }
             }
             
+            buffer.Clear();
+            
             switch (ch)
             {
                 case 'd':

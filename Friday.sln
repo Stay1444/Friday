@@ -18,6 +18,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Friday.Modules.AntiRaid", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Friday.UI", "Friday.UI\Friday.UI.csproj", "{17D91BB8-1C3F-46E7-8F0D-C80988063218}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Friday.Tests", "Friday.Tests\Friday.Tests.csproj", "{A5EBDE83-67C1-45E1-995B-06043942EA36}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,6 +58,10 @@ Global
 		{17D91BB8-1C3F-46E7-8F0D-C80988063218}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{17D91BB8-1C3F-46E7-8F0D-C80988063218}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{17D91BB8-1C3F-46E7-8F0D-C80988063218}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5EBDE83-67C1-45E1-995B-06043942EA36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5EBDE83-67C1-45E1-995B-06043942EA36}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5EBDE83-67C1-45E1-995B-06043942EA36}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5EBDE83-67C1-45E1-995B-06043942EA36}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{8B5E4C31-92E8-474E-8D8F-EFDB905D1DFE} = {B8D1B724-7F5F-493F-82C3-1DEB90582CB6}
