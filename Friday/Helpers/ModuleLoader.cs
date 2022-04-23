@@ -9,11 +9,11 @@ using Tomlyn;
 
 namespace Friday.Helpers;
 
-public class ModuleLoader
+public static class ModuleLoader
 {
-    public static IModule[] LoadModules(ServiceCollection services)
+    public static ModuleBase[] LoadModules(ServiceCollection services)
     {
-        var modules = new List<IModule>();
+        var modules = new List<ModuleBase>();
         
         if (!Directory.Exists("modules"))
         {
@@ -38,7 +38,6 @@ public class ModuleLoader
         
         return modules.ToArray();
     }
-
     private static ModuleConfigModel? ReadConfig(Assembly module)
     {
         try
@@ -58,13 +57,13 @@ public class ModuleLoader
 
     }
     
-    private static void LoadModule(Assembly moduleAssembly, ServiceCollection services, List<IModule> loadedModules)
+    private static void LoadModule(Assembly moduleAssembly, ServiceCollection services, List<ModuleBase> loadedModules)
     {
         if (!IsValid(moduleAssembly))
         {
-            Log.Warning("Module {0} does not implement {1} interface. Skipping.", 
+            Log.Warning("Module {0} does not implement {1}. Skipping.", 
                 moduleAssembly.GetName().Name,
-                nameof(IModule));
+                nameof(ModuleBase));
             return;
         }
         
@@ -100,7 +99,7 @@ public class ModuleLoader
             }
         }
         
-        var module = (IModule?) ActivatorUtilities.CreateInstance(services.BuildServiceProvider(), GetModuleType(moduleAssembly));
+        var module = (ModuleBase?) ActivatorUtilities.CreateInstance(services.BuildServiceProvider(), GetModuleType(moduleAssembly));
         
         Log.Information("Module {0} loaded.", moduleAssembly.GetName().Name);
         module!.OnLoad().GetAwaiter().GetResult();
@@ -111,14 +110,14 @@ public class ModuleLoader
 
     private static bool IsValid(Assembly module)
     {
-        return module.GetTypes().Any(t => t.GetInterfaces().Contains(typeof(IModule)));
+        return module.GetTypes().Any(t => t.IsSubclassOf(typeof(ModuleBase)));
     }
 
     private static Type GetModuleType(Assembly module)
     {
-        return module.GetTypes().First(t => t.GetInterfaces().Contains(typeof(IModule)));
+        return module.GetTypes().First(t => t.IsSubclassOf(typeof(ModuleBase)));
     }
-    private static bool IsModuleLoaded(string assemblyName, List<IModule> loadedModules)
+    private static bool IsModuleLoaded(string assemblyName, List<ModuleBase> loadedModules)
     {
         foreach (var module in loadedModules)
         {

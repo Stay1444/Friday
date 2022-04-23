@@ -74,10 +74,6 @@ public class Resource
             //Check if resource exists in that assembly
             if (assembly.GetManifestResourceInfo(path) is null)
             {
-                foreach (var VARIABLE in assembly.GetManifestResourceNames())
-                {
-                    Console.WriteLine(VARIABLE);
-                }
                 throw new FileNotFoundException("Resource not found. Path: " + path);
             }
             

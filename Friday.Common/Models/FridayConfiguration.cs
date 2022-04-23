@@ -24,7 +24,7 @@ public record FridayConfiguration
         public string Host { get; init; } = "localhost";
         public ushort Port { get; init; } = 2333;
     }
-
+    public bool Debug { get; init; } = false;
     public FridayConfigurationDiscord Discord { get; init; } = new FridayConfigurationDiscord();
     public FridayConfigurationDatabase Database { get; init; } = new FridayConfigurationDatabase();
     public FridayConfigurationLavalink Lavalink { get; init; } = new FridayConfigurationLavalink();

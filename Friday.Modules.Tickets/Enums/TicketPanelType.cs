@@ -1,6 +1,6 @@
 ﻿namespace Friday.Modules.Tickets.Enums;
 
-public enum TicketType
+public enum TicketPanelType
 {
     Button,
     Select

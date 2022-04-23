@@ -12,12 +12,12 @@ namespace Friday.Modules.Moderation.Commands;
 
 public class BanCommand : BaseCommandModule
 {
-    private ModerationModule _moderationModule;
+    private ModerationModuleBase _moderationModuleBase;
     private FridayConfiguration _config;
     private LanguageProvider _languageProvider;
-    public BanCommand(ModerationModule moderationModule, FridayConfiguration config, LanguageProvider languageProvider)
+    public BanCommand(ModerationModuleBase moderationModuleBase, FridayConfiguration config, LanguageProvider languageProvider)
     {
-        _moderationModule = moderationModule;
+        _moderationModuleBase = moderationModuleBase;
         _config = config;
         _languageProvider = languageProvider;
     }
@@ -37,10 +37,10 @@ public class BanCommand : BaseCommandModule
             return;
         }
         
-        var banState = await _moderationModule.GetBanState(ctx.Guild.Id, member);
+        var banState = await _moderationModuleBase.GetBanState(ctx.Guild.Id, member);
         if (banState is not null)
         {
-            await _moderationModule.RemoveBanState(banState);
+            await _moderationModuleBase.RemoveBanState(banState);
         }
 
         if (reason is null)
@@ -51,7 +51,7 @@ public class BanCommand : BaseCommandModule
         var ackMsgBuilder = await GetAckEmbed(ctx, member, reason, expiration);
         await ctx.RespondAsync(ackMsgBuilder);
 
-        await _moderationModule.BanAsync(ctx.Guild.Id, member, ctx.Member.Id, reason, expiration);
+        await _moderationModuleBase.BanAsync(ctx.Guild.Id, member, ctx.Member.Id, reason, expiration);
     }
     
     
@@ -85,10 +85,10 @@ public class BanCommand : BaseCommandModule
             await Ban(ctx, await ctx.Guild.GetMemberAsync(member), reason);
             return;
         }
-        var banState = await _moderationModule.GetBanState(ctx.Guild.Id, member);
+        var banState = await _moderationModuleBase.GetBanState(ctx.Guild.Id, member);
         if (banState is not null)
         {
-            await _moderationModule.RemoveBanState(banState);
+            await _moderationModuleBase.RemoveBanState(banState);
         }
 
         if (reason is null)
@@ -110,10 +110,10 @@ public class BanCommand : BaseCommandModule
     public async Task Ban(CommandContext ctx, DiscordMember member, DateTime expiration, [RemainingText] string? reason)
     {
         var botMember = await ctx.GetCurrentMember();
-        var banState = await _moderationModule.GetBanState(member);
+        var banState = await _moderationModuleBase.GetBanState(member);
         if (banState is not null)
         {
-            await _moderationModule.RemoveBanState(banState);
+            await _moderationModuleBase.RemoveBanState(banState);
         }
 
         if (!await CanBeBanned(ctx, member, botMember)) return;
@@ -138,7 +138,7 @@ public class BanCommand : BaseCommandModule
             // ignored. Can't send DM to user.
         }
         
-        await _moderationModule.BanAsync(member, ctx.Member, reason, expiration);
+        await _moderationModuleBase.BanAsync(member, ctx.Member, reason, expiration);
         _ = UnbanButtonHandler(ctx, ackMsgBuilder, ackMsg, member.Id);
     }
 
@@ -167,10 +167,10 @@ public class BanCommand : BaseCommandModule
     public async Task Ban(CommandContext ctx, DiscordMember member, [RemainingText] string? reason)
     {
         var botMember = await ctx.GetCurrentMember();
-        var banState = await _moderationModule.GetBanState(member);
+        var banState = await _moderationModuleBase.GetBanState(member);
         if (banState is not null)
         {
-            await _moderationModule.RemoveBanState(banState);
+            await _moderationModuleBase.RemoveBanState(banState);
         }
 
         if (!await CanBeBanned(ctx, member, botMember)) return;
@@ -331,7 +331,7 @@ public class BanCommand : BaseCommandModule
             }
             await unbanButton.Ack();            
             await ctx.Guild.UnbanMemberAsync(unban);
-            await _moderationModule.RemoveBanState(unban, ctx.Guild.Id);
+            await _moderationModuleBase.RemoveBanState(unban, ctx.Guild.Id);
             ackBuilder.ClearComponents();
             ackBuilder.AddComponents(new DiscordButtonComponent(ButtonStyle.Secondary, "unban", await ctx.GetString("moderation.commands.ban.embeds.ack.button.unbanned"), true));
             await message.ModifyAsync(ackBuilder);
@@ -350,7 +350,7 @@ public class BanCommand : BaseCommandModule
     [Priority(1)]
     public async Task Unban(CommandContext ctx, DiscordUser member)
     {
-        await _moderationModule.RemoveBanState(member.Id, ctx.Guild.Id);
+        await _moderationModuleBase.RemoveBanState(member.Id, ctx.Guild.Id);
         try
         {
             await ctx.Guild.UnbanMemberAsync(member.Id);
@@ -369,7 +369,7 @@ public class BanCommand : BaseCommandModule
     [RequireBotPermissions(Permissions.BanMembers)]
     public async Task Unban(CommandContext ctx, ulong memberId)
     {
-        await _moderationModule.RemoveBanState(memberId, ctx.Guild.Id);
+        await _moderationModuleBase.RemoveBanState(memberId, ctx.Guild.Id);
         try
         {
             await ctx.Guild.UnbanMemberAsync(memberId);

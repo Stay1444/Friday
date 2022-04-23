@@ -1,6 +1,8 @@
-﻿namespace Friday.Modules.Tickets.Commands;
+﻿using DSharpPlus.CommandsNext;
 
-public class Commands
+namespace Friday.Modules.Tickets.Commands;
+
+public partial class Commands : BaseCommandModule
 {
     
 }

@@ -1,6 +1,6 @@
 ﻿namespace Friday.Common;
 
-public interface IModule
+public abstract class ModuleBase
 {
-    public Task OnLoad();
+    public abstract Task OnLoad();
 }

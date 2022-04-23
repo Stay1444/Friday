@@ -15,10 +15,13 @@
     <ItemGroup>
       <None Remove="Resources\Languages\en.lang" />
       <EmbeddedResource Include="Resources\Languages\en.lang" />
+      <None Remove="Resources\required.sql" />
+      <EmbeddedResource Include="Resources\required.sql" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Friday.Common\Friday.Common.csproj" />
+      <ProjectReference Include="..\Friday.UI\Friday.UI.csproj" />
     </ItemGroup>
 
 </Project>

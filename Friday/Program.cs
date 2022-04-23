@@ -1,8 +1,11 @@
 ﻿using DSharpPlus;
 using DSharpPlus.CommandsNext;
+using DSharpPlus.CommandsNext.Exceptions;
+using DSharpPlus.Exceptions;
 using DSharpPlus.Interactivity.Extensions;
 using DSharpPlus.Lavalink;
 using DSharpPlus.SlashCommands;
+using Friday.Common.Entities;
 using Friday.Common.Services;
 using Friday.Helpers;
 using Friday.Models;
@@ -65,8 +68,29 @@ try
     {
         Log.Information("Loaded {0} modules", modules.Length);
     }
-    
-    
+
+    foreach (var module in modules)
+    {
+        try
+        {
+            var resource = Resource.Load(module.GetType().Assembly, "Resources/required.sql");
+            var sql = resource.ReadString();
+            if (string.IsNullOrEmpty(sql)) continue;
+            await dbProvider.ExecuteAsync(sql);
+        }
+        catch (FileNotFoundException)
+        {
+            // ignored
+        }catch(Exception e)
+        {
+            Log.Error(e, "Failed to load required.sql");
+        }
+        
+    }
+
+    var fridayResource = Resource.Load(typeof(Program).Assembly, "Resources/required.sql");
+    var fridaySql = fridayResource.ReadString();
+    await dbProvider.ExecuteAsync(fridaySql);
     
     var serviceProvider = services.BuildServiceProvider();
 
@@ -96,6 +120,30 @@ try
     {
         commandsNextExtensions.RegisterCommands(module.GetType().Assembly);
     }
+    
+    Log.Information("Commands next created successfully");
+    foreach(var cnext in commandsNextExtensions.Values)
+    {
+        #if DEBUG
+        bool isDebug = true;
+        #else
+        bool isDebug = false;
+        #endif
+        if (config.Debug || isDebug)
+        {
+            cnext.CommandErrored += async (e, error) =>
+            {
+                if (error.Exception is CommandNotFoundException) return;
+                if (error.Exception is BadRequestException badRequestException)
+                {
+                    await error.Context.Channel.SendMessageAsync(badRequestException.JsonMessage);
+                    return;
+                }
+                await error.Context.Channel.SendMessageAsync(error.Exception.ToString());
+            };
+        }
+    }
+    
     
     await client.UseSlashCommandsAsync();
 

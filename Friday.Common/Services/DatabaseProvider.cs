@@ -59,7 +59,7 @@ public class DatabaseProvider
     {
         var connection = GetConnection();
         await connection.OpenAsync();
-        await connection.ExecuteAsync(sql, parameters);
+        await connection.ExecuteAsync(new CommandDefinition(sql, parameters));
         await connection.CloseAsync();
     }
 }

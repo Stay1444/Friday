@@ -1,6 +1,6 @@
 ﻿namespace Friday.Modules.Tickets.Commands;
 
-public class Close
+public partial class Commands
 {
     
 }

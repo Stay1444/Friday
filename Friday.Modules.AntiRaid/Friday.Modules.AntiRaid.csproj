@@ -7,20 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="Resources\Language" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Remove="Resources\module_config.toml" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\Friday.Common\Friday.Common.csproj" />
+      <ProjectReference Include="..\Friday.UI\Friday.UI.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="Resources\required.sql" />
-      <EmbeddedResource Include="Resources\required.sql" />
+      <Folder Include="Services" />
     </ItemGroup>
 
 </Project>

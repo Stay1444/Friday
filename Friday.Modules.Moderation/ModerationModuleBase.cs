@@ -23,7 +23,7 @@ public class ModerationModuleBase : ModuleBase
         _banTimer = new Timer(60000);
     }
 
-    public Task OnLoad()
+    public override Task OnLoad()
     {
         Log.Information("[Moderation] Module loaded.");
         Log.Information("[Moderation] Loading config...");

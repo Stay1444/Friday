@@ -44,6 +44,17 @@ public static class Extensions
         return null;
     }
 
+    public static List<T> ToList<T>(this IEnumerator<T> enumerator)
+    {
+        var list = new List<T>();
+        while (enumerator.MoveNext())
+        {
+            list.Add(enumerator.Current);
+        }
+
+        return list;
+    }
+
     public static DiscordClient GetClient(this DiscordShardedClient client, DiscordGuild guild)
     {
         var c =  client.ShardClients.FirstOrDefault(x => x.Value.Guilds.ContainsKey(guild.Id)).Value;

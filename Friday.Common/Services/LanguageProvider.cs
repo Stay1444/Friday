@@ -30,7 +30,7 @@ public class LanguageProvider
             
             var resourceNames = assembly.GetManifestResourceNames();
             var expectedPath = $"{assembly.GetName().Name}.Resources.Languages.";
-            Log.Information("[LanguageProvider] Loading languages from {0}", assembly.FullName);
+            Log.Information("[LanguageProvider] Loading languages from {0}", assembly.GetName().Name);
             foreach (var resourceName in resourceNames.Where(x => x.StartsWith(expectedPath)))
             {
                 if (!resourceName.EndsWith(".lang"))

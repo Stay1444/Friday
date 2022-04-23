@@ -20,7 +20,7 @@ public class MusicModuleBase : ModuleBase
         _client = client;
     }
 
-    public Task OnLoad()
+    public override Task OnLoad()
     {
         Log.Information("[Music] Module loaded.");
         Log.Information("[Music] Loading config...");

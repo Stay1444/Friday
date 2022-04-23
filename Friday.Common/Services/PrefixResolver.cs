@@ -26,8 +26,15 @@ public class PrefixResolver
                 prefix = userConfig.PrefixOverride;
             }
             // return the index of the prefix end (if it doens't exist, return -1)
-            int r =  message.Content.IndexOf(prefix, StringComparison.Ordinal) + prefix.Length;
-            return r;
+            
+            if (message.Content.StartsWith(prefix))
+            {
+                return prefix.Length;
+            }
+            else
+            {
+                return -1;
+            }
         }
         else
         {
@@ -38,8 +45,14 @@ public class PrefixResolver
                 prefix = userConfig.PrefixOverride;
             }
             // return the index of the prefix end (if it doens't exist, return -1)
-            int r = message.Content.IndexOf(prefix, StringComparison.Ordinal) + prefix.Length;
-            return r;
+            if (message.Content.StartsWith(prefix))
+            {
+                return prefix.Length;
+            }
+            else
+            {
+                return -1;
+            }
         }
     }
 }

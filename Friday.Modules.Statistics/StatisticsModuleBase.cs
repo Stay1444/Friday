@@ -10,7 +10,7 @@ namespace Friday.Modules.Statistics;
 
 public class StatisticsModuleBase : ModuleBase
 {
-    public Task OnLoad()
+    public override Task OnLoad()
     {
         Log.Information("[Statistics] Module loaded");
         return Task.CompletedTask;

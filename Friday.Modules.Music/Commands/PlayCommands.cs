@@ -10,18 +10,18 @@ namespace Friday.Modules.Music.Commands;
 
 public partial class Commands
 {
-    private MusicModule _module;
+    private MusicModuleBase _moduleBase;
 
-    public Commands(MusicModule module)
+    public Commands(MusicModuleBase moduleBase)
     {
-        _module = module;
+        _moduleBase = moduleBase;
     }
 
     [Command("play")]
     [RequireGuild]
     public async Task PlayCommand(CommandContext ctx)
     {
-        var guildMusic = _module.GetGuildMusic(ctx.Guild);
+        var guildMusic = _moduleBase.GetGuildMusic(ctx.Guild);
         if (guildMusic.Channel is not null)
         {
             await ctx.RespondAsync("Already playing music!");
@@ -46,7 +46,7 @@ public partial class Commands
         var panel = MusicPanel.GetMusicPanel(guildMusic);
         if (panel is null)
         {
-            panel = MusicPanel.CreateMusicPanel(guildMusic, ctx.Channel, _module);
+            panel = MusicPanel.CreateMusicPanel(guildMusic, ctx.Channel, _moduleBase);
             await panel.SendMessageAsync();
         }
     }

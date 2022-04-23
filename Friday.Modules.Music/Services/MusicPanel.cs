@@ -16,17 +16,17 @@ public class MusicPanel : IDisposable
 
     private readonly GuildMusic _music;
     private readonly DiscordChannel _channel;
-    private MusicModule _musicModule;
+    private MusicModuleBase _musicModuleBase;
     private DiscordMessage? _message;
     private CancellationTokenSource? _cancellationTokenSource;
     private DateTime _lastUpdate = DateTime.MinValue;
     private string? _imageUrl = null;
     private System.Timers.Timer _imgUpdateTimer;
-    private MusicPanel(GuildMusic music, DiscordChannel textChannel, MusicModule musicModule)
+    private MusicPanel(GuildMusic music, DiscordChannel textChannel, MusicModuleBase musicModuleBase)
     {
         this._music = music;
         this._channel = textChannel;
-        _musicModule = musicModule;
+        _musicModuleBase = musicModuleBase;
         _music.Client.ComponentInteractionCreated += E_ComponentInteractionCreated;
         _imgUpdateTimer = new (15000);
         _imgUpdateTimer.AutoReset = true;
@@ -67,9 +67,9 @@ public class MusicPanel : IDisposable
         return null;
     }
     
-    public static MusicPanel CreateMusicPanel(GuildMusic music, DiscordChannel textChannel, MusicModule module)
+    public static MusicPanel CreateMusicPanel(GuildMusic music, DiscordChannel textChannel, MusicModuleBase moduleBase)
     {
-        MusicPanel panel = new MusicPanel(music, textChannel, module);
+        MusicPanel panel = new MusicPanel(music, textChannel, moduleBase);
         MusicPanels.Add(music.Guild.Id, panel);
         return panel;
     }
@@ -157,7 +157,7 @@ public class MusicPanel : IDisposable
 
     private async Task<string> UploadToCdn(MemoryStream stream)
     {
-        ulong cdnId = _musicModule.Config.CdnChannelId;
+        ulong cdnId = _musicModuleBase.Config.CdnChannelId;
         DiscordChannel cdnChannel = await _music.Client.GetChannelAsync(cdnId);
         stream.Position = 0;
         var msg = await cdnChannel.SendMessageAsync(new DiscordMessageBuilder().WithFile("img.gif", stream));
@@ -194,7 +194,7 @@ public class MusicPanel : IDisposable
                 await _music.Stop();
                 _cancellationTokenSource?.Cancel();
                 await _message!.DeleteAsync();
-                _musicModule.DeleteMusicPlayer(_music.Guild);
+                _musicModuleBase.DeleteMusicPlayer(_music.Guild);
                 Destroy(_music.Guild.Id);
                 return;
             case "youtube":
