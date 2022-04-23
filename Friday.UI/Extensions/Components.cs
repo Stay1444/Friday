@@ -12,6 +12,13 @@ public static class Components
         modify(component);
         page.Add(component);
     }
+
+    public static async Task AddButton(this FridayUIPage page, Func<ButtonComponent, Task> modifyAsync)
+    {
+        var component = new ButtonComponent(page);
+        await modifyAsync(component);
+        page.Add(component);
+    }
     
     public static void AddModal(this FridayUIPage page, Action<ModalComponent> modify)
     {

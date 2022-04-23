@@ -1,1 +1,8 @@
 ﻿general.msg.notEnoughPermissions=You do not have enough permissions to do this.
+common.enabled=Enabled
+common.disabled=Disabled
+common.allowed=Allowed
+common.denied=Denied
+common.back=Back
+common.save=Save
+common.permissions=Permissions

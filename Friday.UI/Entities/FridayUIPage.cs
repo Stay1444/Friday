@@ -27,10 +27,20 @@ public class FridayUIPage
     {
         this.Components.Add(component);
     }
+
+    public void NewLine()
+    {
+        this.Components.Add(new FridayUINewLine(this));
+    }
     
     public void Stop()
     {
-        _builder.CancellationTokenSource.Cancel();
+        _builder.RequestStop();
+    }
+    
+    public void ForceRender()
+    {
+        _builder.ForceRender();
     }
     
     public void OnCancelled(Action<DiscordClient, DiscordMessage> action)
@@ -47,6 +57,13 @@ public class FridayUIPage
     {
         var page = new FridayUIPage(this.Client, this._builder);
         modify(page);
+        this.SubPages.Add(id, page);
+    }
+
+    public async Task AddSubPageAsync(string id, Func<FridayUIPage, Task> modifyAsync)
+    {
+        var page = new FridayUIPage(this.Client, this._builder);
+        await modifyAsync(page);
         this.SubPages.Add(id, page);
     }
     

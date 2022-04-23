@@ -12,7 +12,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Services" />
+      <None Remove="Resources\required.sql" />
+      <EmbeddedResource Include="Resources\required.sql" />
+      <None Remove="Resources\Languages\es.lang" />
+      <None Remove="Resources\Languages\en.lang" />
     </ItemGroup>
 
 </Project>

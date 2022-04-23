@@ -20,14 +20,21 @@ internal class FridayUIRenderer
         return GetActivePage(page.SubPages[page.SubPage]);
     }
 
-    private DiscordMessageBuilder PrepareRender(DiscordClient client)
+    private async Task<DiscordMessageBuilder> PrepareRender(DiscordClient client)
     {
-        _builder.Render(client);
+        await _builder.Render(client);
         var page = GetActivePage(_builder.Page!);
         var buttons = new List<DiscordButtonComponent>();
+        var msgBuilder = new DiscordMessageBuilder();
         
         foreach (var component in page.Components)
         {
+            if (component is FridayUINewLine)
+            {
+                msgBuilder.AddComponents(buttons);
+                buttons.Clear();
+                continue;
+            }
             var componentResult = component.GetDiscordComponent();
             if (componentResult is null)
             {
@@ -40,7 +47,6 @@ internal class FridayUIRenderer
             }
         }
 
-        var msgBuilder = new DiscordMessageBuilder();
         msgBuilder.WithEmbed(page.Embed);
         msgBuilder.AddComponents(buttons);
         
@@ -185,87 +191,105 @@ internal class FridayUIRenderer
         DiscordMessageBuilder? lastBuilder = null;
         while (true)
         {
-            var msgBuilder = PrepareRender(client);
-            Dictionary<string, string>? idMapping = null;
-            if (message is null)
+            try
             {
-                message = await channel.SendMessageAsync(msgBuilder);
-                lastBuilder = msgBuilder;
-            }
-            else
-            {
-                if (!AreEqual(lastBuilder, msgBuilder))
+                var msgBuilder = await PrepareRender(client);
+                Dictionary<string, string>? idMapping = null;
+                if (message is null)
                 {
-                    await message.ModifyAsync(msgBuilder);
+                    message = await channel.SendMessageAsync(msgBuilder);
+                    lastBuilder = msgBuilder;
                 }
                 else
                 {
-                    idMapping = GetComponentsIdMapping(lastBuilder!, msgBuilder);
-                }
-            }
-            
-            var interactivity = client.GetInteractivity();
-            var cancellationTokenSource = _builder.CancellationTokenSource;
-            cancellationTokenSource.CancelAfter(_builder.Duration);
-            var buttonTask = interactivity.WaitForButtonAsync(message, user, cancellationTokenSource.Token);
-
-            await Task.WhenAny(buttonTask);
-
-            if (cancellationTokenSource.IsCancellationRequested)
-            {
-                if (_builder.Page!.EventOnCancelled is not null)
-                {
-                    _builder.Page!.EventOnCancelled.Invoke(client, message);
-                }else if (_builder.Page!.EventOnCancelledAsync is not null)
-                {
-                    await _builder.Page!.EventOnCancelledAsync.Invoke(client, message);
-                }
-                return;
-            }
-            else
-            {
-                cancellationTokenSource.TryReset();
-            }
-            
-            if (buttonTask.IsCompleted)
-            {
-                var buttonResult = await buttonTask;
-
-                var interactionId = buttonResult.Result.Id;
-                
-                if (idMapping is not null)
-                {
-                    if (idMapping.TryGetValue(interactionId, out var newId))
+                    if (!AreEqual(lastBuilder, msgBuilder))
                     {
-                        interactionId = newId;
+                        message = await message.ModifyAsync(msgBuilder);
                     }
                     else
                     {
-                        lastBuilder = null;
-                        continue;
+                        idMapping = GetComponentsIdMapping(lastBuilder!, msgBuilder);
                     }
                 }
-                
-                var buttonComponent = GetButtonComponent(interactionId);
-                
-                if (buttonComponent is not null)
-                {
-                    await buttonComponent.OnClick(buttonResult.Result.Interaction);
-                }
-            }
 
-            if (_builder.CancellationTokenSource.Token.IsCancellationRequested)
-            {
-                if (_builder.Page!.EventOnCancelled is not null)
+                var interactivity = client.GetInteractivity();
+                var cancellationTokenSource = _builder.CancellationTokenSource;
+                var buttonTask = interactivity.WaitForButtonAsync(message, user, cancellationTokenSource.Token);
+                await Task.WhenAny(buttonTask);
+                if (cancellationTokenSource.IsCancellationRequested)
                 {
-                    _builder.Page!.EventOnCancelled.Invoke(client, message);
-                }else if (_builder.Page!.EventOnCancelledAsync is not null)
-                {
-                    await _builder.Page!.EventOnCancelledAsync.Invoke(client, message);
+                    if (_builder.RenderRequested)
+                    {
+                        _builder.ResetToken();
+                        continue;
+                    }
+                
+                    if (_builder.Page!.EventOnCancelled is not null)
+                    {
+                        _builder.Page!.EventOnCancelled.Invoke(client, message);
+                    }else if (_builder.Page!.EventOnCancelledAsync is not null)
+                    {
+                        await _builder.Page!.EventOnCancelledAsync.Invoke(client, message);
+                    }
+                    return;
                 }
+                else
+                {
+                    _builder.ResetToken();
+                }
+
+                if (buttonTask.IsCompleted)
+                {
+                    var buttonResult = await buttonTask;
+
+                    var interactionId = buttonResult.Result.Id;
+                
+                    if (idMapping is not null)
+                    {
+                        if (idMapping.TryGetValue(interactionId, out var newId))
+                        {
+                            interactionId = newId;
+                        }
+                        else
+                        {
+                            lastBuilder = null;
+                            continue;
+                        }
+                    }
+                
+                    var buttonComponent = GetButtonComponent(interactionId);
+                
+                    if (buttonComponent is not null)
+                    {
+                        await buttonComponent.OnClick(buttonResult.Result.Interaction);
+                    }
+                }
+
+                if (_builder.CancellationTokenSource.IsCancellationRequested)
+                {
+                    if (_builder.Page!.EventOnCancelled is not null)
+                    {
+                        _builder.Page!.EventOnCancelled.Invoke(client, message);
+                    }else if (_builder.Page!.EventOnCancelledAsync is not null)
+                    {
+                        await _builder.Page!.EventOnCancelledAsync.Invoke(client, message);
+                    }
+                    return;
+                }
+            }catch(Exception e)
+            {
+                if (message is not null)
+                {
+                    await message.ModifyAsync(new DiscordMessageBuilder()
+                        .WithEmbed(new DiscordEmbedBuilder()
+                            .Transparent()
+                            .WithTitle("FridayUI Error")
+                            .WithDescription($"An error occured while rendering the page.\n```{e.Message}```\nPlease contact the developer.")
+                            .WithColor(DiscordColor.Red)));
+                }
+
                 return;
             }
-            
         }
     }
 }

@@ -1,7 +1,20 @@
+using DSharpPlus;
 using DSharpPlus.CommandsNext;
+using Friday.Common.Entities;
+using Friday.Common.Services;
+using Friday.Modules.AntiRaid.Attributes;
 
 namespace Friday.Modules.AntiRaid.Commands;
 
-public partial class Commands : BaseCommandModule
+[RequireAntiRaidPermission]
+public partial class Commands : FridayCommandModule
 {
+    private AntiRaidModule _module;
+    private LanguageProvider _languageProvider;
+    public Commands(AntiRaidModule module, LanguageProvider languageProvider)
+    {
+        _module = module;
+        _languageProvider = languageProvider;
+    }
+
 }

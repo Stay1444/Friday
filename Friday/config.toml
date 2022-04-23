@@ -1,0 +1,15 @@
+debug = false
+[discord]
+token = "00000000-0000-0000-0000-000000000000"
+color = "#4287f5"
+[database]
+database = "Friday"
+username = "root"
+password = "root"
+host = "localhost"
+port = 3306
+[lavalink]
+enabled = false
+password = "youshallnotpass"
+host = "localhost"
+port = 2333

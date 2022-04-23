@@ -1,4 +1,5 @@
-﻿using DSharpPlus;
+﻿using System.Reflection;
+using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Exceptions;
 using DSharpPlus.Exceptions;
@@ -54,7 +55,9 @@ try
     var prefixResolver = new PrefixResolver(dbProvider, guildConfigurationProvider, userConfigurationProvider);
     services.AddSingleton(prefixResolver);
 
-    var languageProvider = new LanguageProvider(dbProvider, userConfigurationProvider, guildConfigurationProvider, ModuleLoader.GetValidAssemblies());
+    var langModuleAssemblies = ModuleLoader.GetValidAssemblies().ToList();
+    langModuleAssemblies.Add(Assembly.GetAssembly(typeof(Program)));
+    var languageProvider = new LanguageProvider(dbProvider, userConfigurationProvider, guildConfigurationProvider, langModuleAssemblies.ToArray());
     languageProvider.Build();
     services.AddSingleton(languageProvider);
 
@@ -139,16 +142,28 @@ try
                     await error.Context.Channel.SendMessageAsync(badRequestException.JsonMessage);
                     return;
                 }
-                await error.Context.Channel.SendMessageAsync(error.Exception.ToString());
+
+                if (error.Exception is ChecksFailedException checksFailedException)
+                {
+                    foreach (var failedCheck in checksFailedException.FailedChecks)
+                    {
+                        foreach (var moduleBase in modules)
+                        {
+                            if (moduleBase.GetType().Assembly == failedCheck.GetType().Assembly)
+                            {
+                                await moduleBase.HandleFailedChecks(failedCheck.GetType(), e, error);
+
+                                break;
+                            }
+                        }
+                    }
+                }
             };
         }
     }
     
     
     await client.UseSlashCommandsAsync();
-
-
-
 
     Log.Information("Starting client");
 

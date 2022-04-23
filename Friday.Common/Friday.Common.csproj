@@ -21,4 +21,8 @@
       <PackageReference Include="Tomlyn" Version="0.14.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Exception" />
+    </ItemGroup>
+
 </Project>

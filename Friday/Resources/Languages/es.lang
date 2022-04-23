@@ -1,0 +1,8 @@
+general.msg.notEnoughPermissions=No tienes permisos suficientes para realizar esta acción.
+common.enabled=Activado
+common.disabled=Desactivado
+common.allowed=Permitido
+common.denied=Denegado
+common.back=Volver
+common.save=Guardar
+common.permissions=Permisos

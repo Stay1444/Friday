@@ -17,6 +17,8 @@
       <EmbeddedResource Include="Resources\Languages\en.lang" />
       <None Remove="Resources\required.sql" />
       <EmbeddedResource Include="Resources\required.sql" />
+      <None Remove="Resources\Languages\es.lang" />
+      <EmbeddedResource Include="Resources\Languages\es.lang" />
     </ItemGroup>
 
     <ItemGroup>

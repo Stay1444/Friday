@@ -4,10 +4,13 @@ namespace Friday.UI.Entities;
 
 public class FridayUIBuilder
 {
-    internal CancellationTokenSource CancellationTokenSource { get; }
+    internal CancellationTokenSource CancellationTokenSource { get; private set; }
     internal FridayUIPage? Page { get; private set; }
     private Action<FridayUIPage>? _renderAction;
+    private Func<FridayUIPage, Task>? _asyncRenderAction;
     public TimeSpan Duration { get; set; } = TimeSpan.FromMinutes(5);
+    internal bool StopRequested { get; private set; }
+    public bool RenderRequested { get; private set; }
     public FridayUIBuilder()
     {
         this.CancellationTokenSource = new CancellationTokenSource();
@@ -19,7 +22,33 @@ public class FridayUIBuilder
         return this;
     }
     
-    internal void Render(DiscordClient client)
+    public FridayUIBuilder OnRenderAsync(Func<FridayUIPage, Task> renderAction)
+    {
+        this._asyncRenderAction = renderAction;
+        return this;
+    }
+    
+    internal void ForceRender()
+    {
+        this.RenderRequested = true;
+        CancellationTokenSource.Cancel();
+    }
+
+    internal void RequestStop()
+    {
+        StopRequested = true;
+        CancellationTokenSource.Cancel();
+    }
+
+    internal void ResetToken()
+    {
+        CancellationTokenSource = new CancellationTokenSource();
+        CancellationTokenSource.CancelAfter(Duration);
+        RenderRequested = false;
+        StopRequested = false;
+    }
+    
+    internal async Task Render(DiscordClient client)
     {
         if (this.Page is null)
         {
@@ -29,7 +58,14 @@ public class FridayUIBuilder
         Page.Components.Clear();
         var oldSubPages = Page.SubPages;
         Page.SubPages = new();
-        _renderAction?.Invoke(Page);
+        if (_asyncRenderAction is not null)
+        {
+            await _asyncRenderAction(Page);
+        }
+        else
+        {
+            _renderAction?.Invoke(Page);
+        }
 
         void SetSubPagesSubPage(Dictionary<string, FridayUIPage> old, Dictionary<string, FridayUIPage> @new)
         {

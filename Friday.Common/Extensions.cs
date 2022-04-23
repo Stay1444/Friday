@@ -44,6 +44,38 @@ public static class Extensions
         return null;
     }
 
+    public static bool IsCallerOwner(this CommandContext ctx)
+    {
+        return ctx.Guild.OwnerId == ctx.User.Id;
+    }
+
+    public static DiscordInteractionResponseBuilder ToInteractionResponseBuilder(this DiscordMessageBuilder builder)
+    {
+        var responseBuilder = new DiscordInteractionResponseBuilder();
+        if (builder.Embed is not null)
+        {
+            //responseBuilder.AddEmbed(builder.Embed);
+        }
+
+        foreach (var builderEmbed in builder.Embeds)
+        {
+            responseBuilder.AddEmbed(builderEmbed);
+        }
+
+        foreach (var builderComponent in builder.Components)
+        {
+            var components = new List<DiscordComponent>();
+            foreach (var component in builderComponent.Components)
+            {
+                components.Add(component);
+            }
+
+            responseBuilder.AddComponents(components);
+        }
+        
+        return responseBuilder;
+    }
+
     public static List<T> ToList<T>(this IEnumerator<T> enumerator)
     {
         var list = new List<T>();
@@ -82,7 +114,7 @@ public static class Extensions
         if (languageProvider is null) throw new InvalidOperationException("LanguageProvider is null");
         
         var userConfigTask = ctx.GetUserConfiguration();
-        if (ctx.Member is null || ctx.Guild is null) // check if we are in a guild
+        if (ctx.Member is null) // check if we are in a guild
         {
             //We are not in a guild, so we can't get the guild config
             var userConfig = await userConfigTask;
