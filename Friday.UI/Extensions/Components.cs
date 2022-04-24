@@ -25,6 +25,20 @@ public static class Components
         var component = new ModalComponent(page);
         modify(component);
         page.Add(component);
+        
     }
     
+    public static void AddSelect(this FridayUIPage page, Action<SelectComponent> modify)
+    {
+        var component = new SelectComponent(page);
+        modify(component);
+        page.Add(component);
+    }
+    
+    public static async Task AddSelect(this FridayUIPage page, Func<SelectComponent, Task> modifyAsync)
+    {
+        var component = new SelectComponent(page);
+        await modifyAsync(component);
+        page.Add(component);
+    }
 }

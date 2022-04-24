@@ -34,6 +34,11 @@ public class MusicModuleBase : ModuleBase
         return Task.CompletedTask;
     }
 
+    public override Task OnUnload()
+    {
+        throw new NotImplementedException();
+    }
+
     public GuildMusic GetGuildMusic(DiscordGuild guild)
     {
         if (_musicPlayers.ContainsKey(guild.Id))

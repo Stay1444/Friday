@@ -1,5 +1,6 @@
 using DSharpPlus;
 using DSharpPlus.Entities;
+using DSharpPlus.Exceptions;
 using DSharpPlus.Interactivity.Extensions;
 using Friday.Common;
 
@@ -24,15 +25,15 @@ internal class FridayUIRenderer
     {
         await _builder.Render(client);
         var page = GetActivePage(_builder.Page!);
-        var buttons = new List<DiscordButtonComponent>();
+        var dComponents = new List<DiscordComponent>();
         var msgBuilder = new DiscordMessageBuilder();
         
         foreach (var component in page.Components)
         {
             if (component is FridayUINewLine)
             {
-                msgBuilder.AddComponents(buttons);
-                buttons.Clear();
+                msgBuilder.AddComponents(dComponents);
+                dComponents.Clear();
                 continue;
             }
             var componentResult = component.GetDiscordComponent();
@@ -43,12 +44,17 @@ internal class FridayUIRenderer
 
             if (componentResult is DiscordButtonComponent buttonComponent)
             {
-                buttons.Add(buttonComponent);
+                dComponents.Add(buttonComponent);
+            }
+
+            if (componentResult is DiscordSelectComponent selectComponent)
+            {
+                dComponents.Add(selectComponent);
             }
         }
 
         msgBuilder.WithEmbed(page.Embed);
-        msgBuilder.AddComponents(buttons);
+        msgBuilder.AddComponents(dComponents);
         
         return msgBuilder;
     }
@@ -280,12 +286,23 @@ internal class FridayUIRenderer
             {
                 if (message is not null)
                 {
-                    await message.ModifyAsync(new DiscordMessageBuilder()
-                        .WithEmbed(new DiscordEmbedBuilder()
-                            .Transparent()
-                            .WithTitle("FridayUI Error")
-                            .WithDescription($"An error occured while rendering the page.\n```{e.Message}```\nPlease contact the developer.")
-                            .WithColor(DiscordColor.Red)));
+                    if (e is BadRequestException badRequestException)
+                    {
+                        await message.ModifyAsync(new DiscordMessageBuilder()
+                            .WithEmbed(new DiscordEmbedBuilder()
+                                .Transparent()
+                                .WithTitle("FridayUI Error")
+                                .WithDescription($"An error occured while rendering the page.\n```{badRequestException.Errors}```\nPlease contact the developer.")
+                                .WithColor(DiscordColor.Red)));
+                    }else
+                    {
+                        await message.ModifyAsync(new DiscordMessageBuilder()
+                            .WithEmbed(new DiscordEmbedBuilder()
+                                .Transparent()
+                                .WithTitle("FridayUI Error")
+                                .WithDescription($"An error occured while rendering the page.\n```{e.Message}```\nPlease contact the developer.")
+                                .WithColor(DiscordColor.Red)));
+                    }
                 }
 
                 return;

@@ -6,17 +6,21 @@ using Friday.Common.Services;
 using Friday.Modules.AntiRaid.Attributes;
 using Friday.Modules.AntiRaid.Entities;
 using Friday.Modules.AntiRaid.Services;
+using EventHandler = Friday.Modules.AntiRaid.Entities.EventHandler;
 
 namespace Friday.Modules.AntiRaid;
 
 public class AntiRaidModule : ModuleBase
 {
     private DiscordShardedClient _client;
+    internal DiscordShardedClient Client => _client;
     private DatabaseProvider _database;
     private AntiRaidDatabase _antiRaidDatabase;
     private LanguageProvider _language;
     internal AntiRaidDatabase AntiRaidDatabase => _antiRaidDatabase;
     private Dictionary<ulong, GuildAntiRaid> _guilds;
+    internal Dictionary<ulong, GuildAntiRaid> Guilds => _guilds;
+    private EventHandler _eventHandler;
     public AntiRaidModule(DiscordShardedClient client, DatabaseProvider database, LanguageProvider language)
     {
         _client = client;
@@ -24,29 +28,18 @@ public class AntiRaidModule : ModuleBase
         _language = language;
         _antiRaidDatabase = new AntiRaidDatabase(_database);
         _guilds = new Dictionary<ulong, GuildAntiRaid>();
+        _eventHandler = new EventHandler(this);
     }
     
     public override Task OnLoad()
     {
-        _client.GuildDownloadCompleted += async (sender, e) =>
-        {
-            foreach (var downloadedGuild in e.Guilds)
-            {
-                await GetAntiRaid(downloadedGuild.Value);
-            }
-        };
-        
-        _client.GuildCreated += async (sender, e) =>
-        {
-            await GetAntiRaid(e.Guild);
-        };
-        
-        _client.GuildDeleted += (sender, e) =>
-        {
-            _guilds.Remove(e.Guild.Id);
-            return Task.CompletedTask;
-        };
-        
+        _eventHandler.Register();
+        return Task.CompletedTask;
+    }
+
+    public override Task OnUnload()
+    {
+        _eventHandler.Unregister();
         return Task.CompletedTask;
     }
 

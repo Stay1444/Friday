@@ -9,10 +9,9 @@ using DSharpPlus.SlashCommands;
 using Friday.Common.Entities;
 using Friday.Common.Services;
 using Friday.Helpers;
-using Friday.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
-using Tomlyn;
+using Serilog.Extensions.Logging;
 try
 {
     Startup.CleanTempFiles();
@@ -38,7 +37,8 @@ try
         AutoReconnect = true,
         ReconnectIndefinitely = true,
         Intents = DiscordIntents.All,
-        Token = config.Discord.Token
+        Token = config.Discord.Token,
+        LoggerFactory = new SerilogLoggerFactory().AddSerilog(Log.Logger)
     });
     
     services.AddSingleton(client);
@@ -56,7 +56,7 @@ try
     services.AddSingleton(prefixResolver);
 
     var langModuleAssemblies = ModuleLoader.GetValidAssemblies().ToList();
-    langModuleAssemblies.Add(Assembly.GetAssembly(typeof(Program)));
+    langModuleAssemblies.Add(Assembly.GetAssembly(typeof(Program))!);
     var languageProvider = new LanguageProvider(dbProvider, userConfigurationProvider, guildConfigurationProvider, langModuleAssemblies.ToArray());
     languageProvider.Build();
     services.AddSingleton(languageProvider);
@@ -158,6 +158,11 @@ try
                         }
                     }
                 }
+                
+                Log.Error(error.Exception, "Command error");
+                
+                await error.Context.RespondAsync("An error occured while executing this command :(\n" +
+                                             $"```{error.Exception}```");
             };
         }
     }

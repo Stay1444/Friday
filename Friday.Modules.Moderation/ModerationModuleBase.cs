@@ -43,6 +43,11 @@ public class ModerationModuleBase : ModuleBase
         return Task.CompletedTask;
     }
 
+    public override Task OnUnload()
+    {
+        throw new NotImplementedException();
+    }
+
     private async Task BanTimerOnElapsed()
     {
         Log.Debug("[Moderation] Checking for bans...");

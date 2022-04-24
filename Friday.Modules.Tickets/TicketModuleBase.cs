@@ -28,6 +28,11 @@ public class TicketModuleBase : ModuleBase
         return Task.CompletedTask;
     }
 
+    public override Task OnUnload()
+    {
+        throw new NotImplementedException();
+    }
+
     private async Task OnComponentInteractionCreated(DiscordClient sender, ComponentInteractionCreateEventArgs e)
     {
         if (e.User.IsBot) return;

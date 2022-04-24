@@ -15,4 +15,9 @@ public class StatisticsModuleBase : ModuleBase
         Log.Information("[Statistics] Module loaded");
         return Task.CompletedTask;
     }
+
+    public override Task OnUnload()
+    {
+        throw new NotImplementedException();
+    }
 }

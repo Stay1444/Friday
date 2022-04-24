@@ -43,7 +43,7 @@ public class ButtonComponent : FridayUIButtonComponent
         return new DiscordButtonComponent(Style, Id, Label, Disabled);
     }
 
-    public ButtonComponent(FridayUIPage page) : base(page)
+    internal ButtonComponent(FridayUIPage page) : base(page)
     {
     }
 }

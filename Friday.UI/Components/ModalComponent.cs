@@ -76,7 +76,7 @@ public class ModalComponent : FridayUIButtonComponent
         return new DiscordButtonComponent(ButtonStyle, Id, ButtonLabel, ButtonDisabled);
     }
 
-    public ModalComponent(FridayUIPage page) : base(page)
+    internal ModalComponent(FridayUIPage page) : base(page)
     {
         
     }

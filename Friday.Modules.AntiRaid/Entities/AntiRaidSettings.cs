@@ -47,9 +47,16 @@ public class AntiRaidSettings
     
     public AntiRaidSettingsLogs Logs { get; set; } = new AntiRaidSettingsLogs();
     
-    public AntiRaidSettingsChannels Channels { get; set; } = new AntiRaidSettingsChannels();
+    public AntiRaidSettingsChannels CreateChannels { get; set; } = new AntiRaidSettingsChannels();
+    public AntiRaidSettingsChannels DeleteChannels { get; set; } = new AntiRaidSettingsChannels();
+    public AntiRaidSettingsChannels UpdateChannels { get; set; } = new AntiRaidSettingsChannels();
     
-    public AntiRaidSettingsRoles Roles { get; set; } = new AntiRaidSettingsRoles();
+    public AntiRaidSettingsRoles CreateRoles { get; set; } = new AntiRaidSettingsRoles();
+    public AntiRaidSettingsRoles DeleteRoles { get; set; } = new AntiRaidSettingsRoles();
+    public AntiRaidSettingsRoles UpdateRoles { get; set; } = new AntiRaidSettingsRoles();
+    public AntiRaidSettingsRoles GrantRoles { get; set; } = new AntiRaidSettingsRoles();
+    public AntiRaidSettingsRoles RevokeRoles { get; set; } = new AntiRaidSettingsRoles();
+
     
     public AntiRaidSettingsBans Bans { get; set; } = new AntiRaidSettingsBans();
     
