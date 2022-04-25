@@ -21,7 +21,7 @@ public struct HumanTimeSpan
 
     public static HumanTimeSpan Parse(string time)
     {
-        var keyChars = new char[] {'d', 'h', 'm', 's'};
+        var keyChars = new[] {'d', 'h', 'm', 's'};
         var result = new HumanTimeSpan();
         var buffer = new List<char>();
         foreach (var ch in time)
@@ -168,6 +168,36 @@ public struct HumanTimeSpan
     public static bool operator !=(HumanTimeSpan a, HumanTimeSpan b)
     {
         return a.Value != b.Value;
+    }
+    
+    public static bool operator >(HumanTimeSpan a, HumanTimeSpan b)
+    {
+        return a.Value > b.Value;
+    }
+    
+    public static bool operator <(HumanTimeSpan a, HumanTimeSpan b)
+    {
+        return a.Value < b.Value;
+    }
+    
+    public static bool operator >=(HumanTimeSpan a, HumanTimeSpan b)
+    {
+        return a.Value >= b.Value;
+    }
+    
+    public static bool operator <=(HumanTimeSpan a, HumanTimeSpan b)
+    {
+        return a.Value <= b.Value;
+    }
+    
+    public override bool Equals(object? obj)
+    {
+        return obj is HumanTimeSpan && Value == ((HumanTimeSpan) obj).Value;
+    }
+    
+    public override int GetHashCode()
+    {
+        return Value.GetHashCode();
     }
     
 }

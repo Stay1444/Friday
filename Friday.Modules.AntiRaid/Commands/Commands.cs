@@ -1,12 +1,13 @@
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
+using DSharpPlus.CommandsNext.Attributes;
 using Friday.Common.Entities;
 using Friday.Common.Services;
 using Friday.Modules.AntiRaid.Attributes;
 
 namespace Friday.Modules.AntiRaid.Commands;
 
-[RequireAntiRaidPermission]
+[RequireAntiRaidPermission, Group("antiraid")]
 public partial class Commands : FridayCommandModule
 {
     private AntiRaidModule _module;

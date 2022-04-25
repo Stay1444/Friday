@@ -13,8 +13,7 @@ namespace Friday.Modules.AntiRaid.Commands;
 
 public partial class Commands
 {
-    [Command("antiraid")]
-    [Description("AntiRaid settings")]
+    [Description("AntiRaid settings"), GroupCommand]
     public async Task AntiRaidSettingsCommand(CommandContext ctx)
     {
         var guildAntiRaid = await _module.GetAntiRaid(ctx.Guild);
@@ -37,7 +36,7 @@ public partial class Commands
             x.Embed.Title = await ctx.GetString("AntiRaid");
             x.Embed.Description = await ctx.GetString("Manage AntiRaid Settings");
             x.Embed.WithAuthor(ctx.User.Username, null, ctx.User.AvatarUrl);
-
+            x.Embed.Color = guildAntiRaid.Settings!.Enabled ? DiscordColor.SpringGreen : DiscordColor.IndianRed;
             await x.AddButton(async button =>
             {
                 button.Label = guildAntiRaid.Settings!.Enabled
@@ -740,6 +739,16 @@ public partial class Commands
                 logsPage.Embed.Title = "AntiRaid - Logs";
                 logsPage.Embed.Description = "Log Settings";
                 
+                if (ctx.Guild.Channels.Any(xr => xr.Key == guildAntiRaid.Settings!.Logs.ChannelId))
+                {
+                    logsPage.Embed.AddField("Logs Channel", "<#" + guildAntiRaid.Settings!.Logs.ChannelId + ">");
+                }else
+                {
+                    logsPage.Embed.AddField("Logs Channel", "None");
+                }
+                
+                logsPage.Embed.Color = guildAntiRaid.Settings!.Logs.Enabled ? DiscordColor.SpringGreen : DiscordColor.IndianRed;
+                
                 x.AddButton(button =>
                 {
                     button.Label = "Logs";
@@ -760,6 +769,8 @@ public partial class Commands
                         x.SubPage = null;
                     });
                 });
+                
+                
 
                 await logsPage.AddButton(async button =>
                 {
@@ -767,29 +778,42 @@ public partial class Commands
                         ? await ctx.GetString("common.enabled")
                         : await ctx.GetString("common.disabled");
                     button.Style = guildAntiRaid.Settings!.Logs.Enabled ? ButtonStyle.Success : ButtonStyle.Danger;
-                    
+
                     button.OnClick(async () =>
                     {
                         guildAntiRaid.Settings!.Logs.Enabled = !guildAntiRaid.Settings!.Logs.Enabled;
                         await guildAntiRaid.SaveSettingsAsync();
                     });
                 });
+                
                 logsPage.NewLine();
                 logsPage.AddSelect(select =>
                 {
                     select.Placeholder = "Select Log Channel";
 
-                    foreach (var textChannel in ctx.Guild.Channels.Where(x => x.Value.Type == ChannelType.Text))
+                    foreach (var textChannel in ctx.Guild.Channels.Where(xr => xr.Value.Type == ChannelType.Text))
                     {
                         select.AddOption(option =>
                         {
-                            option.Label = textChannel.Value.Name;
+                            option.Label = "# " + textChannel.Value.Name;
                             option.Value = textChannel.Value.Id.ToString();
                             option.Description = textChannel.Value.Parent != null
                                 ? textChannel.Value.Parent.Name
                                 : null;
+                            option.IsDefault = guildAntiRaid.Settings!.Logs.ChannelId == textChannel.Key;
                         });
                     }
+                    
+                    select.OnSelect(async result =>
+                    {
+                        if (!result.Any()) return;
+                        
+                        if (!ulong.TryParse(result.First(), out var channelId)) return;
+                        
+                        guildAntiRaid.Settings!.Logs.ChannelId = channelId;
+                        
+                        await guildAntiRaid.SaveSettingsAsync();
+                    });
                 });
             });
 
@@ -797,4 +821,5 @@ public partial class Commands
         uiBuilder.Duration = TimeSpan.FromSeconds(60);
         await ctx.SendUIAsync(uiBuilder);
     }
+    
 }

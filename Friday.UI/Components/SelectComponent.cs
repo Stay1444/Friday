@@ -1,9 +1,10 @@
+using DSharpPlus;
 using DSharpPlus.Entities;
 using Friday.UI.Entities;
 
 namespace Friday.UI.Components;
 
-public class SelectComponent : FridayUIComponent
+public class SelectComponent : FridayUISelectComponent
 {
     public class SelectComponentOption
     {
@@ -18,17 +19,14 @@ public class SelectComponent : FridayUIComponent
     public bool Disabled { get; set; }
     public int MinOptions { get; set; } = 1;
     public int MaxOptions { get; set; } = 1;
-    private List<SelectComponentOption> _options { get; set; } = new List<SelectComponentOption>();
+    private List<SelectComponentOption> _options = new List<SelectComponentOption>();
+    private Action<string[]>? _onSelect;
+    private Func<string[], Task>? _onSelectAsync;
     internal SelectComponent(FridayUIPage page) : base(page)
     {
         
     }
 
-    internal async Task OnSelect(DiscordInteraction interaction)
-    {
-        
-    }
-    
     internal override DiscordComponent? GetDiscordComponent()
     {
         var discordOptions = new List<DiscordSelectComponentOption>();
@@ -39,6 +37,29 @@ public class SelectComponent : FridayUIComponent
         }
         
         return new DiscordSelectComponent(Id, Placeholder, discordOptions, Disabled, MinOptions, MaxOptions);
+    }
+
+    internal override async Task OnSelect(DiscordInteraction interaction, string[] values)
+    {
+        await interaction.CreateResponseAsync(InteractionResponseType.DeferredMessageUpdate, null);
+        if (_onSelect != null)
+        {
+            _onSelect(values);
+        }
+        else if (_onSelectAsync != null)
+        {
+            await _onSelectAsync(values);
+        }
+    }
+    
+    public void OnSelect(Action<string[]> onSelect)
+    {
+        _onSelect = onSelect;
+    }
+    
+    public void OnSelect(Func<string[], Task> onSelect)
+    {
+        _onSelectAsync = onSelect;
     }
 
     public void AddOption(Action<SelectComponentOption> modify)

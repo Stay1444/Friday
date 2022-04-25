@@ -11,16 +11,19 @@ public class LanguageProvider
     private GuildConfigurationProvider _guildConfiguration;
     private List<Assembly> _modules;
     private Dictionary<string, Dictionary<string,string>> _language;
-    public LanguageProvider(DatabaseProvider db, UserConfigurationProvider userConfiguration, GuildConfigurationProvider guildConfiguration, Assembly[] modules)
+    public LanguageProvider(DatabaseProvider db, UserConfigurationProvider userConfiguration, GuildConfigurationProvider guildConfiguration, FridayAssemblyCollector assemblyCollector)
     {
         _db = db;
         _userConfiguration = userConfiguration;
         _guildConfiguration = guildConfiguration;
-        _modules = modules.ToList();
+        _modules = new List<Assembly>();
+        _modules.AddRange(assemblyCollector.Modules);
+        _modules.Add(assemblyCollector.FridayAssembly);
         _language = new Dictionary<string, Dictionary<string, string>>();
+        Build();
     }
 
-    public void Build()
+    private void Build()
     {
         Log.Information("[LanguageProvider] Building language provider...");
         Log.Information("[LanguageProvider] Loading languages...");

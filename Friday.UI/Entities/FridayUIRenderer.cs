@@ -1,6 +1,8 @@
 using DSharpPlus;
 using DSharpPlus.Entities;
+using DSharpPlus.EventArgs;
 using DSharpPlus.Exceptions;
+using DSharpPlus.Interactivity;
 using DSharpPlus.Interactivity.Extensions;
 using Friday.Common;
 
@@ -59,7 +61,7 @@ internal class FridayUIRenderer
         return msgBuilder;
     }
 
-    internal FridayUIButtonComponent? GetButtonComponent(string id)
+    private FridayUIButtonComponent? GetButtonComponent(string id)
     {
         var page = GetActivePage(_builder.Page!);
         foreach (var component in page.Components)
@@ -76,152 +78,102 @@ internal class FridayUIRenderer
         return null;
     }
 
-    private bool AreEqual(DiscordMessageBuilder? m1, DiscordMessageBuilder? m2)
+    private FridayUISelectComponent? GetSelectComponent(string id)
     {
-        if (m1 is null && m2 is null) return true;
-        if (m1 is null || m2 is null) return false;
-        
-        if (m1.Embed.Title != m2.Embed.Title) return false;
-        if (m1.Embed.Description != m2.Embed.Description) return false;
-        if (m1.Embed.Image?.Url != m2.Embed.Image?.Url) return false;
-        if (m1.Embed.Thumbnail?.Url != m2.Embed.Thumbnail?.Url) return false;
-        
-        if (m1.Embed.Color.HasValue && m2.Embed.Color.HasValue)
+        var page = GetActivePage(_builder.Page!);
+        foreach (var component in page.Components)
         {
-            if (m1.Embed.Color.Value.Value != m2.Embed.Color.Value.Value) return false;
-        }
-        else if (m1.Embed.Color.HasValue || m2.Embed.Color.HasValue)
-        {
-            return false;
-        }
-        
-        if (m1.Embed.Footer != null && m2.Embed.Footer != null)
-        {
-            if (m1.Embed.Footer.Text != m2.Embed.Footer.Text) return false;
-            if (m1.Embed.Footer.IconUrl != m2.Embed.Footer.IconUrl) return false;
-        }
-        else if (m1.Embed.Footer != null || m2.Embed.Footer != null)
-        {
-            return false;
-        }
-        
-        if (m1.Embed.Author != null && m2.Embed.Author != null)
-        {
-            if (m1.Embed.Author.Name != m2.Embed.Author.Name) return false;
-            if (m1.Embed.Author.Url != m2.Embed.Author.Url) return false;
-            if (m1.Embed.Author.IconUrl != m2.Embed.Author.IconUrl) return false;
-        }
-        else if (m1.Embed.Author != null || m2.Embed.Author != null)
-        {
-            return false;
-        }
-        
-        if (m1.Embed.Timestamp != null && m2.Embed.Timestamp != null)
-        {
-            if (m1.Embed.Timestamp.Value.ToUnixTimeMilliseconds() != m2.Embed.Timestamp.Value.ToUnixTimeMilliseconds()) return false;
-        }
-        else if (m1.Embed.Timestamp != null || m2.Embed.Timestamp != null)
-        {
-            return false;
-        }
-        
-        if (m1.Embed.Fields.Count != m2.Embed.Fields.Count) return false;
-        for (var i = 0; i < m1.Embed.Fields.Count; i++)
-        {
-            if (m1.Embed.Fields[i].Name != m2.Embed.Fields[i].Name) return false;
-            if (m1.Embed.Fields[i].Value != m2.Embed.Fields[i].Value) return false;
-            if (m1.Embed.Fields[i].Inline != m2.Embed.Fields[i].Inline) return false;
-        }
-        
-        if (m1.Components.Count != m2.Components.Count) return false;
-        
-        for (var i = 0; i < m1.Components.Count; i++)
-        {
-            if (m1.Components[i].Components.Count != m2.Components[i].Components.Count) return false;
-            
-            for (var c = 0; c < m1.Components[i].Components.Count; c++)
+            if (component is FridayUISelectComponent selectComponent)
             {
-                // ReSharper disable once GenericEnumeratorNotDisposed
-                var m1Enumerator = m1.Components[i].Components.GetEnumerator();
-                // ReSharper disable once GenericEnumeratorNotDisposed
-                var m2Enumerator = m2.Components[i].Components.GetEnumerator();
-
-                while (m1Enumerator.MoveNext() && m2Enumerator.MoveNext())
+                if (selectComponent.Id == id)
                 {
-                    var m1Component = m1Enumerator.Current;
-                    var m2Component = m2Enumerator.Current;
-
-                    if (m1Component is DiscordButtonComponent buttonComponent1)
-                    {
-                        if (!(m2Component is DiscordButtonComponent buttonComponent2)) return false;
-                        if (buttonComponent1.Label != buttonComponent2.Label) return false;
-                        if (buttonComponent1.Style != buttonComponent2.Style) return false;
-                        if (buttonComponent1.Emoji != buttonComponent2.Emoji) return false;
-                        if (buttonComponent1.Disabled != buttonComponent2.Disabled) return false;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                    return selectComponent;
                 }
             }
         }
         
-        return true;
+        return null;
     }
-
-    private Dictionary<string, string> GetComponentsIdMapping(DiscordMessageBuilder old, DiscordMessageBuilder @new)
+    
+    private bool HasButtons(DiscordMessageBuilder builder)
     {
-        var mapping = new Dictionary<string, string>();
-
-        for (int oldI = 0; oldI < old.Components.Count; oldI++)
+        foreach (var discordActionRowComponent in builder.Components)
         {
-            var oldRow = old.Components[oldI].Components.GetEnumerator().ToList();
-            var newRow = @new.Components[oldI].Components.GetEnumerator().ToList();
-            
-            for (int componentIndex = 0; componentIndex < oldRow.Count; componentIndex++)
+            foreach (var discordComponent in discordActionRowComponent.Components)
             {
-                var oldComponent = oldRow[componentIndex];
-                var newComponent = newRow[componentIndex];
-                
-                mapping.Add(oldComponent.CustomId, newComponent.CustomId);
+                if (discordComponent is DiscordButtonComponent)
+                {
+                    return true;
+                }
             }
         }
         
-        return mapping;
+        return false;
     }
-
+    
+    private bool HasSelects(DiscordMessageBuilder builder)
+    {
+        foreach (var discordActionRowComponent in builder.Components)
+        {
+            foreach (var discordComponent in discordActionRowComponent.Components)
+            {
+                if (discordComponent is DiscordSelectComponent)
+                {
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
+    
     internal async Task RenderAsync(DiscordClient client, DiscordChannel channel, DiscordUser user)
     {
         DiscordMessage? message = null;
-        DiscordMessageBuilder? lastBuilder = null;
         while (true)
         {
             try
             {
                 var msgBuilder = await PrepareRender(client);
-                Dictionary<string, string>? idMapping = null;
                 if (message is null)
                 {
                     message = await channel.SendMessageAsync(msgBuilder);
-                    lastBuilder = msgBuilder;
                 }
                 else
                 {
-                    if (!AreEqual(lastBuilder, msgBuilder))
-                    {
-                        message = await message.ModifyAsync(msgBuilder);
-                    }
-                    else
-                    {
-                        idMapping = GetComponentsIdMapping(lastBuilder!, msgBuilder);
-                    }
+                    message = await message.ModifyAsync(msgBuilder);
                 }
 
                 var interactivity = client.GetInteractivity();
                 var cancellationTokenSource = _builder.CancellationTokenSource;
-                var buttonTask = interactivity.WaitForButtonAsync(message, user, cancellationTokenSource.Token);
-                await Task.WhenAny(buttonTask);
+                Task<InteractivityResult<ComponentInteractionCreateEventArgs>>? buttonTask = null;
+                Task<InteractivityResult<ComponentInteractionCreateEventArgs>>? selectTask = null;
+                if (HasButtons(msgBuilder))
+                {
+                    buttonTask = interactivity.WaitForButtonAsync(message, user, cancellationTokenSource.Token);
+                }
+                
+                if (HasSelects(msgBuilder))
+                {
+                    selectTask = interactivity.WaitForSelectAsync(message, x => x.User.Id == user.Id, cancellationTokenSource.Token);
+                }
+                
+                if (buttonTask is null && selectTask is null)
+                {
+                    break;
+                }
+
+                if (buttonTask is not null && selectTask is not null)
+                {
+                    await Task.WhenAny(buttonTask, selectTask);
+                }else if (buttonTask is not null)
+                {
+                    await buttonTask;
+                }else if (selectTask is not null)
+                {
+                    await selectTask;
+                }
+                
                 if (cancellationTokenSource.IsCancellationRequested)
                 {
                     if (_builder.RenderRequested)
@@ -239,35 +191,34 @@ internal class FridayUIRenderer
                     }
                     return;
                 }
-                else
-                {
-                    _builder.ResetToken();
-                }
+                
+                _builder.ResetToken();
 
-                if (buttonTask.IsCompleted)
+                if (buttonTask is not null && buttonTask.IsCompleted)
                 {
                     var buttonResult = await buttonTask;
 
                     var interactionId = buttonResult.Result.Id;
-                
-                    if (idMapping is not null)
-                    {
-                        if (idMapping.TryGetValue(interactionId, out var newId))
-                        {
-                            interactionId = newId;
-                        }
-                        else
-                        {
-                            lastBuilder = null;
-                            continue;
-                        }
-                    }
                 
                     var buttonComponent = GetButtonComponent(interactionId);
                 
                     if (buttonComponent is not null)
                     {
                         await buttonComponent.OnClick(buttonResult.Result.Interaction);
+                    }
+                }
+
+                if (selectTask is not null && selectTask.IsCompleted)
+                {
+                    var selectResult = await selectTask;
+                    
+                    var interactionId = selectResult.Result.Id;
+                
+                    var selectComponent = GetSelectComponent(interactionId);
+                    
+                    if (selectComponent is not null)
+                    {
+                        await selectComponent.OnSelect(selectResult.Result.Interaction, selectResult.Result.Values);
                     }
                 }
 

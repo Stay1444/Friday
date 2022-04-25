@@ -43,23 +43,18 @@ try
     
     services.AddSingleton(client);
     
+    var langModuleAssemblies = ModuleLoader.GetValidAssemblies();
+    services.AddSingleton(new FridayAssemblyCollector(langModuleAssemblies, Assembly.GetAssembly(typeof(Program))!));
     var dbProvider = new DatabaseProvider(config);
     services.AddSingleton(dbProvider);
-
-    var guildConfigurationProvider = new GuildConfigurationProvider(dbProvider);
-    services.AddSingleton(guildConfigurationProvider);
-    
-    var userConfigurationProvider = new UserConfigurationProvider(dbProvider);
-    services.AddSingleton(userConfigurationProvider);
-    
-    var prefixResolver = new PrefixResolver(dbProvider, guildConfigurationProvider, userConfigurationProvider);
+    services.AddSingleton<FridayModeratorService>();
+    var guildConfigProvider = new GuildConfigurationProvider(dbProvider);
+    services.AddSingleton(guildConfigProvider);
+    var userConfigProvider = new UserConfigurationProvider(dbProvider);
+    services.AddSingleton(userConfigProvider);
+    var prefixResolver = new PrefixResolver(dbProvider, guildConfigProvider,userConfigProvider);
     services.AddSingleton(prefixResolver);
-
-    var langModuleAssemblies = ModuleLoader.GetValidAssemblies().ToList();
-    langModuleAssemblies.Add(Assembly.GetAssembly(typeof(Program))!);
-    var languageProvider = new LanguageProvider(dbProvider, userConfigurationProvider, guildConfigurationProvider, langModuleAssemblies.ToArray());
-    languageProvider.Build();
-    services.AddSingleton(languageProvider);
+    services.AddSingleton<LanguageProvider>();
 
     Log.Information("Loading modules");
     
@@ -152,17 +147,17 @@ try
                             if (moduleBase.GetType().Assembly == failedCheck.GetType().Assembly)
                             {
                                 await moduleBase.HandleFailedChecks(failedCheck.GetType(), e, error);
-
                                 break;
                             }
                         }
                     }
                 }
-                
-                Log.Error(error.Exception, "Command error");
-                
-                await error.Context.RespondAsync("An error occured while executing this command :(\n" +
-                                             $"```{error.Exception}```");
+                else
+                {
+                    Log.Error(error.Exception, "Command error");
+                    await error.Context.RespondAsync("An error occured while executing this command :(\n" +
+                                                     $"```{error.Exception}```");
+                }
             };
         }
     }

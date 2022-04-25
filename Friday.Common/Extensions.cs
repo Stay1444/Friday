@@ -3,6 +3,7 @@ using DSharpPlus.CommandsNext;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
 using DSharpPlus.Interactivity;
+using Friday.Common.Entities;
 using Friday.Common.Models;
 using Friday.Common.Services;
 using Microsoft.Extensions.DependencyInjection;

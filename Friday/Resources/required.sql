@@ -11,3 +11,9 @@ CREATE TABLE IF NOT EXISTS `user_config` (
     `language_override` varchar(16),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf32;
+
+CREATE TABLE IF NOT EXISTS `friday_moderators` (
+    `id` bigint(64) NOT NULL UNIQUE AUTO_INCREMENT,
+    `user_id` bigint(64) NOT NULL,
+    PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf32;
