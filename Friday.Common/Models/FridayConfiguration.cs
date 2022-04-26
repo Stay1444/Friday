@@ -29,6 +29,7 @@ public record FridayConfiguration
     {
         public ulong Mod { get; init; } = 0;
         public ulong Boost { get; init; } = 0;
+        public ulong Verified { get; init; } = 0;
     }
     
     public bool Debug { get; init; } = false;

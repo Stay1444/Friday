@@ -44,7 +44,7 @@ public partial class Commands
             try
             {
                 var moderatorEmoji = DiscordEmoji.FromGuildEmote(ctx.Client, _fridayConfiguration.Emojis.Mod);
-                embedBuilder.WithFooter($"Moderator", moderatorEmoji.Url);
+                embedBuilder.WithFooter($"{ctx.Client.CurrentUser.Username} Moderator", moderatorEmoji.Url);
                 embedBuilder.WithColor(DiscordColor.Yellow);
             }
             catch (Exception e)

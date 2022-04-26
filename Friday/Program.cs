@@ -50,6 +50,7 @@ try
     var dbProvider = new DatabaseProvider(config);
     services.AddSingleton(dbProvider);
     services.AddSingleton(new FridayModeratorService(dbProvider));
+    services.AddSingleton(new FridayVerifiedServerService(dbProvider));
     var guildConfigProvider = new GuildConfigurationProvider(dbProvider);
     services.AddSingleton(guildConfigProvider);
     var userConfigProvider = new UserConfigurationProvider(dbProvider);

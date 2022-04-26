@@ -8,10 +8,13 @@ public partial class Commands : FridayCommandModule
 {
     private FridayModeratorService _moderatorService;
     private FridayConfiguration _fridayConfiguration;
+    private FridayVerifiedServerService _fridayVerifiedServer;
 
-    public Commands(FridayModeratorService moderatorService, FridayConfiguration fridayConfiguration)
+    public Commands(FridayModeratorService moderatorService, FridayConfiguration fridayConfiguration, FridayVerifiedServerService fridayVerifiedServer)
     {
         _moderatorService = moderatorService;
         _fridayConfiguration = fridayConfiguration;
+        _fridayVerifiedServer = fridayVerifiedServer;
+        
     }
 }
