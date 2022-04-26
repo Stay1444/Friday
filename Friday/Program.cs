@@ -44,17 +44,19 @@ try
     services.AddSingleton(client);
     
     var langModuleAssemblies = ModuleLoader.GetValidAssemblies();
-    services.AddSingleton(new FridayAssemblyCollector(langModuleAssemblies, Assembly.GetAssembly(typeof(Program))!));
+    var fridayAssemblyProvider =
+        new FridayAssemblyCollector(langModuleAssemblies, Assembly.GetAssembly(typeof(Program))!);
+    services.AddSingleton(fridayAssemblyProvider);
     var dbProvider = new DatabaseProvider(config);
     services.AddSingleton(dbProvider);
-    services.AddSingleton<FridayModeratorService>();
+    services.AddSingleton(new FridayModeratorService(dbProvider));
     var guildConfigProvider = new GuildConfigurationProvider(dbProvider);
     services.AddSingleton(guildConfigProvider);
     var userConfigProvider = new UserConfigurationProvider(dbProvider);
     services.AddSingleton(userConfigProvider);
     var prefixResolver = new PrefixResolver(dbProvider, guildConfigProvider,userConfigProvider);
     services.AddSingleton(prefixResolver);
-    services.AddSingleton<LanguageProvider>();
+    services.AddSingleton(new LanguageProvider(dbProvider, userConfigProvider, guildConfigProvider,fridayAssemblyProvider));
 
     Log.Information("Loading modules");
     

@@ -1,7 +1,7 @@
 using DSharpPlus;
+using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
 using Friday.Common;
-using Friday.Common.Entities;
 
 namespace Friday.Modules.AntiRaid.Entities;
 
@@ -27,8 +27,11 @@ internal class EventHandler
         _module.Client.GuildRoleUpdated += RoleUpdated;
         _module.Client.GuildMemberRemoved += MemberRemoved;
         _module.Client.GuildMemberUpdated += MemberUpdated;
+        _module.Client.MessageCreated += MessageCreated;
     }
+
     
+
     public void Unregister()
     {
         _module.Client.GuildDownloadCompleted -= GuildDownloadCompleted;
@@ -42,6 +45,7 @@ internal class EventHandler
         _module.Client.GuildRoleUpdated -= RoleUpdated;
         _module.Client.GuildMemberRemoved -= MemberRemoved;
         _module.Client.GuildMemberUpdated -= MemberUpdated;
+        _module.Client.MessageCreated -= MessageCreated;
     }
     
     private async Task GuildDownloadCompleted(DiscordClient client , GuildDownloadCompletedEventArgs e)
@@ -72,6 +76,7 @@ internal class EventHandler
         if (channelDeletedInfo is not null)
         {
             await guildAntiRaid.ChannelDeleted(client, e.Guild, channelDeletedInfo.UserResponsible, e.Channel);
+            await guildAntiRaid.UpdateChildren();
         }
     }
     
@@ -84,6 +89,8 @@ internal class EventHandler
         if (channelCreatedInfo is not null)
         {
             await guildAntiRaid.ChannelCreated(client, e.Guild, channelCreatedInfo.UserResponsible, e.Channel);
+            await guildAntiRaid.UpdateChildren();
+
         }
     }
     
@@ -96,11 +103,14 @@ internal class EventHandler
         if (channelUpdatedInfo is not null)
         {
             await guildAntiRaid.ChannelUpdated(client, e.Guild, channelUpdatedInfo);
+            await guildAntiRaid.UpdateChildren();
+
         }
     }
     
     private async Task RoleDeleted(DiscordClient client, GuildRoleDeleteEventArgs e)
     {
+        var guildAntiRaid = await _module.GetAntiRaid(e.Guild.Id);
         
     }
     
@@ -135,6 +145,28 @@ internal class EventHandler
     
     private async Task MemberUpdated(DiscordClient client, GuildMemberUpdateEventArgs e)
     {
+        
+    }
+    
+    private async Task MessageCreated(DiscordClient sender, MessageCreateEventArgs e)
+    {
+        if (e.Message.WebhookMessage)
+            return;
+        if (e.Channel.IsPrivate) return;
+        var guildAntiRaid = await _module.GetAntiRaid(e.Guild.Id);
+
+        if (guildAntiRaid.GuildChannelMessages.ContainsKey(e.Channel.Id))
+        {
+            guildAntiRaid.GuildChannelMessages[e.Channel.Id].Add(e.Message);
+        }else
+        {
+            guildAntiRaid.GuildChannelMessages.Add(e.Channel.Id, new List<DiscordMessage>() {e.Message});
+        }
+        
+        if (guildAntiRaid.GuildChannelMessages[e.Channel.Id].Count > 100)
+        {
+            guildAntiRaid.GuildChannelMessages[e.Channel.Id].RemoveAt(0);
+        }
         
     }
 }

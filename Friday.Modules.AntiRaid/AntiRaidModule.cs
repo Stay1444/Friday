@@ -56,9 +56,8 @@ public class AntiRaidModule : ModuleBase
         }
         
         var antiRaid = new GuildAntiRaid(this, guildId);
-        await antiRaid.LoadAsync();
         _guilds.Add(guildId, antiRaid);
-        
+        await antiRaid.LoadAsync(_client);
         return antiRaid;
     }
 

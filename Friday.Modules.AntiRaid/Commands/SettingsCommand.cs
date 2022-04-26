@@ -786,35 +786,39 @@ public partial class Commands
                     });
                 });
                 
-                logsPage.NewLine();
-                logsPage.AddSelect(select =>
+                if (guildAntiRaid.Settings!.Logs.Enabled)
                 {
-                    select.Placeholder = "Select Log Channel";
+                    logsPage.NewLine();
 
-                    foreach (var textChannel in ctx.Guild.Channels.Where(xr => xr.Value.Type == ChannelType.Text))
+                    logsPage.AddSelect(select =>
                     {
-                        select.AddOption(option =>
+                        select.Placeholder = "Select Log Channel";
+
+                        foreach (var textChannel in ctx.Guild.Channels.Where(xr => xr.Value.Type == ChannelType.Text))
                         {
-                            option.Label = "# " + textChannel.Value.Name;
-                            option.Value = textChannel.Value.Id.ToString();
-                            option.Description = textChannel.Value.Parent != null
-                                ? textChannel.Value.Parent.Name
-                                : null;
-                            option.IsDefault = guildAntiRaid.Settings!.Logs.ChannelId == textChannel.Key;
-                        });
-                    }
+                            select.AddOption(option =>
+                            {
+                                option.Label = "# " + textChannel.Value.Name;
+                                option.Value = textChannel.Value.Id.ToString();
+                                option.Description = textChannel.Value.Parent != null
+                                    ? textChannel.Value.Parent.Name
+                                    : null;
+                                option.IsDefault = guildAntiRaid.Settings!.Logs.ChannelId == textChannel.Key;
+                            });
+                        }
                     
-                    select.OnSelect(async result =>
-                    {
-                        if (!result.Any()) return;
+                        select.OnSelect(async result =>
+                        {
+                            if (!result.Any()) return;
                         
-                        if (!ulong.TryParse(result.First(), out var channelId)) return;
+                            if (!ulong.TryParse(result.First(), out var channelId)) return;
                         
-                        guildAntiRaid.Settings!.Logs.ChannelId = channelId;
+                            guildAntiRaid.Settings!.Logs.ChannelId = channelId;
                         
-                        await guildAntiRaid.SaveSettingsAsync();
+                            await guildAntiRaid.SaveSettingsAsync();
+                        });
                     });
-                });
+                }
             });
 
         });

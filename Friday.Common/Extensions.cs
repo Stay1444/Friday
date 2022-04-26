@@ -93,6 +93,12 @@ public static class Extensions
         var c =  client.ShardClients.FirstOrDefault(x => x.Value.Guilds.ContainsKey(guild.Id)).Value;
         return c;
     }
+
+    public static DiscordClient GetClient(this DiscordShardedClient client, ulong guildId)
+    {
+        var c =  client.ShardClients.FirstOrDefault(x => x.Value.Guilds.ContainsKey(guildId)).Value;
+        return c;
+    }
     
     public static string GetName(this DiscordMember member)
     {
@@ -172,5 +178,21 @@ public static class Extensions
     public static DiscordEmbedBuilder Transparent(this DiscordEmbedBuilder builder)
     {
         return builder.WithColor(new DiscordColor("#2F3136"));
+    }
+    
+    public static HumanTimeSpan ToHumanTimeSpan(this TimeSpan span)
+    {
+        return new HumanTimeSpan(span);
+    }
+
+    public static IEnumerable<DiscordGuild> GetGuilds(this DiscordShardedClient client)
+    {
+        var guilds = new List<DiscordGuild>();
+        foreach (var shardClient in client.ShardClients)
+        {
+            guilds.AddRange(shardClient.Value.Guilds.Values);
+        }
+        
+        return guilds;
     }
 }

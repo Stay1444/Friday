@@ -7,7 +7,7 @@ namespace Friday.UI.Entities;
 public class FridayUIPage
 {
     internal DiscordClient Client { get; }
-    public DiscordEmbedBuilder Embed { get; }
+    public DiscordEmbedBuilder Embed { get; set; }
     internal List<FridayUIComponent> Components { get; }
     internal Action<DiscordClient, DiscordMessage>? EventOnCancelled;
     internal Func<DiscordClient, DiscordMessage,Task>? EventOnCancelledAsync;

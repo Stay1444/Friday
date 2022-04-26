@@ -168,4 +168,11 @@ public class LanguageProvider
         return language;
     }
     
+    public async Task<string> GetString(DiscordGuild guild, string key, params object[] format)
+    {
+        var guildConfig = await _guildConfiguration.GetConfiguration(guild);
+        var language = guildConfig.Language;
+        return GetString(language, key, format);
+    }
+    
 }

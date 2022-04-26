@@ -1,0 +1,7 @@
+it.cfg.btn.join=Log Join
+it.cfg.btn.create=Log Create
+it.cfg.btn.delete=Log Delete
+it.cfg.select.placeholder=Select a channel
+it.event.join.title=Member Joined
+it.event.join.f1=Invite
+it.event.join.f2=Invited By

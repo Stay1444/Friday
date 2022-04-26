@@ -24,8 +24,16 @@ public record FridayConfiguration
         public string Host { get; init; } = "localhost";
         public ushort Port { get; init; } = 2333;
     }
+
+    public record FridayConfigurationEmojis
+    {
+        public ulong Mod { get; init; } = 0;
+        public ulong Boost { get; init; } = 0;
+    }
+    
     public bool Debug { get; init; } = false;
     public FridayConfigurationDiscord Discord { get; init; } = new FridayConfigurationDiscord();
     public FridayConfigurationDatabase Database { get; init; } = new FridayConfigurationDatabase();
     public FridayConfigurationLavalink Lavalink { get; init; } = new FridayConfigurationLavalink();
+    public FridayConfigurationEmojis Emojis { get; init; } = new FridayConfigurationEmojis();
 }
