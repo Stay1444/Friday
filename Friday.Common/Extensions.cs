@@ -13,6 +13,7 @@ namespace Friday.Common;
 
 public static class Extensions
 {
+    private static Random _random = new Random();
     public static Task<UserConfiguration> GetUserConfiguration(this CommandContext ctx)
     {
         var userConfigurationProvider = ctx.Services.GetService<UserConfigurationProvider>();
@@ -195,4 +196,24 @@ public static class Extensions
         
         return guilds;
     }
+
+    public static string RandomAlphanumeric(this char[] array)
+    {
+        const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        for (var i = 0; i < array.Length; i++)
+        {
+            array[i] = chars[_random.Next(chars.Length)];
+        }
+        return new string(array) ?? throw new InvalidOperationException();
+    }
+    
+    public static string MaxLength(this string str, int maxLength)
+    {
+        if (str.Length > maxLength)
+        {
+            return str.Substring(0, maxLength);
+        }
+        return str;
+    }
+    
 }

@@ -158,7 +158,7 @@ try
                 {
                     Log.Error(error.Exception, "Command error");
                     await error.Context.RespondAsync("An error occured while executing this command :(\n" +
-                                                     $"```{error.Exception}```");
+                                                     $"```{error.Exception.Message}```");
                 }
             };
         }

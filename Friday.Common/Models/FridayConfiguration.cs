@@ -27,6 +27,7 @@ public record FridayConfiguration
 
     public record FridayConfigurationEmojis
     {
+        public ulong Transparent { get; init; } = 0;
         public ulong Mod { get; init; } = 0;
         public ulong Boost { get; init; } = 0;
     }

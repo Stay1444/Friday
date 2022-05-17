@@ -40,7 +40,7 @@ public class ButtonComponent : FridayUIButtonComponent
 
     internal override DiscordComponent? GetDiscordComponent()
     {
-        return new DiscordButtonComponent(Style, Id, Label, Disabled);
+        return new DiscordButtonComponent(Style, Id, Label, Disabled, new DiscordComponentEmoji(Emoji));
     }
 
     internal ButtonComponent(FridayUIPage page) : base(page)

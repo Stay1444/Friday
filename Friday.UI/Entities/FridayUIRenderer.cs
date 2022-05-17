@@ -243,7 +243,7 @@ internal class FridayUIRenderer
                             .WithEmbed(new DiscordEmbedBuilder()
                                 .Transparent()
                                 .WithTitle("FridayUI Error")
-                                .WithDescription($"An error occured while rendering the page.\n```{badRequestException.Errors}```\nPlease contact the developer.")
+                                .WithDescription($"An error occured while rendering the page.\n```json\n{badRequestException.Errors.MaxLength(256)}```\nPlease contact the developer.")
                                 .WithColor(DiscordColor.Red)));
                     }else
                     {
@@ -251,7 +251,26 @@ internal class FridayUIRenderer
                             .WithEmbed(new DiscordEmbedBuilder()
                                 .Transparent()
                                 .WithTitle("FridayUI Error")
-                                .WithDescription($"An error occured while rendering the page.\n```{e.Message}```\nPlease contact the developer.")
+                                .WithDescription($"An error occured while rendering the page.\n```{e.Message.MaxLength(256)}```\nPlease contact the developer.")
+                                .WithColor(DiscordColor.Red)));
+                    }
+                }else
+                {
+                    if (e is BadRequestException badRequestException)
+                    {
+                        await channel.SendMessageAsync(new DiscordMessageBuilder()
+                            .WithEmbed(new DiscordEmbedBuilder()
+                                .Transparent()
+                                .WithTitle("FridayUI Error")
+                                .WithDescription($"An error occured while rendering the page.\n```json\n{badRequestException.Errors.MaxLength(1024)}```\nPlease contact the developer.")
+                                .WithColor(DiscordColor.Red)));
+                    }else
+                    {
+                        await channel.SendMessageAsync(new DiscordMessageBuilder()
+                            .WithEmbed(new DiscordEmbedBuilder()
+                                .Transparent()
+                                .WithTitle("FridayUI Error")
+                                .WithDescription($"An error occured while rendering the page.\n```{e.Message.MaxLength(256)}```\nPlease contact the developer.")
                                 .WithColor(DiscordColor.Red)));
                     }
                 }
