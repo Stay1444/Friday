@@ -7,13 +7,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <EmbeddedResource Include="Resources\Languages\en.lang" />
-      <None Remove="Resources\Languages\es.lang" />
-      <EmbeddedResource Include="Resources\Languages\es.lang" />
+      <ProjectReference Include="..\..\Friday.Common\Friday.Common.csproj" />
+      <ProjectReference Include="..\..\Friday.UI\Friday.UI.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Friday.Common\Friday.Common.csproj" />
+      <None Remove="Resources\required.sql" />
+      <EmbeddedResource Include="Resources\required.sql" />
     </ItemGroup>
 
 </Project>

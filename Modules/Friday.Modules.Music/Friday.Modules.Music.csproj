@@ -43,7 +43,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Friday.Common\Friday.Common.csproj" />
+      <ProjectReference Include="..\..\Friday.Common\Friday.Common.csproj" />
     </ItemGroup>
 
 </Project>
