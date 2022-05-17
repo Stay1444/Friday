@@ -1,0 +1,3 @@
+[submodule "Vendor/SimpleCDN"]
+	path = Vendor/SimpleCDN
+	url = https://github.com/Stay1444/SimpleCDN
