@@ -6,4 +6,8 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Vendor\SimpleCDN\SimpleCDN.Wrapper\SimpleCDN.Wrapper.csproj" />
+    </ItemGroup>
+
 </Project>
