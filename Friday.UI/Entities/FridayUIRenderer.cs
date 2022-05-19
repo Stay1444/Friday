@@ -149,13 +149,11 @@ internal class FridayUIRenderer
                     if (interaction is null)
                     {
                         message = await message.ModifyAsync(msgBuilder);
-                        Console.WriteLine("Modified message");
                     }
                     else
                     {
                         await interaction.CreateResponseAsync(InteractionResponseType.UpdateMessage,
                             msgBuilder.ToInteractionResponseBuilder());
-                        Console.WriteLine("Updated message with interaction");
                         interaction = null;
                     }
                 }
@@ -269,7 +267,7 @@ internal class FridayUIRenderer
                             .WithEmbed(new DiscordEmbedBuilder()
                                 .Transparent()
                                 .WithTitle("FridayUI Error")
-                                .WithDescription($"An error occured while rendering the page.\n```{e.Message.MaxLength(1024)}```\nPlease contact the developer.")
+                                .WithDescription($"An error occured while rendering the page.\n```{e.ToString().MaxLength(1024)}```\nPlease contact the developer.")
                                 .WithColor(DiscordColor.Red)));
                     }
                 }else

@@ -1,4 +1,3 @@
-using System.Data;
 using System.Text.Json;
 using Friday.Common.Services;
 using Friday.Modules.Backups.Entities;
@@ -147,5 +146,14 @@ internal class DatabaseService
         command.Parameters.AddWithValue("@max_backups", update.MaxBackups);
         await command.ExecuteNonQueryAsync();
     }
-    
+
+    public async Task DeleteBackupAsync(long id)
+    {
+        await using var connection = _databaseProvider.GetConnection();
+        await connection.OpenAsync();
+        await using var command = connection.CreateCommand();
+        command.CommandText = "DELETE FROM bak_backups WHERE id = @id";
+        command.Parameters.AddWithValue("@id", id);
+        await command.ExecuteNonQueryAsync();
+    }
 }

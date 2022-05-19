@@ -59,18 +59,6 @@ public class Commands : FridayCommandModule
             
             x.AddSubPage("backups-list", backupsList =>
             {
-                var index = backupsList.GetState("index", 0);
-                var queryString = backupsList.GetState<string?>("queryString", null);
-                
-                backupsList.Embed.Transparent();
-                backupsList.Embed.Title = backups[index.Value].backup.Name;
-                backupsList.Embed.WithThumbnail(backups[index.Value].backup.Icon);
-                backupsList.Embed.WithFooter(backups[index.Value].code);
-                backupsList.Embed.WithTimestamp(backups[index.Value].backup.Date);
-                backupsList.Embed.AddField("Channels", backups[index.Value].backup.Channels.Count.ToString(), true);
-                backupsList.Embed.AddField("Roles", backups[index.Value].backup.Roles.Count.ToString(), true);
-                backupsList.Embed.AddField("Backup Date", new HumanTimeSpan(DateTime.UtcNow - backups[index.Value].backup.Date).Humanize(2) + " ago");
-                
                 x.AddButton(list =>
                 {
                     list.Label = "Your Backups";
@@ -82,78 +70,209 @@ public class Commands : FridayCommandModule
                         x.SubPage = "backups-list";
                     });
                 });
-
-                backupsList.AddButton(previous =>
+                
+                if (backups.Count > 0)
                 {
-                    previous.Emoji = DiscordEmoji.FromName(ctx.Client, ":arrow_left:");
-                    previous.Style = ButtonStyle.Secondary;
-                });
+                    var index = x.GetState("index", 0);
+                    var queryString = x.GetState<string?>("queryString", null);
+                    var queriedBackups = queryString.Value is null ? backups : backups.Where(b => b.code == queryString.Value || b.backup.Name.ToLower().Contains(queryString.Value.ToLower())).ToList();
 
-                backupsList.AddModal(query =>
-                {
-                    query.ButtonEmoji = DiscordEmoji.FromName(ctx.Client, ":mag:");
-                    query.ButtonStyle = queryString.Value == null ? ButtonStyle.Secondary : ButtonStyle.Success;
-                    query.Title = "Query";
-                    query.AddField("query", field =>
+                    backupsList.Embed.Transparent();
+                    
+                    if (queriedBackups.Count > 0)
                     {
-                        field.Placeholder = "Search for a backup or code";
-                        field.Value = queryString.Value;
-                        field.Style = TextInputStyle.Short;
+                        backupsList.Embed.Title = queriedBackups[index.Value].backup.Name;
+                        backupsList.Embed.WithThumbnail(queriedBackups[index.Value].backup.Icon);
+                        backupsList.Embed.WithFooter($"{queriedBackups[index.Value].code} ({index.Value + 1}/{queriedBackups.Count})");
+                        backupsList.Embed.WithTimestamp(queriedBackups[index.Value].backup.Date);
+                        backupsList.Embed.AddField("Channels", queriedBackups[index.Value].backup.Channels.Count.ToString(), true);
+                        backupsList.Embed.AddField("Roles", queriedBackups[index.Value].backup.Roles.Count.ToString(), true);
+                        backupsList.Embed.AddField("Backup Date", new HumanTimeSpan(DateTime.UtcNow - queriedBackups[index.Value].backup.Date).Humanize(2) + " ago");
+                    }
+                    else
+                    {
+                        backupsList.Embed.WithTitle("No backups found");
+                        backupsList.Embed.Description = $"No backups found for \n```{queryString.Value}```";
+                    }
+
+                    backupsList.AddButton(previous =>
+                    {
+                        previous.Emoji = DiscordEmoji.FromName(ctx.Client, ":arrow_left:");
+                        previous.Style = ButtonStyle.Secondary;
+                        previous.Disabled = queriedBackups.Count < 2;
+                        previous.OnClick(() =>
+                        {
+                            index.Value--;
+                            if (index.Value < 0)
+                            {
+                                index.Value = queriedBackups.Count - 1;
+                            }
+                        });
                     });
                     
-                    query.OnSubmit(result =>
+                    backupsList.AddModal(query =>
                     {
-                        if (result["query"] == "")
+                        query.ButtonEmoji = DiscordEmoji.FromName(ctx.Client, ":mag:");
+                        query.ButtonStyle = queryString.Value == null ? ButtonStyle.Secondary : ButtonStyle.Success;
+                        query.Title = "Query";
+                        query.ButtonDisabled = backups.Count < 2;
+                        query.AddField("query", field =>
                         {
-                            queryString.Value = null;
-                        }else
+                            field.Placeholder = "Search for a backup or code";
+                            field.Value = queryString.Value;
+                            field.Style = TextInputStyle.Short;
+                        });
+                    
+                        query.OnSubmit(result =>
                         {
-                            queryString.Value = result["query"];
-                        }
-                        x.ForceRender();
+                            queryString.Value = result["query"] == "" ? null : result["query"];
+                            index.Value = 0;
+                            x.ForceRender();
+                        });
                     });
-                });
-
-                backupsList.AddButton(next =>
-                {
-                    next.Emoji = DiscordEmoji.FromName(ctx.Client, ":arrow_right:");
-                    next.Style = ButtonStyle.Secondary;
-                });
-                
-                backupsList.NewLine();
-
-                backupsList.AddButton(delete =>
-                {
-                    delete.Emoji = DiscordEmoji.FromName(ctx.Client, ":wastebasket:");
-                    delete.Style = ButtonStyle.Danger;
-                    delete.Label = "Delete";
-                });
-
-                backupsList.AddButton(empty =>
-                {
-                    empty.Emoji = DiscordEmoji.FromGuildEmote(ctx.Client, _fridayConfiguration.Emojis.Transparent);
-                    empty.Style = ButtonStyle.Secondary;
-                    empty.Disabled = true;
-                });
-                
-                backupsList.AddButton(load =>
-                {
-                    load.Emoji = DiscordEmoji.FromName(ctx.Client, ":outbox_tray:");
-                    load.Style = ButtonStyle.Success;
-                    load.Label = "Load";
-                });
-                
-                backupsList.NewLine();
-
-                backupsList.AddButton(back =>
-                {
-                    back.Label = "Back";
-                    back.Style = ButtonStyle.Secondary;
-                    back.OnClick(() =>
+                    
+                    backupsList.AddButton(next =>
                     {
-                        x.SubPage = null;
+                        next.Emoji = DiscordEmoji.FromName(ctx.Client, ":arrow_right:");
+                        next.Style = ButtonStyle.Secondary;
+                        next.Disabled = queriedBackups.Count < 2;
+                        next.OnClick(() =>
+                        {
+                            index.Value++;
+                            if (index.Value >= queriedBackups.Count)
+                                index.Value = 0;
+                        });
                     });
-                });
+                    
+                    backupsList.NewLine();
+                    
+                    backupsList.AddButton(delete =>
+                    {
+                        delete.Emoji = DiscordEmoji.FromName(ctx.Client, ":wastebasket:");
+                        delete.Style = ButtonStyle.Danger;
+                        delete.Label = "Delete";
+                        delete.Disabled = queriedBackups.Count == 0;
+                        delete.OnClick(() =>
+                        {
+                            backupsList.SubPage = "deleteConfirm";
+                        });
+                    });
+                    
+                    backupsList.AddButton(empty =>
+                    {
+                        empty.Emoji = DiscordEmoji.FromGuildEmote(ctx.Client, _fridayConfiguration.Emojis.Transparent);
+                        empty.Style = ButtonStyle.Secondary;
+                        empty.Disabled = true;
+                    });
+                    
+                    backupsList.AddButton(load =>
+                    {
+                        load.Emoji = DiscordEmoji.FromName(ctx.Client, ":outbox_tray:");
+                        load.Style = ButtonStyle.Success;
+                        load.Label = "Load";
+                        load.Disabled = queriedBackups.Count == 0;
+                        
+                        load.OnClick(() =>
+                        {
+                            backupsList.SubPage = "loadConfirm";
+                        });
+                    });
+
+                    backupsList.NewLine();
+                    
+                    backupsList.AddButton(back =>
+                    {
+                        back.Label = "Back";
+                        back.Style = ButtonStyle.Secondary;
+                        back.OnClick(() =>
+                        {
+                            x.SubPage = null;
+                        });
+                    });
+                    
+                    backupsList.AddSubPage("deleteConfirm", deleteConfirm =>
+                    {
+                        deleteConfirm.Embed.Transparent();
+                        deleteConfirm.Embed.Description = "Are you sure you want to delete this backup?";
+                        deleteConfirm.Embed.WithFooter("This action cannot be undone.");
+
+                        deleteConfirm.AddButton(no =>
+                        {
+                            no.Label = "No";
+                            no.Style = ButtonStyle.Secondary;
+                        
+                            no.OnClick(() =>
+                            {
+                                backupsList.SubPage = null;
+                            });
+                        });
+                    
+                        deleteConfirm.AddButton(yes =>
+                        {
+                            yes.Label = "Yes";
+                            yes.Style = ButtonStyle.Danger;
+                        
+                            yes.OnClick(async () =>
+                            {
+                                await _module.Database.DeleteBackupAsync(queriedBackups[index.Value].id);
+                                backups = backups.Where(b => b.id != queriedBackups[index.Value].id).ToList();
+                                if (backups.Count == 0)
+                                {
+                                    backupsList.SubPage = null;
+                                    x.SubPage = null;
+                                    index.Value = 0;
+                                    return;
+                                }
+                                index.Value = Math.Clamp(index.Value - 1, 0, queriedBackups.Count - 1);
+                                backupsList.SubPage = null;
+                            });
+                        });
+                    });
+                    
+                    backupsList.AddSubPage("loadConfirm", loadConfirm =>
+                    {
+                        var loadTime = x.GetState("loadConfirm-time", 5);
+                        loadConfirm.Embed.Transparent();
+                        loadConfirm.Embed.Description = "Are you sure you want to load this backup?";
+                        loadConfirm.Embed.WithFooter("This will wipe the current server.");
+
+                        loadConfirm.AddButton(no =>
+                        {
+                            no.Label = "No";
+                            no.Style = ButtonStyle.Secondary;
+                        
+                            no.OnClick(() =>
+                            {
+                                backupsList.SubPage = null;
+                                loadTime.Value = 5;
+                            });
+                        });
+                    
+                        loadConfirm.AddButton(yes =>
+                        {
+                            yes.Label = loadTime.Value == 0 ? "Yes" : loadTime.Value.ToString();
+                            yes.Style = ButtonStyle.Danger;
+                            yes.Disabled = loadTime.Value != 0;
+
+                            if (loadTime.Value != 0 && backupsList.SubPage == "loadConfirm")
+                            {
+                                _ = Task.Run(async () =>
+                                {
+                                    await Task.Delay(1000);
+                                    loadTime.Value--;
+                                    Console.WriteLine(loadTime.Value);
+                                    x.ForceRender();
+                                });
+                            }
+                            
+                            yes.OnClick(async () =>
+                            {
+                                loadTime.Value = 5;
+                                backupsList.SubPage = null;
+                            });
+                        });
+                    });
+                }
             });
 
             

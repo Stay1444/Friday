@@ -77,6 +77,7 @@ public class FridayUIBuilder
                     SetSubPagesSubPage(old[newPage.Key].SubPages, newPage.Value.SubPages);
                     
                     newPage.Value.SubPage = old[newPage.Key].SubPage;
+                    newPage.Value.State = old[newPage.Key].State;
                 }
             }
         }
