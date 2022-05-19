@@ -59,6 +59,8 @@ public class FridayUIBuilder
         Page.Reset();
         var oldSubPages = Page.SubPages;
         Page.SubPages = new();
+        Page.SubPagesRender = new();
+        
         if (_asyncRenderAction is not null)
         {
             await _asyncRenderAction(Page);
@@ -81,8 +83,33 @@ public class FridayUIBuilder
                 }
             }
         }
+
+        async Task RunRender(Dictionary<string, FridayUIPage> pages, Dictionary<string, (Action<FridayUIPage>?, Func<FridayUIPage, Task>?)> render, string? selected)
+        {
+            if (selected is null) return;
+            foreach (var fridayUIPage in pages)
+            {
+                if (fridayUIPage.Key != selected)
+                {
+                    continue;
+                }
+                
+                if (render[fridayUIPage.Key].Item1 is not null)
+                {
+                    render[fridayUIPage.Key].Item1!(fridayUIPage.Value);
+                }
+                else
+                {
+                    await render[fridayUIPage.Key].Item2!(fridayUIPage.Value);
+                }
+
+                await RunRender(fridayUIPage.Value.SubPages, fridayUIPage.Value.SubPagesRender, fridayUIPage.Value.SubPage);
+                
+                return;
+            }
+        }
         
         SetSubPagesSubPage(oldSubPages, Page.SubPages);
-        
+        await RunRender(Page.SubPages, Page.SubPagesRender, Page.SubPage);
     }
 }

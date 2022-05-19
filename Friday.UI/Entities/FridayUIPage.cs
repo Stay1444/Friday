@@ -26,6 +26,10 @@ public class FridayUIPage
     internal Func<DiscordClient, DiscordMessage,Task>? EventOnCancelledAsync;
     private readonly FridayUIBuilder _builder;
     internal Dictionary<string, FridayUIPage> SubPages { get; set; } = new Dictionary<string, FridayUIPage>();
+
+    internal Dictionary<string, (Action<FridayUIPage>? render, Func<FridayUIPage, Task>? task)> SubPagesRender =
+        new Dictionary<string, (Action<FridayUIPage>? render, Func<FridayUIPage, Task>? task)>();
+    
     public string? SubPage { get; set; }
     internal FridayUIPage(DiscordClient client, FridayUIBuilder builder)
     {
@@ -68,15 +72,15 @@ public class FridayUIPage
     public void AddSubPage(string id, Action<FridayUIPage> modify)
     {
         var page = new FridayUIPage(this.Client, this._builder);
-        modify(page);
         this.SubPages.Add(id, page);
+        this.SubPagesRender.Add(id, (modify, null));
     }
 
     public async Task AddSubPageAsync(string id, Func<FridayUIPage, Task> modifyAsync)
     {
         var page = new FridayUIPage(this.Client, this._builder);
-        await modifyAsync(page);
         this.SubPages.Add(id, page);
+        this.SubPagesRender.Add(id, (null, modifyAsync));
     }
 
     public Ref<T> GetState<T>(string key, T def)
