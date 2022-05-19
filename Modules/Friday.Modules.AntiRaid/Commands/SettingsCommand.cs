@@ -13,7 +13,8 @@ namespace Friday.Modules.AntiRaid.Commands;
 
 public partial class Commands
 {
-    [Description("AntiRaid settings"), GroupCommand]
+    [Description("AntiRaid settings")]
+    [GroupCommand]
     public async Task AntiRaidSettingsCommand(CommandContext ctx)
     {
         var guildAntiRaid = await _module.GetAntiRaid(ctx.Guild);
@@ -23,7 +24,7 @@ public partial class Commands
 
         AntiRaidSettings.AntiRaidSettingsRoles? selectedRolesSettings = null;
         string? selectedRolesSettingsName = null;
-        
+
         var uiBuilder = new FridayUIBuilder().OnRenderAsync(async x =>
         {
             x.OnCancelledAsync(async (_, message) =>
@@ -37,6 +38,7 @@ public partial class Commands
             x.Embed.Description = await ctx.GetString("Manage AntiRaid Settings");
             x.Embed.WithAuthor(ctx.User.Username, null, ctx.User.AvatarUrl);
             x.Embed.Color = guildAntiRaid.Settings!.Enabled ? DiscordColor.SpringGreen : DiscordColor.IndianRed;
+
             await x.AddButton(async button =>
             {
                 button.Label = guildAntiRaid.Settings!.Enabled
@@ -85,14 +87,14 @@ public partial class Commands
                         await guildAntiRaid.SaveSettingsAsync();
                     });
                 });
+            });
 
-                await x.AddButton(async button =>
-                {
-                    button.Label = await ctx.GetString("common.permissions");
-                    button.Style = ButtonStyle.Primary;
-                    button.Disabled = !ctx.IsCallerOwner();
-                    button.OnClick(() => { x.SubPage = "permissions"; });
-                });
+            await x.AddButton(async button =>
+            {
+                button.Label = await ctx.GetString("common.permissions");
+                button.Style = ButtonStyle.Primary;
+                button.Disabled = !ctx.IsCallerOwner();
+                button.OnClick(() => { x.SubPage = "permissions"; });
             });
 
             await x.AddSubPageAsync("events", async eventsPage =>
@@ -100,31 +102,24 @@ public partial class Commands
                 eventsPage.Embed.Title = await ctx.GetString("AntiRaid - Event Settings");
                 eventsPage.Embed.Description = await ctx.GetString("Manage AntiRaid Events");
 
-                x.AddButton(button =>
-                {
-                    button.Label = "Events";
-                    button.Style = ButtonStyle.Primary;
-                    button.OnClick(() => { x.SubPage = "events"; });
-                });
-
                 await eventsPage.AddButton(async button =>
                 {
                     button.Label = await ctx.GetString("common.back");
                     button.Style = ButtonStyle.Secondary;
                     button.OnClick(() => { x.SubPage = null; });
                 });
-                
+
+                eventsPage.AddButton(button =>
+                {
+                    button.Label = "Channels";
+                    button.Style = ButtonStyle.Primary;
+                    button.OnClick(() => { eventsPage.SubPage = "channel"; });
+                });
+
                 await eventsPage.AddSubPageAsync("channel", async channelEventsPage =>
                 {
                     channelEventsPage.Embed.Title = "AntiRaid - Channels";
                     channelEventsPage.Embed.Description = "Manage channel Events";
-
-                    eventsPage.AddButton(button =>
-                    {
-                        button.Label = "Channels";
-                        button.Style = ButtonStyle.Primary;
-                        button.OnClick(() => { eventsPage.SubPage = "channel"; });
-                    });
 
                     await channelEventsPage.AddButton(async button =>
                     {
@@ -133,7 +128,7 @@ public partial class Commands
                         button.OnClick(() => { eventsPage.SubPage = null; });
                     });
                     channelEventsPage.NewLine();
-                    
+
                     channelEventsPage.AddButton(button =>
                     {
                         button.Label = "On Delete";
@@ -170,11 +165,12 @@ public partial class Commands
                         });
                     });
                     if (selectedChannelSettings is not null)
-                    {
                         await channelEventsPage.AddSubPageAsync("settings", async settingsChannelsPage =>
                         {
-                            settingsChannelsPage.Embed.Title = "AntiRaid - Channels " + selectedChannelSettingsName + " Events";
-                            settingsChannelsPage.Embed.Description = $"Manage channel {selectedChannelSettingsName} events";
+                            settingsChannelsPage.Embed.Title =
+                                "AntiRaid - Channels " + selectedChannelSettingsName + " Events";
+                            settingsChannelsPage.Embed.Description =
+                                $"Manage channel {selectedChannelSettingsName} events";
                             settingsChannelsPage.Embed.Color = selectedChannelSettings!.Enabled
                                 ? DiscordColor.SpringGreen
                                 : DiscordColor.IndianRed;
@@ -296,7 +292,13 @@ public partial class Commands
                                 });
                             });
                         });
-                    }
+                });
+
+                eventsPage.AddButton(button =>
+                {
+                    button.Label = "Roles";
+                    button.Style = ButtonStyle.Primary;
+                    button.OnClick(() => { eventsPage.SubPage = "role"; });
                 });
 
                 await eventsPage.AddSubPageAsync("role", async roleEventsPage =>
@@ -304,12 +306,6 @@ public partial class Commands
                     roleEventsPage.Embed.Title = "AntiRaid - Roles";
                     roleEventsPage.Embed.Description = "Manage Role Events";
 
-                    eventsPage.AddButton(button =>
-                    {
-                        button.Label = "Roles";
-                        button.Style = ButtonStyle.Primary;
-                        button.OnClick(() => { eventsPage.SubPage = "role"; });
-                    });
 
                     await roleEventsPage.AddButton(async button =>
                     {
@@ -317,9 +313,9 @@ public partial class Commands
                         button.Style = ButtonStyle.Secondary;
                         button.OnClick(() => { eventsPage.SubPage = null; });
                     });
-                    
+
                     roleEventsPage.NewLine();
-                    
+
                     roleEventsPage.AddButton(button =>
                     {
                         button.Label = "On Delete";
@@ -355,7 +351,7 @@ public partial class Commands
                             roleEventsPage.SubPage = "settings";
                         });
                     });
-                    
+
                     roleEventsPage.AddButton(button =>
                     {
                         button.Label = "On Grant";
@@ -367,7 +363,7 @@ public partial class Commands
                             roleEventsPage.SubPage = "settings";
                         });
                     });
-                    
+
                     roleEventsPage.AddButton(button =>
                     {
                         button.Label = "On Revoke";
@@ -379,12 +375,12 @@ public partial class Commands
                             roleEventsPage.SubPage = "settings";
                         });
                     });
-                    
+
                     if (selectedRolesSettings is not null)
-                    {
                         await roleEventsPage.AddSubPageAsync("settings", async settingsChannelsPage =>
                         {
-                            settingsChannelsPage.Embed.Title = "AntiRaid - Roles " + selectedRolesSettingsName + " Events";
+                            settingsChannelsPage.Embed.Title =
+                                "AntiRaid - Roles " + selectedRolesSettingsName + " Events";
                             settingsChannelsPage.Embed.Description = $"Manage role {selectedRolesSettingsName} events";
                             settingsChannelsPage.Embed.Color = selectedRolesSettings!.Enabled
                                 ? DiscordColor.SpringGreen
@@ -507,7 +503,13 @@ public partial class Commands
                                 });
                             });
                         });
-                    }
+                });
+
+                eventsPage.AddButton(button =>
+                {
+                    button.Label = "Ban";
+                    button.Style = ButtonStyle.Primary;
+                    button.OnClick(() => { eventsPage.SubPage = "ban"; });
                 });
 
                 await eventsPage.AddSubPageAsync("ban", async banEventPage =>
@@ -527,12 +529,7 @@ public partial class Commands
                         "If threshold is reached in the given time span, the member will be " +
                         (guildAntiRaid.Settings!.Bans.Ban ? "banned" : "kicked") +
                         "\n```" + new HumanTimeSpan(guildAntiRaid.Settings!.Bans.Time).Humanize() + "```");
-                    eventsPage.AddButton(button =>
-                    {
-                        button.Label = "Ban";
-                        button.Style = ButtonStyle.Primary;
-                        button.OnClick(() => { eventsPage.SubPage = "ban"; });
-                    });
+
 
                     await banEventPage.AddButton(async button =>
                     {
@@ -733,44 +730,35 @@ public partial class Commands
                 });
             });
 
+            x.AddButton(button =>
+            {
+                button.Label = "Events";
+                button.Style = ButtonStyle.Primary;
+                button.OnClick(() => { x.SubPage = "events"; });
+            });
+
             await x.AddSubPageAsync("logs", async logsPage =>
             {
-                
                 logsPage.Embed.Title = "AntiRaid - Logs";
                 logsPage.Embed.Description = "Log Settings";
-                
-                if (ctx.Guild.Channels.Any(xr => xr.Key == guildAntiRaid.Settings!.Logs.ChannelId))
-                {
-                    logsPage.Embed.AddField("Logs Channel", "<#" + guildAntiRaid.Settings!.Logs.ChannelId + ">");
-                }else
-                {
-                    logsPage.Embed.AddField("Logs Channel", "None");
-                }
-                
-                logsPage.Embed.Color = guildAntiRaid.Settings!.Logs.Enabled ? DiscordColor.SpringGreen : DiscordColor.IndianRed;
-                
-                x.AddButton(button =>
-                {
-                    button.Label = "Logs";
-                    button.Style = ButtonStyle.Primary;
 
-                    button.OnClick(() =>
-                    {
-                        x.SubPage = "logs";
-                    });
-                });
+                if (ctx.Guild.Channels.Any(xr => xr.Key == guildAntiRaid.Settings!.Logs.ChannelId))
+                    logsPage.Embed.AddField("Logs Channel", "<#" + guildAntiRaid.Settings!.Logs.ChannelId + ">");
+                else
+                    logsPage.Embed.AddField("Logs Channel", "None");
+
+                logsPage.Embed.Color = guildAntiRaid.Settings!.Logs.Enabled
+                    ? DiscordColor.SpringGreen
+                    : DiscordColor.IndianRed;
+
 
                 logsPage.AddButton(button =>
                 {
                     button.Label = "Back";
                     button.Style = ButtonStyle.Secondary;
-                    button.OnClick(() =>
-                    {
-                        x.SubPage = null;
-                    });
+                    button.OnClick(() => { x.SubPage = null; });
                 });
-                
-                
+
 
                 await logsPage.AddButton(async button =>
                 {
@@ -785,7 +773,7 @@ public partial class Commands
                         await guildAntiRaid.SaveSettingsAsync();
                     });
                 });
-                
+
                 if (guildAntiRaid.Settings!.Logs.Enabled)
                 {
                     logsPage.NewLine();
@@ -795,7 +783,6 @@ public partial class Commands
                         select.Placeholder = "Select Log Channel";
 
                         foreach (var textChannel in ctx.Guild.Channels.Where(xr => xr.Value.Type == ChannelType.Text))
-                        {
                             select.AddOption(option =>
                             {
                                 option.Label = "# " + textChannel.Value.Name;
@@ -805,25 +792,30 @@ public partial class Commands
                                     : null;
                                 option.IsDefault = guildAntiRaid.Settings!.Logs.ChannelId == textChannel.Key;
                             });
-                        }
-                    
+
                         select.OnSelect(async result =>
                         {
                             if (!result.Any()) return;
-                        
+
                             if (!ulong.TryParse(result.First(), out var channelId)) return;
-                        
+
                             guildAntiRaid.Settings!.Logs.ChannelId = channelId;
-                        
+
                             await guildAntiRaid.SaveSettingsAsync();
                         });
                     });
                 }
             });
 
+            x.AddButton(button =>
+            {
+                button.Label = "Logs";
+                button.Style = ButtonStyle.Primary;
+
+                button.OnClick(() => { x.SubPage = "logs"; });
+            });
         });
         uiBuilder.Duration = TimeSpan.FromSeconds(60);
         await ctx.SendUIAsync(uiBuilder);
     }
-    
 }

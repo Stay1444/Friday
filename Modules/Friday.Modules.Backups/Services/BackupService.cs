@@ -29,4 +29,9 @@ public class BackupService
         
         return (id, code, backup);
     }
+
+    public async Task LoadBackupAsync(DiscordGuild guild, Backup bk)
+    {
+        
+    }
 }

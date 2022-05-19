@@ -55,22 +55,23 @@ public class Commands : FridayCommandModule
             {
                 x.Embed.AddField("Last Backup", new HumanTimeSpan(DateTime.UtcNow - backups.Last().backup.Date).Humanize(2) + " ago", true);
             }
+            
             x.Embed.WithAuthor(ctx.User.Username, null, ctx.User.AvatarUrl);
+            
+            x.AddButton(list =>
+            {
+                list.Label = "Your Backups";
+                list.Style = ButtonStyle.Secondary;
+                list.Emoji = DiscordEmoji.FromName(ctx.Client, ":scroll:");
+                list.Disabled = backups.Count == 0;
+                list.OnClick(() =>
+                {
+                    x.SubPage = "backups-list";
+                });
+            });
             
             x.AddSubPage("backups-list", backupsList =>
             {
-                x.AddButton(list =>
-                {
-                    list.Label = "Your Backups";
-                    list.Style = ButtonStyle.Secondary;
-                    list.Emoji = DiscordEmoji.FromName(ctx.Client, ":scroll:");
-                    list.Disabled = backups.Count == 0;
-                    list.OnClick(() =>
-                    {
-                        x.SubPage = "backups-list";
-                    });
-                });
-                
                 if (backups.Count > 0)
                 {
                     var index = x.GetState("index", 0);
@@ -170,8 +171,21 @@ public class Commands : FridayCommandModule
                         load.Emoji = DiscordEmoji.FromName(ctx.Client, ":outbox_tray:");
                         load.Style = ButtonStyle.Success;
                         load.Label = "Load";
-                        load.Disabled = queriedBackups.Count == 0;
-                        
+                        if (queriedBackups.Count == 0)
+                        {
+                            load.Disabled = true;
+                        }else if (config is null)
+                        {
+                            load.Disabled = true;
+                        }else if (!ctx.Member!.IsOwner)
+                        {
+                            if (!config.AdminsCanRestore ||
+                                !ctx.Member.Permissions.HasPermission(Permissions.Administrator))
+                            {
+                                load.Disabled = true;
+                            }
+                        }
+
                         load.OnClick(() =>
                         {
                             backupsList.SubPage = "loadConfirm";
@@ -254,13 +268,12 @@ public class Commands : FridayCommandModule
                             yes.Style = ButtonStyle.Danger;
                             yes.Disabled = loadTime.Value != 0;
 
-                            if (loadTime.Value != 0 && backupsList.SubPage == "loadConfirm")
+                            if (loadTime.Value != 0)
                             {
                                 _ = Task.Run(async () =>
                                 {
                                     await Task.Delay(1000);
                                     loadTime.Value--;
-                                    Console.WriteLine(loadTime.Value);
                                     x.ForceRender();
                                 });
                             }
@@ -269,6 +282,8 @@ public class Commands : FridayCommandModule
                             {
                                 loadTime.Value = 5;
                                 backupsList.SubPage = null;
+                                await _module.BackupService.LoadBackupAsync(ctx.Guild,
+                                    queriedBackups[index.Value].backup);
                             });
                         });
                     });
