@@ -56,6 +56,7 @@ public class FridayUIBuilder
         }
         
         Page.Components.Clear();
+        Page.Reset();
         var oldSubPages = Page.SubPages;
         Page.SubPages = new();
         if (_asyncRenderAction is not null)

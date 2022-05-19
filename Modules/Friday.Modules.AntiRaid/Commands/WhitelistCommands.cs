@@ -21,7 +21,6 @@ public partial class Commands
             x.Embed.Title = $"{member.Username} Whitelist";
             x.Embed.Color = isWhiteListed ? DiscordColor.SpringGreen : DiscordColor.IndianRed;
             x.Embed.Description = $"{member.Username} is {(isWhiteListed ? "" : "not")} whitelisted";
-
             x.AddButton( button =>
             {
                 button.Label = isWhiteListed ? "Remove from whitelist" : "Add to whitelist";

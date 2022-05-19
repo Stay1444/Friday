@@ -25,10 +25,8 @@ public class ButtonComponent : FridayUIButtonComponent
         this._clickAction = action;
     }
     
-    internal override async Task OnClick(DiscordInteraction interaction)
+    internal override async Task<bool> OnClick(DiscordInteraction interaction)
     {
-        await interaction.CreateResponseAsync(InteractionResponseType.DeferredMessageUpdate);
-
         if (this._asyncClickAction is not null)
         {
             await this._asyncClickAction.Invoke();
@@ -36,11 +34,13 @@ public class ButtonComponent : FridayUIButtonComponent
         {
             this._clickAction.Invoke();
         }
+        
+        return false;
     }
 
-    internal override DiscordComponent? GetDiscordComponent()
+    internal override DiscordComponent GetDiscordComponent()
     {
-        return new DiscordButtonComponent(Style, Id, Label, Disabled, new DiscordComponentEmoji(Emoji));
+        return new DiscordButtonComponent(Style, Id, Label, Disabled, Emoji != null ? new DiscordComponentEmoji(Emoji) : null);
     }
 
     internal ButtonComponent(FridayUIPage page) : base(page)

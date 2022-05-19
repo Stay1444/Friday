@@ -8,6 +8,6 @@ public abstract class FridayUISelectComponent : FridayUIComponent
     {
     }
 
-    internal abstract Task OnSelect(DiscordInteraction interaction, string[] values);
+    internal abstract Task<bool> OnSelect(DiscordInteraction interaction, string[] values);
 
 }

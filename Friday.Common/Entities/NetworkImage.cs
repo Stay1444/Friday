@@ -7,7 +7,7 @@ public static class NetworkImage
 {
     private static readonly Dictionary<string,Guid> UrlCache = new();
     
-    public static async Task<Image<Rgba32>> DownloadImage(string url)
+    public static async Task<Image<Rgba32>> DownloadImageSharpImage(string url)
     {
         if (UrlCache.TryGetValue(url, out var id))
         {
@@ -18,7 +18,7 @@ public static class NetworkImage
         r.Position = 0;
         return Image.Load<Rgba32>(r);
     }
-
+    
     public static async Task<Stream> DownloadStream(string url)
     {
         if (UrlCache.ContainsKey(url))

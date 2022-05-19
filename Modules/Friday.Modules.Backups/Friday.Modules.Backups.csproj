@@ -8,12 +8,18 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Friday.Common\Friday.Common.csproj" />
+      <ProjectReference Include="..\..\Friday.Rendering\Friday.Rendering.csproj" />
       <ProjectReference Include="..\..\Friday.UI\Friday.UI.csproj" />
     </ItemGroup>
 
     <ItemGroup>
       <None Remove="Resources\required.sql" />
       <EmbeddedResource Include="Resources\required.sql" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Images" />
+      <Folder Include="Resources\Images" />
     </ItemGroup>
 
 </Project>

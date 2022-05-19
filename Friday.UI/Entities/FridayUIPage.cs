@@ -7,17 +7,29 @@ namespace Friday.UI.Entities;
 public class FridayUIPage
 {
     internal DiscordClient Client { get; }
-    public DiscordEmbedBuilder Embed { get; set; }
+    //public DiscordEmbedBuilder Embed { get; set; }
+    
+    private DiscordMessageBuilder? _msgBuilder;
+    private DiscordEmbedBuilder? _embedBuilder;
+    
+    internal Dictionary<string, object> State { get; set; } = new Dictionary<string, object>();
+    
+    public DiscordMessageBuilder Message => _msgBuilder ??= new DiscordMessageBuilder();
+
+    public DiscordEmbedBuilder Embed => _embedBuilder ??= new DiscordEmbedBuilder();
+
+    internal bool UsedMessageBuilder => _msgBuilder != null;
+    internal bool UsedEmbedBuilder => _embedBuilder != null;
+    
     internal List<FridayUIComponent> Components { get; }
     internal Action<DiscordClient, DiscordMessage>? EventOnCancelled;
     internal Func<DiscordClient, DiscordMessage,Task>? EventOnCancelledAsync;
-    private FridayUIBuilder _builder;
+    private readonly FridayUIBuilder _builder;
     internal Dictionary<string, FridayUIPage> SubPages { get; set; } = new Dictionary<string, FridayUIPage>();
-    public string? SubPage { get; set; } = null;
+    public string? SubPage { get; set; }
     internal FridayUIPage(DiscordClient client, FridayUIBuilder builder)
     {
         this.Client = client;
-        this.Embed = new DiscordEmbedBuilder();
         this.Embed.Transparent();
         this.Components = new List<FridayUIComponent>();
         this._builder = builder;
@@ -66,5 +78,20 @@ public class FridayUIPage
         await modifyAsync(page);
         this.SubPages.Add(id, page);
     }
-    
+
+    public Ref<T> GetState<T>(string key, T def)
+    {
+        if (!State.ContainsKey(key))
+        {
+            State.Add(key, new Ref<T>(def));
+        }
+        
+        return (Ref<T>) State[key];
+    }
+
+    internal void Reset()
+    {
+        _embedBuilder = null;
+        _msgBuilder = null;
+    }
 }

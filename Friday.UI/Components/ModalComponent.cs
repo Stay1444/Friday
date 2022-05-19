@@ -37,7 +37,7 @@ public class ModalComponent : FridayUIButtonComponent
         this._onSubmitAsync = onSubmit;
     }
     
-    internal override Task OnClick(DiscordInteraction interaction)
+    internal override Task<bool> OnClick(DiscordInteraction interaction)
     {
         _ = Task.Run(async () =>
         {
@@ -68,12 +68,12 @@ public class ModalComponent : FridayUIButtonComponent
             }
         });
         
-        return Task.CompletedTask;
+        return Task.FromResult(true);
     }
 
     internal override DiscordComponent? GetDiscordComponent()
     {
-        return new DiscordButtonComponent(ButtonStyle, Id, ButtonLabel, ButtonDisabled);
+        return new DiscordButtonComponent(ButtonStyle, Id, ButtonLabel, ButtonDisabled, ButtonEmoji == null ? null : new DiscordComponentEmoji(ButtonEmoji));
     }
 
     internal ModalComponent(FridayUIPage page) : base(page)

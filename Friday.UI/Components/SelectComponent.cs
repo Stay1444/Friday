@@ -39,9 +39,8 @@ public class SelectComponent : FridayUISelectComponent
         return new DiscordSelectComponent(Id, Placeholder, discordOptions, Disabled, MinOptions, MaxOptions);
     }
 
-    internal override async Task OnSelect(DiscordInteraction interaction, string[] values)
+    internal override async Task<bool> OnSelect(DiscordInteraction interaction, string[] values)
     {
-        await interaction.CreateResponseAsync(InteractionResponseType.DeferredMessageUpdate, null);
         if (_onSelect != null)
         {
             _onSelect(values);
@@ -50,6 +49,8 @@ public class SelectComponent : FridayUISelectComponent
         {
             await _onSelectAsync(values);
         }
+
+        return false;
     }
     
     public void OnSelect(Action<string[]> onSelect)

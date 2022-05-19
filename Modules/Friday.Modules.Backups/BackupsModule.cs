@@ -9,6 +9,7 @@ public class BackupsModule : ModuleBase
 {
     internal DatabaseService Database { get; }
     internal BackupService BackupService { get; }
+    public const int BackupsPerUser = 500;
     public BackupsModule(DatabaseProvider provider)
     {
         Database = new DatabaseService(provider);

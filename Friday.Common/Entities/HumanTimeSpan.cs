@@ -108,28 +108,32 @@ public struct HumanTimeSpan
         return result;
     }
     
-    public string Humanize()
+    public string Humanize(int precision = int.MaxValue)
     {
         var result = new List<string>();
         
-        if (Value.Days > 0)
+        if (Value.Days > 0 && precision > 0)
         {
             result.Add(Value.Days + " day" + (Value.Days > 1 ? "s" : ""));
+            precision--;
         }
         
-        if (Value.Hours > 0)
+        if (Value.Hours > 0 && precision > 0)
         {
             result.Add(Value.Hours + " hour" + (Value.Hours > 1 ? "s" : ""));
+            precision--;
         }
         
-        if (Value.Minutes > 0)
+        if (Value.Minutes > 0 && precision > 0)
         {
             result.Add(Value.Minutes + " minute" + (Value.Minutes > 1 ? "s" : ""));
+            precision--;
         }
         
-        if (Value.Seconds > 0)
+        if (Value.Seconds > 0 && precision > 0)
         {
             result.Add(Value.Seconds + " second" + (Value.Seconds > 1 ? "s" : ""));
+            precision--;
         }
         
         return string.Join(" ", result);

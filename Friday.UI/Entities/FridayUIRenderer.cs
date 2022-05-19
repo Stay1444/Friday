@@ -28,7 +28,7 @@ internal class FridayUIRenderer
         await _builder.Render(client);
         var page = GetActivePage(_builder.Page!);
         var dComponents = new List<DiscordComponent>();
-        var msgBuilder = new DiscordMessageBuilder();
+        var msgBuilder = page.UsedMessageBuilder ? page.Message : new DiscordMessageBuilder();
         
         foreach (var component in page.Components)
         {
@@ -55,7 +55,11 @@ internal class FridayUIRenderer
             }
         }
 
-        msgBuilder.WithEmbed(page.Embed);
+        if (page.UsedEmbedBuilder)
+        {
+            msgBuilder.AddEmbed(page.Embed);
+        }
+        
         msgBuilder.AddComponents(dComponents);
         
         return msgBuilder;
@@ -130,6 +134,7 @@ internal class FridayUIRenderer
     internal async Task RenderAsync(DiscordClient client, DiscordChannel channel, DiscordUser user)
     {
         DiscordMessage? message = null;
+        DiscordInteraction? interaction = null;
         while (true)
         {
             try
@@ -141,7 +146,18 @@ internal class FridayUIRenderer
                 }
                 else
                 {
-                    message = await message.ModifyAsync(msgBuilder);
+                    if (interaction is null)
+                    {
+                        message = await message.ModifyAsync(msgBuilder);
+                        Console.WriteLine("Modified message");
+                    }
+                    else
+                    {
+                        await interaction.CreateResponseAsync(InteractionResponseType.UpdateMessage,
+                            msgBuilder.ToInteractionResponseBuilder());
+                        Console.WriteLine("Updated message with interaction");
+                        interaction = null;
+                    }
                 }
 
                 var interactivity = client.GetInteractivity();
@@ -204,7 +220,8 @@ internal class FridayUIRenderer
                 
                     if (buttonComponent is not null)
                     {
-                        await buttonComponent.OnClick(buttonResult.Result.Interaction);
+                        var handled = await buttonComponent.OnClick(buttonResult.Result.Interaction);
+                        if (!handled) interaction = buttonResult.Result.Interaction;
                     }
                 }
 
@@ -218,7 +235,8 @@ internal class FridayUIRenderer
                     
                     if (selectComponent is not null)
                     {
-                        await selectComponent.OnSelect(selectResult.Result.Interaction, selectResult.Result.Values);
+                        var handled = await selectComponent.OnSelect(selectResult.Result.Interaction, selectResult.Result.Values);
+                        if (!handled) interaction = selectResult.Result.Interaction;
                     }
                 }
 
@@ -243,7 +261,7 @@ internal class FridayUIRenderer
                             .WithEmbed(new DiscordEmbedBuilder()
                                 .Transparent()
                                 .WithTitle("FridayUI Error")
-                                .WithDescription($"An error occured while rendering the page.\n```json\n{badRequestException.Errors.MaxLength(256)}```\nPlease contact the developer.")
+                                .WithDescription($"An error occured while rendering the page.\n```json\n{badRequestException.Errors.MaxLength(1024)}```\nPlease contact the developer.")
                                 .WithColor(DiscordColor.Red)));
                     }else
                     {
@@ -251,7 +269,7 @@ internal class FridayUIRenderer
                             .WithEmbed(new DiscordEmbedBuilder()
                                 .Transparent()
                                 .WithTitle("FridayUI Error")
-                                .WithDescription($"An error occured while rendering the page.\n```{e.Message.MaxLength(256)}```\nPlease contact the developer.")
+                                .WithDescription($"An error occured while rendering the page.\n```{e.Message.MaxLength(1024)}```\nPlease contact the developer.")
                                 .WithColor(DiscordColor.Red)));
                     }
                 }else
@@ -262,7 +280,7 @@ internal class FridayUIRenderer
                             .WithEmbed(new DiscordEmbedBuilder()
                                 .Transparent()
                                 .WithTitle("FridayUI Error")
-                                .WithDescription($"An error occured while rendering the page.\n```json\n{badRequestException.Errors.MaxLength(1024)}```\nPlease contact the developer.")
+                                .WithDescription($"An error occured rendering the page.\n```json\n{badRequestException.Errors.MaxLength(1024)}```\nPlease contact the developer.")
                                 .WithColor(DiscordColor.Red)));
                     }else
                     {
@@ -270,7 +288,7 @@ internal class FridayUIRenderer
                             .WithEmbed(new DiscordEmbedBuilder()
                                 .Transparent()
                                 .WithTitle("FridayUI Error")
-                                .WithDescription($"An error occured while rendering the page.\n```{e.Message.MaxLength(256)}```\nPlease contact the developer.")
+                                .WithDescription($"An error occured rendering the page.\n```{e.ToString().MaxLength(1024)}```\nPlease contact the developer.")
                                 .WithColor(DiscordColor.Red)));
                     }
                 }

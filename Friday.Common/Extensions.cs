@@ -215,5 +215,4 @@ public static class Extensions
         }
         return str;
     }
-    
 }

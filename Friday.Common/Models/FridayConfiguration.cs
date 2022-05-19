@@ -31,10 +31,17 @@ public record FridayConfiguration
         public ulong Mod { get; init; } = 0;
         public ulong Boost { get; init; } = 0;
     }
+
+    public record FridayConfigurationSimpleCdn
+    {
+        public string Host { get; init; } = "https://cdn.friday.gg";
+        public string ApiKey { get; init; } = "";
+    }
     
     public bool Debug { get; init; } = false;
     public FridayConfigurationDiscord Discord { get; init; } = new FridayConfigurationDiscord();
     public FridayConfigurationDatabase Database { get; init; } = new FridayConfigurationDatabase();
     public FridayConfigurationLavalink Lavalink { get; init; } = new FridayConfigurationLavalink();
     public FridayConfigurationEmojis Emojis { get; init; } = new FridayConfigurationEmojis();
+    public FridayConfigurationSimpleCdn SimpleCdn { get; init; } = new FridayConfigurationSimpleCdn();
 }

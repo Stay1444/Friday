@@ -12,6 +12,8 @@ using Friday.Helpers;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Extensions.Logging;
+using SimpleCDN.Wrapper;
+
 try
 {
     Startup.CleanTempFiles();
@@ -57,7 +59,7 @@ try
     var prefixResolver = new PrefixResolver(dbProvider, guildConfigProvider,userConfigProvider);
     services.AddSingleton(prefixResolver);
     services.AddSingleton(new LanguageProvider(dbProvider, userConfigProvider, guildConfigProvider,fridayAssemblyProvider));
-
+    services.AddSingleton(new SimpleCdnClient(config.SimpleCdn.Host, Guid.Parse(config.SimpleCdn.ApiKey)));
     Log.Information("Loading modules");
     
     var modules = Startup.LoadModules(services);

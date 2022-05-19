@@ -134,7 +134,7 @@ public class PlayingTrackImage
         {
             if (_trackImageUrl is not null)
             {
-                var img =await NetworkImage.DownloadImage(_trackImageUrl);
+                var img =await NetworkImage.DownloadImageSharpImage(_trackImageUrl);
                 return img;
             }else if (_trackImagePath is not null)
             {
