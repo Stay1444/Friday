@@ -1,31 +1,55 @@
 using DSharpPlus;
 using DSharpPlus.Entities;
+using Serilog;
 
 namespace Friday.Modules.Backups.Entities;
 
 public record Backup
 {
+    private static HttpClient Client { get; } = new HttpClient();
     public record Role
     {
         public ulong Id { get; init; }
         public string Name { get; init; } = String.Empty;
-        public int[] Color { get; init; } = Array.Empty<int>();
+        public byte[] Color { get; init; } = Array.Empty<byte>();
         public int Position { get; init; }
         public bool IsMentionable { get; init; }
         public bool IsHoisted { get; init; }
         public Permissions Permissions { get; init; }
-        
+        public bool IsEveryone { get; init; }
+        public string? Icon { get; set; }
         public Role(){ }
 
-        public Role(DiscordRole role)
+        public Role(DiscordGuild guild, DiscordRole role)
         {
             Id = role.Id;
             Name = role.Name;
-            Color = new int[] {role.Color.R, role.Color.G, role.Color.B};
+            Color = new byte[] {role.Color.R, role.Color.G, role.Color.B};
             Position = role.Position;
             IsMentionable = role.IsMentionable;
             IsHoisted = role.IsHoisted;
             Permissions = role.Permissions;
+            IsEveryone = guild.EveryoneRole.Id == role.Id;
+        }
+
+        public async Task From(BackupsModule module, DiscordRole role)
+        {
+            if (string.IsNullOrEmpty(role.IconHash))
+            {
+                return;
+            }
+
+            try
+            {
+                var response = await Client.GetAsync(role.IconUrl);
+                var icon = await response.Content.ReadAsStreamAsync();
+                var iconName = $"bak_R_{role.Id}.png";
+                var id = await module.CdnClient.UploadAsync(iconName, icon, true);
+                Icon = id.ToString();
+            }catch(Exception e)
+            {
+                Log.Error(e, "Failed to upload role icon");
+            }
         }
     }
 
@@ -106,24 +130,34 @@ public record Backup
 
     public List<Channel> Channels { get; set; } = new List<Channel>();
     
-    public async Task From(DiscordGuild guild)
+    public async Task From(BackupsModule module, DiscordGuild guild)
     {
         this.Name = guild.Name;
-        this.Icon = guild.IconUrl;
         this.Date = DateTime.UtcNow;
+
+        if (!string.IsNullOrEmpty(guild.IconHash))
+        {
+            var response = await Client.GetAsync(guild.IconUrl);
+            var icon = await response.Content.ReadAsStreamAsync();
+            var iconName = $"bak_G_{guild.Id}.png";
+            var id = await module.CdnClient.UploadAsync(iconName, icon, true);
+            this.Icon = id.ToString();
+        }
         
-        this.Roles = guild.Roles
-            .Where(x => !x.Value.IsManaged)
-            .Select(x => new Role(x.Value)).ToList();
-
-
+        foreach (var role in guild.Roles
+                     .Where(x => !x.Value.IsManaged))
+        {
+            var bRole = new Role(guild, role.Value);
+            await bRole.From(module, role.Value);
+            Roles.Add(bRole);
+        }
+        
         foreach (var guildChannel in guild.Channels)
         {
             var channel = new Channel();
             await channel.From(guildChannel.Value);
             Channels.Add(channel);
         }
-
     }
     
 }

@@ -34,7 +34,11 @@ internal class FridayUIRenderer
         {
             if (component is FridayUINewLine)
             {
-                msgBuilder.AddComponents(dComponents);
+                if (dComponents.Count > 0)
+                {
+                    msgBuilder.AddComponents(dComponents);
+                }
+
                 dComponents.Clear();
                 continue;
             }
@@ -59,9 +63,12 @@ internal class FridayUIRenderer
         {
             msgBuilder.AddEmbed(page.Embed);
         }
-        
-        msgBuilder.AddComponents(dComponents);
-        
+
+        if (dComponents.Count > 0)
+        {
+            msgBuilder.AddComponents(dComponents);
+        }
+
         return msgBuilder;
     }
 
@@ -246,6 +253,10 @@ internal class FridayUIRenderer
                     }else if (_builder.Page!.EventOnCancelledAsync is not null)
                     {
                         await _builder.Page!.EventOnCancelledAsync.Invoke(client, message);
+                    }
+                    else
+                    {
+                        await message.DeleteAsync();
                     }
                     return;
                 }

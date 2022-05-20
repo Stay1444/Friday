@@ -133,7 +133,11 @@ public struct HumanTimeSpan
         if (Value.Seconds > 0 && precision > 0)
         {
             result.Add(Value.Seconds + " second" + (Value.Seconds > 1 ? "s" : ""));
-            precision--;
+        }
+        
+        if (result.Count == 0)
+        {
+            return "0 seconds";
         }
         
         return string.Join(" ", result);

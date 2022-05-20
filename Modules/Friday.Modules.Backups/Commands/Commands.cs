@@ -3,9 +3,11 @@ using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
 using Friday.Common;
+using Friday.Common.Attributes;
 using Friday.Common.Entities;
 using Friday.Common.Models;
 using Friday.Modules.Backups.Entities;
+using Friday.Modules.Backups.Services;
 using Friday.UI;
 using Friday.UI.Entities;
 using Friday.UI.Extensions;
@@ -36,7 +38,7 @@ public class Commands : FridayCommandModule
         }
         
         var uiBuilder = new FridayUIBuilder();
-        uiBuilder.OnRender(x =>
+        uiBuilder.OnRenderAsync(async x =>
         {
             var backingUp = x.GetState("backingUp", false);
             
@@ -70,7 +72,7 @@ public class Commands : FridayCommandModule
                 });
             });
             
-            x.AddSubPage("backups-list", backupsList =>
+            await x.AddSubPageAsync("backups-list", async backupsList =>
             {
                 if (backups.Count > 0)
                 {
@@ -83,7 +85,7 @@ public class Commands : FridayCommandModule
                     if (queriedBackups.Count > 0)
                     {
                         backupsList.Embed.Title = queriedBackups[index.Value].backup.Name;
-                        backupsList.Embed.WithThumbnail(queriedBackups[index.Value].backup.Icon);
+                        backupsList.Embed.WithThumbnail(new Uri(new Uri(_module.CdnClient.Host), queriedBackups[index.Value].backup.Icon).ToString());
                         backupsList.Embed.WithFooter($"{queriedBackups[index.Value].code} ({index.Value + 1}/{queriedBackups.Count})");
                         backupsList.Embed.WithTimestamp(queriedBackups[index.Value].backup.Date);
                         backupsList.Embed.AddField("Channels", queriedBackups[index.Value].backup.Channels.Count.ToString(), true);
@@ -243,49 +245,79 @@ public class Commands : FridayCommandModule
                         });
                     });
                     
-                    backupsList.AddSubPage("loadConfirm", loadConfirm =>
+                    await backupsList.AddSubPageAsync("loadConfirm", async loadConfirm =>
                     {
                         var loadTime = x.GetState("loadConfirm-time", 5);
-                        loadConfirm.Embed.Transparent();
-                        loadConfirm.Embed.Description = "Are you sure you want to load this backup?";
-                        loadConfirm.Embed.WithFooter("This will wipe the current server.");
-
-                        loadConfirm.AddButton(no =>
+                        var (date, count) = await _module.RoleCooldownService.GetUsed(ctx.Guild.Id);
+                        var free = RoleCooldownService.RoleCountPerDay - count;
+                        if (free >=
+                            queriedBackups[index.Value].backup.Roles.Count)
                         {
-                            no.Label = "No";
-                            no.Style = ButtonStyle.Secondary;
+                            loadConfirm.Embed.Transparent();
+                            loadConfirm.Embed.Description = "Are you sure you want to load this backup?";
+                            loadConfirm.Embed.WithFooter("This will wipe the current server.");
+
+                            loadConfirm.AddButton(no =>
+                            {
+                                no.Label = "No";
+                                no.Style = ButtonStyle.Secondary;
                         
-                            no.OnClick(() =>
-                            {
-                                backupsList.SubPage = null;
-                                loadTime.Value = 5;
-                            });
-                        });
-                    
-                        loadConfirm.AddButton(yes =>
-                        {
-                            yes.Label = loadTime.Value == 0 ? "Yes" : loadTime.Value.ToString();
-                            yes.Style = ButtonStyle.Danger;
-                            yes.Disabled = loadTime.Value != 0;
-
-                            if (loadTime.Value != 0)
-                            {
-                                _ = Task.Run(async () =>
+                                no.OnClick(() =>
                                 {
-                                    await Task.Delay(1000);
-                                    loadTime.Value--;
-                                    x.ForceRender();
+                                    backupsList.SubPage = null;
+                                    loadTime.Value = 5;
                                 });
-                            }
-                            
-                            yes.OnClick(async () =>
-                            {
-                                loadTime.Value = 5;
-                                backupsList.SubPage = null;
-                                await _module.BackupService.LoadBackupAsync(ctx.Guild,
-                                    queriedBackups[index.Value].backup);
                             });
-                        });
+                    
+                            loadConfirm.AddButton(yes =>
+                            {
+                                yes.Label = loadTime.Value == 0 ? "Yes" : loadTime.Value.ToString();
+                                yes.Style = ButtonStyle.Danger;
+                                yes.Disabled = loadTime.Value != 0;
+
+                                if (loadTime.Value != 0)
+                                {
+                                    _ = Task.Run(async () =>
+                                    {
+                                        await Task.Delay(1000);
+                                        loadTime.Value--;
+                                        x.ForceRender();
+                                    });
+                                }
+                            
+                                yes.OnClick(async () =>
+                                {
+                                    loadTime.Value = 5;
+                                    backupsList.SubPage = null;
+                                    _ = Task.Run(async () =>
+                                    {
+                                        try
+                                        {
+                                            await _module.BackupService.LoadBackupAsync(ctx.Guild,
+                                                queriedBackups[index.Value].backup, ctx.User.Username + "#" + ctx.User.Discriminator);
+                                        }
+                                        catch (Exception error)
+                                        {
+                                            await ctx.Channel.SendMessageAsync("Error loading backup: " +
+                                                                               error.Message);
+                                        }
+                                    });
+                                    x.Stop();
+                                    await ctx.Channel.SendMessageAsync($"{ctx.User.Mention} is loading a backup");
+                                });
+                            });
+                        }
+                        else
+                        {
+                            loadConfirm.Embed.Title = "Backup Load Failed";
+                            loadConfirm.Embed.WithColor(DiscordColor.IndianRed);
+                            loadConfirm.Embed.Description = "Role quota exceeded for this guild.";
+                            loadConfirm.Embed.AddField("Role Slots", $"{count}/{RoleCooldownService.RoleCountPerDay}", true);
+                            loadConfirm.Embed.AddField("Backup Needs", $"{queriedBackups[index.Value].backup.Roles.Count}", true);
+                            loadConfirm.Embed.AddField("Reset Time", $"{new HumanTimeSpan(TimeSpan.FromDays(1) - (DateTime.UtcNow - date)).Humanize(2)}");
+                            x.Stop();
+                        }
+                        
                     });
                 }
             });
@@ -343,66 +375,44 @@ public class Commands : FridayCommandModule
         await ctx.SendUIAsync(uiBuilder);
     }
 
-    private async Task<Action<FridayUIPage>> BuildBackupListUI(ulong owner)
-    {
-        var backups = await _module.Database.GetBackupsAsync(owner);
-
-        int index = 0;
-        return page =>
-        {
-            page.Embed.Transparent();
-            page.Embed.Title = backups[index].backup.Name;
-            page.Embed.WithThumbnail(backups[index].backup.Icon);
-            page.Embed.ClearFields();
-            page.Embed.AddField("Date", backups[index].backup.Date.ToString("yyyy/MM/dd HH:mm:ss"));
-            page.Embed.WithFooter("Backup " + (index + 1) + "/" + backups.Count);
-
-            page.AddButton(previous =>
-            {
-                previous.Style = ButtonStyle.Primary;
-                previous.Label = "Previous";
-                previous.Disabled = backups.Count == 1;
-                previous.OnClick(() =>
-                {
-                    index--;
-                    if (index < 0)
-                    {
-                        index = backups.Count - 1;
-                    }
-                });
-            });
-            
-            page.AddButton(next =>
-            {
-                next.Style = ButtonStyle.Primary;
-                next.Label = "Next";
-                next.Disabled = backups.Count == 1;
-                next.OnClick(() =>
-                {
-                    index++;
-                    if (index >= backups.Count)
-                    {
-                        index = 0;
-                    }
-                });
-            });
-            
-        };
-    }
-    
-    [Command("list"), Aliases("ls")]
-    [Description("Lists all your backups")]
-    public async Task ListCommand(CommandContext ctx)
+    [Command("settings"), Aliases("cfg", "config")]
+    [FridayRequireGuildOwner, RequireGuild]
+    public async Task Settings(CommandContext ctx)
     {
         var uiBuilder = new FridayUIBuilder();
-        uiBuilder.OnRender(await BuildBackupListUI(ctx.User.Id));
-        await ctx.SendUIAsync(uiBuilder);
-    }
+        var settings = await _module.Database.GetGuildConfigAsync(ctx.Guild.Id);
+        uiBuilder.OnRender(x =>
+        {
+            x.Embed.Transparent();
+            x.Embed.Title = "Backup Settings";
+            x.Embed.AddField("Admins Can Backup", settings.AdminsCanBackup ? "Yes" : "No", true);
+            x.Embed.AddField("Admins Can Restore/Load", settings.AdminsCanRestore ? "Yes" : "No", true);
 
-    [Command("create"), Aliases("new"), RequireGuild]
-    public async Task CreateCommand(CommandContext ctx)
-    {
-        await _module.BackupService.CreateBackupAsync(ctx.Guild, ctx.User);
-        await ctx.RespondAsync("Backup created");
+            x.AddButton(adminsCanBackupButton =>
+            {
+                adminsCanBackupButton.Label = "Admins Can Backup";
+                adminsCanBackupButton.Style = settings.AdminsCanBackup ? ButtonStyle.Success : ButtonStyle.Danger;
+
+                adminsCanBackupButton.OnClick(async () =>
+                {
+                    settings.AdminsCanBackup = !settings.AdminsCanBackup;
+                    await _module.Database.UpdateGuildConfigAsync(ctx.Guild.Id, settings);
+                });
+            });
+            
+            x.AddButton(adminsCanRestoreButton =>
+            {
+                adminsCanRestoreButton.Label = "Admins Can Restore/Load";
+                adminsCanRestoreButton.Style = settings.AdminsCanRestore ? ButtonStyle.Success : ButtonStyle.Danger;
+
+                adminsCanRestoreButton.OnClick(async () =>
+                {
+                    settings.AdminsCanRestore = !settings.AdminsCanRestore;
+                    await _module.Database.UpdateGuildConfigAsync(ctx.Guild.Id, settings);
+                });
+            });
+        });
+        
+        await ctx.SendUIAsync(uiBuilder);
     }
 }
