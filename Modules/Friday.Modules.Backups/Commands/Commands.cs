@@ -72,7 +72,7 @@ public class Commands : FridayCommandModule
                 });
             });
             
-            await x.AddSubPageAsync("backups-list", async backupsList =>
+            x.AddSubPageAsync("backups-list", async backupsList =>
             {
                 if (backups.Count > 0)
                 {
@@ -245,7 +245,7 @@ public class Commands : FridayCommandModule
                         });
                     });
                     
-                    await backupsList.AddSubPageAsync("loadConfirm", async loadConfirm =>
+                    backupsList.AddSubPageAsync("loadConfirm", async loadConfirm =>
                     {
                         var loadTime = x.GetState("loadConfirm-time", 5);
                         var (date, count) = await _module.RoleCooldownService.GetUsed(ctx.Guild.Id);

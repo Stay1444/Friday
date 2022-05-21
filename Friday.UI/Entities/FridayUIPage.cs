@@ -76,13 +76,11 @@ public class FridayUIPage
         this.SubPagesRender.Add(id, (modify, null));
     }
 
-    public Task AddSubPageAsync(string id, Func<FridayUIPage, Task> modifyAsync)
+    public void AddSubPageAsync(string id, Func<FridayUIPage, Task> modifyAsync)
     {
         var page = new FridayUIPage(this.Client, this._builder);
         this.SubPages.Add(id, page);
         this.SubPagesRender.Add(id, (null, modifyAsync));
-
-        return Task.CompletedTask;
     }
 
     public Ref<T> GetState<T>(string key, T def)

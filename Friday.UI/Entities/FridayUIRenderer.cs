@@ -161,6 +161,8 @@ internal class FridayUIRenderer
                     {
                         await interaction.CreateResponseAsync(InteractionResponseType.UpdateMessage,
                             msgBuilder.ToInteractionResponseBuilder());
+                        
+                        message = await interaction.GetOriginalResponseAsync();
                         interaction = null;
                     }
                 }

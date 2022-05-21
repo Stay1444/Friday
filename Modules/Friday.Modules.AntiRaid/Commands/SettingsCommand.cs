@@ -53,7 +53,7 @@ public partial class Commands
                 });
             });
 
-            await x.AddSubPageAsync("permissions", async permissionsPage =>
+            x.AddSubPageAsync("permissions", async permissionsPage =>
             {
                 permissionsPage.Embed.Title = await ctx.GetString("AntiRaid - Permissions");
                 permissionsPage.Embed.Description = await ctx.GetString("Manage AntiRaid Permissions settings");
@@ -97,7 +97,7 @@ public partial class Commands
                 button.OnClick(() => { x.SubPage = "permissions"; });
             });
 
-            await x.AddSubPageAsync("events", async eventsPage =>
+            x.AddSubPageAsync("events", async eventsPage =>
             {
                 eventsPage.Embed.Title = await ctx.GetString("AntiRaid - Event Settings");
                 eventsPage.Embed.Description = await ctx.GetString("Manage AntiRaid Events");
@@ -116,7 +116,7 @@ public partial class Commands
                     button.OnClick(() => { eventsPage.SubPage = "channel"; });
                 });
 
-                await eventsPage.AddSubPageAsync("channel", async channelEventsPage =>
+                eventsPage.AddSubPageAsync("channel", async channelEventsPage =>
                 {
                     channelEventsPage.Embed.Title = "AntiRaid - Channels";
                     channelEventsPage.Embed.Description = "Manage channel Events";
@@ -165,7 +165,7 @@ public partial class Commands
                         });
                     });
                     if (selectedChannelSettings is not null)
-                        await channelEventsPage.AddSubPageAsync("settings", async settingsChannelsPage =>
+                        channelEventsPage.AddSubPageAsync("settings", async settingsChannelsPage =>
                         {
                             settingsChannelsPage.Embed.Title =
                                 "AntiRaid - Channels " + selectedChannelSettingsName + " Events";
@@ -301,7 +301,7 @@ public partial class Commands
                     button.OnClick(() => { eventsPage.SubPage = "role"; });
                 });
 
-                await eventsPage.AddSubPageAsync("role", async roleEventsPage =>
+                eventsPage.AddSubPageAsync("role", async roleEventsPage =>
                 {
                     roleEventsPage.Embed.Title = "AntiRaid - Roles";
                     roleEventsPage.Embed.Description = "Manage Role Events";
@@ -377,7 +377,7 @@ public partial class Commands
                     });
 
                     if (selectedRolesSettings is not null)
-                        await roleEventsPage.AddSubPageAsync("settings", async settingsChannelsPage =>
+                        roleEventsPage.AddSubPageAsync("settings", async settingsChannelsPage =>
                         {
                             settingsChannelsPage.Embed.Title =
                                 "AntiRaid - Roles " + selectedRolesSettingsName + " Events";
@@ -512,7 +512,7 @@ public partial class Commands
                     button.OnClick(() => { eventsPage.SubPage = "ban"; });
                 });
 
-                await eventsPage.AddSubPageAsync("ban", async banEventPage =>
+                eventsPage.AddSubPageAsync("ban", async banEventPage =>
                 {
                     banEventPage.Embed.Title = await ctx.GetString("AntiRaid - Ban");
                     banEventPage.Embed.Description = await ctx.GetString("Manage ban events");
@@ -618,7 +618,7 @@ public partial class Commands
                     });
                 });
 
-                await eventsPage.AddSubPageAsync("kick", async kickEventPage =>
+                eventsPage.AddSubPageAsync("kick", async kickEventPage =>
                 {
                     kickEventPage.Embed.Title = await ctx.GetString("AntiRaid - Kick");
                     kickEventPage.Embed.Description = await ctx.GetString("Manage kick events");
@@ -737,7 +737,7 @@ public partial class Commands
                 button.OnClick(() => { x.SubPage = "events"; });
             });
 
-            await x.AddSubPageAsync("logs", async logsPage =>
+            x.AddSubPageAsync("logs", async logsPage =>
             {
                 logsPage.Embed.Title = "AntiRaid - Logs";
                 logsPage.Embed.Description = "Log Settings";
