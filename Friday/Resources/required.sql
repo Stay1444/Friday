@@ -17,3 +17,12 @@ CREATE TABLE IF NOT EXISTS `friday_moderators` (
     `user_id` bigint(64) NOT NULL,
     PRIMARY KEY (`id`)
 ) DEFAULT CHARSET=utf32;
+
+CREATE TABLE IF NOT EXISTS `friday_verified_servers` (
+    `id` bigint(64) NOT NULL UNIQUE AUTO_INCREMENT,
+    `server_id` bigint(64) NOT NULL,
+    PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf32;
+
+
+
