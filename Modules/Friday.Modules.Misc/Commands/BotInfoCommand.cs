@@ -21,9 +21,9 @@ public partial class Commands
         embedBuilder.AddField("Shard", $"```{ctx.Client.ShardId + 1}/{ctx.Client.ShardCount}```", true);
         embedBuilder.AddField("Uptime", $"```{new HumanTimeSpan(DateTime.UtcNow - Constants.ProcessStartTimeUtc).Humanize(2)}```", true);
         embedBuilder.AddField("Host", $"```{Environment.OSVersion}```", true);
-        Process proc = Process.GetCurrentProcess();
+        var proc = Process.GetCurrentProcess();
         var memory = proc.PrivateMemorySize64;
-        var memoryString = "";
+        string memoryString;
         
         if (memory < 1024)
         {
