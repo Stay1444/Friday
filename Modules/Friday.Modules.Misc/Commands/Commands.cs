@@ -9,12 +9,12 @@ public partial class Commands : FridayCommandModule
     private FridayModeratorService _moderatorService;
     private FridayConfiguration _fridayConfiguration;
     private FridayVerifiedServerService _fridayVerifiedServer;
-
-    public Commands(FridayModeratorService moderatorService, FridayConfiguration fridayConfiguration, FridayVerifiedServerService fridayVerifiedServer)
+    private DatabaseProvider _databaseProvider;
+    public Commands(FridayModeratorService moderatorService, FridayConfiguration fridayConfiguration, FridayVerifiedServerService fridayVerifiedServer, DatabaseProvider databaseProvider)
     {
         _moderatorService = moderatorService;
         _fridayConfiguration = fridayConfiguration;
         _fridayVerifiedServer = fridayVerifiedServer;
-        
+        _databaseProvider = databaseProvider;
     }
 }

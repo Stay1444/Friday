@@ -1,8 +1,8 @@
-﻿using DSharpPlus.CommandsNext;
+﻿using System.Diagnostics;
+using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
 using Friday.Common;
-using Serilog;
 
 namespace Friday.Modules.Misc.Commands;
 
@@ -41,7 +41,7 @@ public partial class Commands
         {
             embedBuilder.Transparent();
         }
-
+        
         await ctx.RespondAsync(embedBuilder.Build());
         
     }
