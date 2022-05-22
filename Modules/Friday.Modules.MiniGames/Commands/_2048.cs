@@ -21,8 +21,7 @@ public partial class Commands
         { 
             x.OnCancelledAsync(async (_, message) =>
             {
-                await message.ModifyAsync("Game Ended");
-                Console.WriteLine("Game Ended");
+                await message.DeleteAsync();
             });
             
             x.Embed.Title = "2048";
@@ -36,8 +35,6 @@ public partial class Commands
                     x.SubPage = "game";
                     var game = x.GetState("game", new _2048Game());
                     game.Value.Start();
-                    game.Value.Board[0, 0] = 1024;
-                    game.Value.Board[0, 1] = 1024;
                 });
                 play.Label = "Play";
                 play.Emoji = DiscordEmoji.FromName(ctx.Client, ":game_die:");
@@ -103,7 +100,7 @@ public partial class Commands
                 gamePage.Embed.Transparent();
                 gamePage.Embed.Title = "2048";
                 gamePage.Embed.ImageUrl = imgUrl.Value;
-                gamePage.Embed.WithFooter(game.Value.Score.ToString());
+                gamePage.Embed.WithFooter("Score: " + game.Value.Score.ToString());
                 gamePage.AddButton(left =>
                 {
                     left.Emoji = DiscordEmoji.FromName(ctx.Client, ":arrow_left:");
