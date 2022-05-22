@@ -42,6 +42,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Friday.Modules.Statistics",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Friday.Modules.Experience", "Modules\Friday.Modules.Experience\Friday.Modules.Experience.csproj", "{6BD5AA79-6904-4948-82A3-EE49097BBF6F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Friday.Modules.MiniGames", "Modules\Friday.Modules.MiniGames\Friday.Modules.MiniGames.csproj", "{126E04FD-3003-401D-B014-8F94F1A7F06E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -124,6 +126,10 @@ Global
 		{6BD5AA79-6904-4948-82A3-EE49097BBF6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6BD5AA79-6904-4948-82A3-EE49097BBF6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6BD5AA79-6904-4948-82A3-EE49097BBF6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{126E04FD-3003-401D-B014-8F94F1A7F06E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{126E04FD-3003-401D-B014-8F94F1A7F06E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{126E04FD-3003-401D-B014-8F94F1A7F06E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{126E04FD-3003-401D-B014-8F94F1A7F06E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{8B5E4C31-92E8-474E-8D8F-EFDB905D1DFE} = {B8D1B724-7F5F-493F-82C3-1DEB90582CB6}
@@ -139,5 +145,6 @@ Global
 		{D42EB5E1-0581-4BAD-B563-4F8492A645CC} = {B8D1B724-7F5F-493F-82C3-1DEB90582CB6}
 		{31ACC1DC-5F69-491F-AB03-E7A513BBA928} = {B8D1B724-7F5F-493F-82C3-1DEB90582CB6}
 		{6BD5AA79-6904-4948-82A3-EE49097BBF6F} = {B8D1B724-7F5F-493F-82C3-1DEB90582CB6}
+		{126E04FD-3003-401D-B014-8F94F1A7F06E} = {B8D1B724-7F5F-493F-82C3-1DEB90582CB6}
 	EndGlobalSection
 EndGlobal

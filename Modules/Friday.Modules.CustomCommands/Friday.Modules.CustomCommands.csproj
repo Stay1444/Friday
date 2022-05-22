@@ -6,4 +6,9 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\Friday.Common\Friday.Common.csproj" />
+      <ProjectReference Include="..\..\Friday.UI\Friday.UI.csproj" />
+    </ItemGroup>
+
 </Project>

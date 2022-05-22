@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Friday.Common\Friday.Common.csproj" />
+      <ProjectReference Include="..\..\Friday.Network\Friday.Network.csproj" />
+      <ProjectReference Include="..\..\Friday.UI\Friday.UI.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="SixLabors.Fonts" Version="1.0.0-beta16" />
+      <PackageReference Include="SixLabors.ImageSharp" Version="2.1.1" />
+      <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta14" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Resources\Fonts\ClearSans-Bold.ttf" />
+      <EmbeddedResource Include="Resources\Fonts\ClearSans-Bold.ttf" />
+    </ItemGroup>
+
+</Project>

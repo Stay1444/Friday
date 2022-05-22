@@ -93,7 +93,6 @@ public class FridayUIBuilder
                 {
                     continue;
                 }
-                
                 if (render[fridayUIPage.Key].Item1 is not null)
                 {
                     render[fridayUIPage.Key].Item1!(fridayUIPage.Value);
