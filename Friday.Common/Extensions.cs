@@ -215,4 +215,42 @@ public static class Extensions
         }
         return str;
     }
+
+    public static async Task<Stream> DownloadAsync(this DiscordEmoji emoji)
+    {
+        var client = new HttpClient();
+        
+        var response = await client.GetAsync(emoji.Url);
+        
+        return await response.Content.ReadAsStreamAsync();
+    }
+    
+    public static async Task<Stream> DownloadAsync(this DiscordAttachment attachment)
+    {
+        var client = new HttpClient();
+        
+        var response = await client.GetAsync(attachment.Url);
+        
+        return await response.Content.ReadAsStreamAsync();
+    }
+
+    public static string ToHex(this DiscordColor color)
+    {
+        return $"#{color.R:X2}{color.G:X2}{color.B:X2}";
+    }
+
+    public static int GetUserCount(this DiscordShardedClient client)
+    {
+        var count = 0;
+        
+        foreach (var shardClient in client.ShardClients)
+        {
+            foreach (var guild in shardClient.Value.Guilds.Values)
+            {
+                count += guild.MemberCount;
+            }
+        }
+        
+        return count;
+    }
 }

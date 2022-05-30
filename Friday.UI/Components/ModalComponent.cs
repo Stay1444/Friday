@@ -8,8 +8,8 @@ namespace Friday.UI.Components;
 public class ModalComponent : FridayUIButtonComponent
 {
     public string? ButtonLabel { get; set; }
-    public ButtonStyle ButtonStyle { get; set; }
-    public bool ButtonDisabled { get; set; } 
+    public ButtonStyle ButtonStyle { get; set; } = ButtonStyle.Primary;
+    public bool ButtonDisabled { get; set; }  
     public DiscordEmoji? ButtonEmoji { get; set; }
     
     public string Title { get; set; } = "Friday UI Modal";
@@ -39,6 +39,11 @@ public class ModalComponent : FridayUIButtonComponent
     
     internal override Task<bool> OnClick(DiscordInteraction interaction)
     {
+        if (_fields.Count > 5)
+        {
+            throw new Exception("Modal can only have up to 5 fields");
+        }
+        
         _ = Task.Run(async () =>
         {
             var builder = new DiscordInteractionResponseBuilder();

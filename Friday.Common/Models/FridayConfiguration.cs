@@ -6,6 +6,8 @@ public record FridayConfiguration
     {
         public string Token { get; init; } = Guid.Empty.ToString();
         public string Color { get; init; } = "#4287f5";
+        
+        public string SupportServer { get; init; } = "https://discord.gg/friday";
     }
 
     public record FridayConfigurationDatabase

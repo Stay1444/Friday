@@ -61,7 +61,7 @@ public partial class Commands
                 var thinking = x.GetState("thinking", false);
                 if (imgUrl.Value is null)
                 {
-                    var r = await _module.SimpleCdnClient.UploadAsync("2048.png", await _2080Renderer.Render(game.Value), false, DateTime.UtcNow + TimeSpan.FromDays(1));
+                    var r = await _module.SimpleCdnClient.UploadAsync("2048.png", await _2080Renderer.Render(game.Value), false, DateTime.UtcNow + TimeSpan.FromHours(1));
                     imgUrl.Value = new Uri(new Uri(_module.SimpleCdnClient.Host), r.ToString()).ToString();
                 }
 
@@ -85,10 +85,8 @@ public partial class Commands
                             return;
                         }
 
-                        
-
                         var render = await _2080Renderer.Render(game.Value);
-                        var r = await _module.SimpleCdnClient.UploadAsync("2048.png", render, false, DateTime.UtcNow + TimeSpan.FromDays(1));
+                        var r = await _module.SimpleCdnClient.UploadAsync("2048.png", render, false, DateTime.UtcNow + TimeSpan.FromHours(1));
                         imgUrl.Value = new Uri(new Uri(_module.SimpleCdnClient.Host), r.ToString()).ToString();
                         
                         

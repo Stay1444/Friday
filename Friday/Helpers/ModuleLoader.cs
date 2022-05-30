@@ -102,7 +102,7 @@ public static class ModuleLoader
         var module = (ModuleBase?) ActivatorUtilities.CreateInstance(services.BuildServiceProvider(), GetModuleType(moduleAssembly));
         
         Log.Information("Module {0} loaded.", moduleAssembly.GetName().Name);
-        module!.OnLoad().GetAwaiter().GetResult();
+
 
         loadedModules.Add(module);
         services.AddSingleton(module.GetType(),module);

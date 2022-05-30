@@ -30,7 +30,8 @@ public class TicketModuleBase : ModuleBase
 
     public override Task OnUnload()
     {
-        throw new NotImplementedException();
+        _client.ComponentInteractionCreated -= OnComponentInteractionCreated;
+        return Task.CompletedTask;
     }
 
     private async Task OnComponentInteractionCreated(DiscordClient sender, ComponentInteractionCreateEventArgs e)
@@ -38,6 +39,18 @@ public class TicketModuleBase : ModuleBase
         if (e.User.IsBot) return;
         var ticketPanel = await GetTicketPanel(e.Message.Id);
         if (ticketPanel == null) return;
+        if (ticketPanel is ButtonTicketPanel buttonTicketPanel)
+        {
+            if (e.Id != "open") return;
+            
+            var category = await sender.GetChannelAsync(buttonTicketPanel.CategoryId);
+            
+            if (category == null)
+            {
+                return;
+            }
+            
+        }
     }
 
     public async Task<ITicketPanel?> GetTicketPanel(ulong messageId)

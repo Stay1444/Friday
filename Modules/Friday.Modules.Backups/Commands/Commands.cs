@@ -38,7 +38,7 @@ public class Commands : FridayCommandModule
         }
         
         var uiBuilder = new FridayUIBuilder();
-        uiBuilder.OnRenderAsync(async x =>
+        uiBuilder.OnRender(x =>
         {
             var backingUp = x.GetState("backingUp", false);
             
@@ -72,7 +72,7 @@ public class Commands : FridayCommandModule
                 });
             });
             
-            x.AddSubPageAsync("backups-list", async backupsList =>
+            x.AddSubPage("backups-list", backupsList =>
             {
                 if (backups.Count > 0)
                 {

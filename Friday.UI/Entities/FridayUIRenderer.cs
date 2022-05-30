@@ -59,7 +59,7 @@ internal class FridayUIRenderer
             }
         }
 
-        if (page.UsedEmbedBuilder)
+        if (!page.UsedMessageBuilder)
         {
             msgBuilder.AddEmbed(page.Embed);
         }
