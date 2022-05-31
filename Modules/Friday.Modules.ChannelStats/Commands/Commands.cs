@@ -71,7 +71,12 @@ public class Commands : FridayCommandModule
                     listPage.Embed.Title = $"GCS: Channels";
                     listPage.Embed.WithFooter($"{index.Value + 1}/{channels.Count}");
                     listPage.Embed.AddField("Channel", $"<#{channels[index.Value].Id}>", true);
-                    listPage.Embed.AddField("Next Name", await _module.VariablesService.Process(ctx.Guild, channels[index.Value].Value), true);
+                    var processed = await _module.VariablesService.Process(ctx.Guild, channels[index.Value].Value);
+                    if (string.IsNullOrEmpty(processed))
+                    {
+                        processed = "`Empty`";
+                    }
+                    listPage.Embed.AddField("Next Name", processed, true);
                     listPage.Embed.AddField("Value", channels[index.Value].Value);
                 }
                 listPage.AddButton(previous =>
