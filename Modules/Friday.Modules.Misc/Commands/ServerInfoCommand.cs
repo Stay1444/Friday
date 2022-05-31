@@ -20,7 +20,6 @@ public partial class Commands
         
         
         embedBuilder.AddField("Created At", ctx.Guild.CreationTimestamp.DateTime.ToLongDateString() + ", " + ctx.Guild.CreationTimestamp.DateTime.ToShortTimeString(), true);
-        embedBuilder.AddField("Partnered", (ctx.Guild.BannerUrl != null).ToString(), true);
         embedBuilder.AddField("Boosts", ctx.Guild.PremiumSubscriptionCount.ToString(), true);
         
         
@@ -28,6 +27,14 @@ public partial class Commands
         embedBuilder.AddField("Members", ctx.Guild.Members.Count.ToString(), true);
         embedBuilder.AddField("Role Count", ctx.Guild.Roles.Count.ToString(), true);
 
+        if (ctx.Guild.Roles.Any())
+        {
+            embedBuilder.AddField("Roles", string.Join(", ", ctx.Guild.Roles.Values.OrderByDescending(x => x.Position).Take(10).Select(x => x.Mention)) + (ctx.Guild.Roles.Count() > 10 ? "..." : ""), true);
+        }else
+        {
+            embedBuilder.AddField("Roles", "None", true);
+        }
+        
         if (await _fridayVerifiedServer.IsVerified(ctx.Guild.Id))
         {
             embedBuilder.WithColor(DiscordColor.Azure);

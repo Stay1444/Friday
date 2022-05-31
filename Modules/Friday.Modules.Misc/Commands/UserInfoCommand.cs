@@ -29,7 +29,7 @@ public partial class Commands
         embedBuilder.AddField("Nickname", member.Nickname ?? "None");
         if (member.Roles.Any())
         {
-            embedBuilder.AddField("Roles", string.Join(", ", member.Roles.Take(10).Select(x => x.Mention)) + (member.Roles.Count() > 10 ? "..." : ""), true);
+            embedBuilder.AddField("Roles", string.Join(", ", member.Roles.OrderByDescending(x => x.Position).Take(10).Select(x => x.Mention)) + (member.Roles.Count() > 10 ? "..." : ""), true);
         }else
         {
             embedBuilder.AddField("Roles", "None", true);
