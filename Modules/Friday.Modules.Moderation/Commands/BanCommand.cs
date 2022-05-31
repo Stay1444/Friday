@@ -23,7 +23,7 @@ public class BanCommand : BaseCommandModule
     }
 
         
-    [Command("ban")]
+    [Command("tempban")]
     [RequireGuild]
     [RequireUserPermissions(Permissions.BanMembers)]
     [RequireBotPermissions(Permissions.BanMembers)]
@@ -55,7 +55,7 @@ public class BanCommand : BaseCommandModule
     }
     
     
-    [Command("ban")]
+    [Command("tempban")]
     [RequireGuild]
     [RequireUserPermissions(Permissions.BanMembers)]
     [RequireBotPermissions(Permissions.BanMembers)]
@@ -102,7 +102,7 @@ public class BanCommand : BaseCommandModule
         await ctx.Guild.BanMemberAsync(member, 0, reason);
     }
     
-    [Command("ban")]
+    [Command("tempban")]
     [RequireGuild]
     [RequireUserPermissions(Permissions.BanMembers)]
     [RequireBotPermissions(Permissions.BanMembers)]
@@ -142,7 +142,7 @@ public class BanCommand : BaseCommandModule
         _ = UnbanButtonHandler(ctx, ackMsgBuilder, ackMsg, member.Id);
     }
 
-    [Command("ban")]
+    [Command("tempban")]
     [RequireGuild]
     [RequireUserPermissions(Permissions.BanMembers)]
     [RequireBotPermissions(Permissions.BanMembers)]
