@@ -25,12 +25,12 @@ public class RoleCountVariable : Variable
         {
             if (member.Roles.Contains(role))
             {
-                if (state == "online" && member.Presence.Status != UserStatus.Offline)
+                if (state == "online" && member?.Presence?.Status != UserStatus.Offline)
                 {
                     count++;
                 }           
                 
-                if (state == "offline" && member.Presence.Status == UserStatus.Offline)
+                if (state == "offline" && member?.Presence?.Status == UserStatus.Offline)
                 {
                     count++;
                 }
