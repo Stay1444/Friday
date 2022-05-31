@@ -5,12 +5,14 @@ using DSharpPlus.Entities;
 using DSharpPlus.Exceptions;
 using DSharpPlus.Interactivity.Extensions;
 using Friday.Common;
+using Friday.Common.Attributes;
+using Friday.Common.Entities;
 using Friday.Common.Models;
 using Friday.Common.Services;
 
 namespace Friday.Modules.Moderation.Commands;
 
-public class BanCommand : BaseCommandModule
+public class BanCommand : FridayCommandModule
 {
     private ModerationModuleBase _moderationModuleBase;
     private FridayConfiguration _config;
@@ -25,7 +27,7 @@ public class BanCommand : BaseCommandModule
         
     [Command("tempban")]
     [RequireGuild]
-    [RequireUserPermissions(Permissions.BanMembers)]
+    [FridayRequirePermission(Permissions.BanMembers)]
     [RequireBotPermissions(Permissions.BanMembers)]
     [Priority(10)]
     public async Task Ban(CommandContext ctx, ulong member, DateTime expiration, [RemainingText] string? reason)
