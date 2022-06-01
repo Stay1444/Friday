@@ -90,7 +90,7 @@ public class DatabaseService
         PlayTime
     }
     
-    public async Task<List<(ulong userId, long maxScore, long totalScore, long played, TimeSpan playTime, string username)>> Get2048Leaderboard(_2048LeaderBoardOrderBy orderBy)
+    public async Task<List<(ulong userId, long maxScore, long totalScore, long played, TimeSpan playTime, string username)>> Get2048Leaderboard(_2048LeaderBoardOrderBy orderBy, int max)
     {
         await using var connection = _provider.GetConnection();
         await connection.OpenAsync();
@@ -117,6 +117,9 @@ public class DatabaseService
         while (await reader.ReadAsync())
         {
             result.Add(((ulong) reader.GetInt64(0), reader.GetInt64(1), reader.GetInt64(2), reader.GetInt64(3), TimeSpan.FromSeconds(reader.GetInt64(4)), reader.GetString(5)));
+            
+            if (result.Count >= max)
+                break;
         }
         
         return result;
