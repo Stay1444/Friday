@@ -96,6 +96,7 @@ public partial class Commands
                 button.Disabled = !ctx.IsCallerOwner();
                 button.OnClick(() => { x.SubPage = "permissions"; });
             });
+            x.NewLine();
 
             x.AddSubPageAsync("events", async eventsPage =>
             {
@@ -858,7 +859,6 @@ public partial class Commands
                     });
                 });
             });
-            
             x.AddButton(button =>
             {
                 button.Label = "Bot Restrictions";
