@@ -80,7 +80,7 @@ public class ModerationModuleBase : ModuleBase
     public async Task<UserBanState?> GetBanState(ulong guildId, ulong userId)
     {
         var banState = await _db.QueryFirstOrDefaultAsync<UserBanState>(
-            "SELECT * FROM user_bans WHERE user_id = @UserId AND guild_id=@GuildId", new
+            "SELECT * FROM mod_user_bans WHERE user_id = @UserId AND guild_id=@GuildId", new
             {
                 UserId = userId,
                 GuildId = guildId
@@ -106,7 +106,7 @@ public class ModerationModuleBase : ModuleBase
             Expiration = Expiration
         };
         
-        await _db.ExecuteAsync("INSERT INTO user_bans (user_id, guild_id, banned_by, reason, banned_at, expires_at) VALUES (@UserId, @GuildId, @BannedBy, @Reason, @BanDate, @Expiration)", banState);
+        await _db.ExecuteAsync("INSERT INTO mod_user_bans (user_id, guild_id, banned_by, reason, banned_at, expires_at) VALUES (@UserId, @GuildId, @BannedBy, @Reason, @BanDate, @Expiration)", banState);
         await member.BanAsync(0, reason ?? "No reason provided");
         return banState;
     }
@@ -118,7 +118,7 @@ public class ModerationModuleBase : ModuleBase
     
     internal Task RemoveBanState(ulong userId, ulong guildId)
     {
-        return _db.ExecuteAsync("DELETE FROM user_bans WHERE user_id = @UserId AND guild_id=@GuildId", new {UserId = userId, GuildId = guildId});
+        return _db.ExecuteAsync("DELETE FROM mod_user_bans WHERE user_id = @UserId AND guild_id=@GuildId", new {UserId = userId, GuildId = guildId});
     }
     
     public async Task<UserBanState?> BanAsync(ulong guildId, ulong memberId, ulong bannedBy, string? reason, DateTime? Expiration)
@@ -138,7 +138,7 @@ public class ModerationModuleBase : ModuleBase
             Expiration = Expiration
         };
         
-        await _db.ExecuteAsync("INSERT INTO user_bans (user_id, guild_id, banned_by, reason, banned_at, expires_at) VALUES (@UserId, @GuildId, @BannedBy, @Reason, @BanDate, @Expiration)", banState);
+        await _db.ExecuteAsync("INSERT INTO mod_user_bans (user_id, guild_id, banned_by, reason, banned_at, expires_at) VALUES (@UserId, @GuildId, @BannedBy, @Reason, @BanDate, @Expiration)", banState);
         var guild = await _client.GetGuildAsync(guildId);
         if (guild is null)
         {
@@ -152,7 +152,7 @@ public class ModerationModuleBase : ModuleBase
     public async Task<UserBanState[]> GetBans(ulong guildId)
     {
         var r = await _db.QueryAsync<UserBanState>(
-            "SELECT * FROM user_bans WHERE guild_id = @GuildId", new
+            "SELECT * FROM mod_user_bans WHERE guild_id = @GuildId", new
             {
                 GuildId = guildId
             });
@@ -163,14 +163,14 @@ public class ModerationModuleBase : ModuleBase
     public async Task<UserBanState[]> GetAllBans()
     {
         var r = await _db.QueryAsync<UserBanState>(
-            "SELECT * FROM user_bans");
+            "SELECT * FROM mod_user_bans");
         
         return r.ToArray();
     }
     
     public async Task Unban(UserBanState ban)
     {
-        await _db.ExecuteAsync("DELETE FROM user_bans WHERE user_id = @UserId AND guild_id = @GuildId", new
+        await _db.ExecuteAsync("DELETE FROM mod_user_bans WHERE user_id = @UserId AND guild_id = @GuildId", new
         {
             ban.UserId,
             ban.GuildId
@@ -186,7 +186,7 @@ public class ModerationModuleBase : ModuleBase
 
     public async Task Unban(DiscordGuild guild, DiscordUser user)
     {
-        await _db.ExecuteAsync("DELETE FROM user_bans WHERE user_id = @UserId AND guild_id = @GuildId", new
+        await _db.ExecuteAsync("DELETE FROM mod_user_bans WHERE user_id = @UserId AND guild_id = @GuildId", new
         {
             UserId = user.Id,
             GuildId = guild.Id
@@ -197,7 +197,7 @@ public class ModerationModuleBase : ModuleBase
     
     private Task UpdateBanState(ulong guildId, ulong userId, UserBanState state)
     {
-        return _db.ExecuteAsync("UPDATE user_bans SET banned_by = @BannedBy, reason = @Reason, banned_at = @BannedAt, expires_at = @ExpiresAt WHERE user_id = @UserId AND guild_id = @GuildId", new
+        return _db.ExecuteAsync("UPDATE mod_user_bans SET banned_by = @BannedBy, reason = @Reason, banned_at = @BannedAt, expires_at = @ExpiresAt WHERE user_id = @UserId AND guild_id = @GuildId", new
         {
             state.BannedBy,
             state.Reason,
