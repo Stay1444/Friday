@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using DSharpPlus.Exceptions;
 using Friday.Common.Enums;
 
 namespace Friday.Common.Entities;
