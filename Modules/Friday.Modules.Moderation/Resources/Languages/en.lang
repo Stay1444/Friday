@@ -11,7 +11,7 @@ moderation.commands.kick.embeds.ack.button.unkickned=Unkickned
 moderation.commands.kick.messages.checks.kickBot=Ouch! Sorry, i can't do that.
 moderation.commands.kick.messages.checks.kickSelf=You cannot kick yourself.
 moderation.commands.kick.messages.checks.kickMember=You cannot kick this member.
-moderation.commands.kick.messages.checks.cantKick=I don't have enough permissions to ban that member :(
+moderation.commands.kick.messages.checks.cantKick=I don't have enough permissions to kick that member :(
 moderation.commands.kick.messages.checks.kickOwner=You cannot kick the server owner.
 
 moderation.commands.ban.embeds.ack.title=Member Banned
@@ -23,5 +23,5 @@ moderation.commands.ban.embeds.ack.button.unbanned=Unbanned
 moderation.commands.ban.messages.checks.banBot=Ouch! Sorry, i can't do that.
 moderation.commands.ban.messages.checks.banSelf=You cannot ban yourself.
 moderation.commands.ban.messages.checks.banMember=You cannot ban this member.
-moderation.commands.ban.messages.checks.cantBan=I can't ban that member.
+moderation.commands.ban.messages.checks.cantBan=I don't have enough permissions to ban that member :(
 moderation.commands.ban.messages.checks.banOwner=You cannot ban the server owner.
