@@ -159,11 +159,18 @@ internal class FridayUIRenderer
                     }
                     else
                     {
-                        await interaction.CreateResponseAsync(InteractionResponseType.UpdateMessage,
-                            msgBuilder.ToInteractionResponseBuilder());
+                        try
+                        {
+                            await interaction.CreateResponseAsync(InteractionResponseType.UpdateMessage,
+                                msgBuilder.ToInteractionResponseBuilder());
                         
-                        message = await interaction.GetOriginalResponseAsync();
-                        interaction = null;
+                            message = await interaction.GetOriginalResponseAsync();
+                            interaction = null;
+                        }
+                        catch (DSharpPlus.Exceptions.NotFoundException)
+                        {
+                            message = await message.ModifyAsync(msgBuilder);
+                        }
                     }
                 }
 
