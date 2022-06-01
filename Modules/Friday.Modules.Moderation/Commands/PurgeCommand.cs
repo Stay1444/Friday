@@ -1,6 +1,7 @@
 ﻿using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
+using DSharpPlus.Entities;
 using Friday.Common.Attributes;
 using Friday.Common.Entities;
 using Friday.Common.Models;
@@ -29,7 +30,22 @@ public class PurgeCommand : FridayCommandModule
     public async Task Purge(CommandContext ctx, [Description("Number of messages to delete")] int amount)
     {
         var messages = await ctx.Channel.GetMessagesAsync(amount);
-        await ctx.Channel.DeleteMessagesAsync(messages);
-        await ctx.RespondAsync("Done.");
+
+        var messagesList = messages.ToList();
+        // REMOVE ALL MESSAGES OLDER THAN 2 WEEKS FROM THE LIST
+
+        var olderThanTwoWeeks = messagesList.Count(x => x.CreationTimestamp < DateTimeOffset.Now.AddDays(-14));
+        
+        messagesList.RemoveAll(x => x.Timestamp < DateTimeOffset.Now.AddDays(-14));
+                
+        await ctx.Channel.DeleteMessagesAsync(messagesList);
+        
+        if (olderThanTwoWeeks == 0)
+        {
+            await ctx.RespondAsync("Done.");
+        }else
+        {
+            await ctx.RespondAsync($"Done. {olderThanTwoWeeks} messages older than 2 weeks were not removed.");
+        }
     }
 }
