@@ -124,4 +124,33 @@ public class DatabaseService
         
         return result;
     }
+
+    public async Task<long> Get2048LeaderboardPosition(_2048LeaderBoardOrderBy orderBy, ulong user)
+    {
+        if (!await Exists2048Stats(user))
+            return -1;
+        
+        await using var connection = _provider.GetConnection();
+        await connection.OpenAsync();
+        await using var command = connection.CreateCommand();
+        command.CommandText = "SELECT COUNT(*) FROM mgs_2048_leaderboard WHERE ";
+        switch (orderBy)
+        {
+            case _2048LeaderBoardOrderBy.MaxScore:
+                command.CommandText += "max_score > (SELECT max_score FROM mgs_2048_leaderboard WHERE id = @user)";
+                break;
+            case _2048LeaderBoardOrderBy.TotalScore:
+                command.CommandText += "total_score > (SELECT total_score FROM mgs_2048_leaderboard WHERE id = @user)";
+                break;
+            case _2048LeaderBoardOrderBy.Played:
+                command.CommandText += "played > (SELECT played FROM mgs_2048_leaderboard WHERE id = @user)";
+                break;
+            case _2048LeaderBoardOrderBy.PlayTime:
+                command.CommandText += "playtime_seconds > (SELECT playtime_seconds FROM mgs_2048_leaderboard WHERE id = @user)";
+                break;
+        }
+        
+        command.Parameters.AddWithValue("@user", user);
+        return (long) (await command.ExecuteScalarAsync() ?? 0);
+    }
 }
