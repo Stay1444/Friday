@@ -42,7 +42,7 @@ public class KickCommand : FridayCommandModule
         try
         {
             await member.SendMessageAsync(new DiscordEmbedBuilder()
-                .WithTitle("You have been kicked from the server")
+                .WithTitle($"You have been kicked from {ctx.Guild.Name}")
                 .WithDescription(reason)
                 .Transparent()
                 .AddField("Kicked By", ctx.Member.Mention));
