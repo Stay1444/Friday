@@ -736,7 +736,67 @@ public partial class Commands
                 button.Style = ButtonStyle.Primary;
                 button.OnClick(() => { x.SubPage = "events"; });
             });
+            
+            x.AddSubPageAsync("account-age", async agePage =>
+            {
+                agePage.Embed.Transparent();
+                agePage.Embed.Title = "AntiRaid - Account Restrictions";
+                agePage.Embed.Color = guildAntiRaid.Settings.MinimumAge.Enabled ? DiscordColor.SpringGreen : DiscordColor.IndianRed;
+                agePage.Embed.AddField("Minimum Age",
+                    $"```\n{guildAntiRaid.Settings.MinimumAge.MinimumAge.ToHumanTimeSpan().Humanize()}\n```");
 
+                agePage.AddButton(back =>
+                {
+                    back.Label = "Back";
+                    back.OnClick(() => x.SubPage = null);
+                });
+                
+                await agePage.AddButton(async button =>
+                {
+                    button.Label = guildAntiRaid.Settings!.MinimumAge.Enabled
+                        ? await ctx.GetString("common.enabled")
+                        : await ctx.GetString("common.disabled");
+                    button.Style = guildAntiRaid.Settings!.MinimumAge.Enabled ? ButtonStyle.Success : ButtonStyle.Danger;
+
+                    button.OnClick(async () =>
+                    {
+                        guildAntiRaid.Settings!.MinimumAge.Enabled = !guildAntiRaid.Settings!.MinimumAge.Enabled;
+                        await guildAntiRaid.SaveSettingsAsync();
+                    });
+                });
+                
+                agePage.AddModal(minimumModal =>
+                {
+                    minimumModal.ButtonStyle = ButtonStyle.Primary;
+                    minimumModal.ButtonLabel = "Minimum Age";
+                    minimumModal.Title = "Minimum Age";
+                    minimumModal.AddField("0", field =>
+                    {
+                        field.Title = "Minimum Age";
+                        field.Value = guildAntiRaid.Settings.MinimumAge.MinimumAge.ToHumanTimeSpan().ToHumanTime();
+                        field.Placeholder = "7d";
+                    });
+                    
+                    minimumModal.OnSubmit(async result =>
+                    {
+                        if (HumanTimeSpan.TryParse(result["0"], out var timeSpan))
+                        {
+                            guildAntiRaid.Settings.MinimumAge.MinimumAge = timeSpan;
+
+                            await guildAntiRaid.SaveSettingsAsync();
+                        }
+                    });
+                });
+            });
+
+            x.AddButton(button =>
+            {
+                button.Label = "Account Restrictions";
+                button.Style = ButtonStyle.Primary;
+
+                button.OnClick(() => x.SubPage = "account-age");
+            });
+            
             x.AddSubPageAsync("logs", async logsPage =>
             {
                 logsPage.Embed.Title = "AntiRaid - Logs";
