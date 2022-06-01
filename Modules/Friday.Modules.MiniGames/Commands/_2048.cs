@@ -4,6 +4,7 @@ using DSharpPlus.Entities;
 using Friday.Common;
 using Friday.Modules.MiniGames.Games;
 using Friday.Modules.MiniGames.Images;
+using Friday.Modules.MiniGames.Services;
 using Friday.UI;
 using Friday.UI.Entities;
 using Friday.UI.Extensions;
@@ -17,15 +18,41 @@ public partial class Commands
     public async Task TwentyFortyEight(CommandContext ctx)
     {
         var uiBuilder = new FridayUIBuilder();
-        uiBuilder.OnRender(x =>
+        uiBuilder.OnRenderAsync(async x =>
         { 
+            var leaderBoardOrderType = x.GetState("leaderBoardOrderType", DatabaseService._2048LeaderBoardOrderBy.TotalScore);
             x.OnCancelledAsync(async (_, message) =>
             {
                 await message.DeleteAsync();
             });
             
             x.Embed.Title = "2048";
-            x.Embed.AddField("Leaderboard", "Coming Soon");
+            var leaderBoard =
+                await _module.DatabaseService.Get2048Leaderboard(leaderBoardOrderType.Value, 10);
+            
+            var leaderBoardString = "";
+            
+            for (var i = 0; i < leaderBoard.Count; i++)
+            {
+                switch (leaderBoardOrderType.Value)
+                {
+                    case DatabaseService._2048LeaderBoardOrderBy.PlayTime:
+                        leaderBoardString += $"{i + 1}. {leaderBoard[i].username} - {leaderBoard[i].playTime.ToHumanTimeSpan().Humanize(2)}\n";
+                        break;
+                    case DatabaseService._2048LeaderBoardOrderBy.MaxScore:
+                        leaderBoardString += $"{i + 1}. {leaderBoard[i].username} - {leaderBoard[i].maxScore}\n";
+                        break;
+                    case DatabaseService._2048LeaderBoardOrderBy.TotalScore:
+                        leaderBoardString += $"{i + 1}. {leaderBoard[i].username} - {leaderBoard[i].totalScore}\n";
+                        break;
+                    case DatabaseService._2048LeaderBoardOrderBy.Played:
+                        leaderBoardString += $"{i + 1}. {leaderBoard[i].username} - {leaderBoard[i].played}\n";
+                        break;
+                }
+            }
+            
+            x.Embed.AddField("Leaderboard", leaderBoardString);
+            
             x.Embed.Transparent();
 
             x.AddButton(play =>
