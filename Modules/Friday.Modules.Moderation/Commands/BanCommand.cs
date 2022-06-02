@@ -29,7 +29,7 @@ public class BanCommand : FridayCommandModule
     [RequireGuild]
     [FridayRequirePermission(Permissions.BanMembers)]
     [RequireBotPermissions(Permissions.BanMembers)]
-    [Priority(10)]
+    [Priority(15)]
     public async Task Ban(CommandContext ctx, ulong member, DateTime expiration, [RemainingText] string? reason)
     {
         if (await ctx.Guild.GetMemberAsync(member) is not null)
@@ -61,7 +61,7 @@ public class BanCommand : FridayCommandModule
     [RequireGuild]
     [RequireUserPermissions(Permissions.BanMembers)]
     [RequireBotPermissions(Permissions.BanMembers)]
-    [Priority(9)]
+    [Priority(10)]
     public Task Ban(CommandContext ctx, ulong member, string expiration, [RemainingText] string? reason)
     {
         try
@@ -72,36 +72,6 @@ public class BanCommand : FridayCommandModule
         {
             return Ban(ctx, member, expiration + " " + reason);
         }
-    }
-    
-    [Command("ban")]
-    [RequireGuild]
-    [RequireUserPermissions(Permissions.BanMembers)]
-    [RequireBotPermissions(Permissions.BanMembers)]
-    [Priority(8)]
-    public async Task Ban(CommandContext ctx, ulong member, [RemainingText] string? reason)
-    {
-        if (await ctx.Guild.GetMemberAsync(member) is not null)
-        {
-            // member is in guild
-            await Ban(ctx, await ctx.Guild.GetMemberAsync(member), reason);
-            return;
-        }
-        var banState = await _moderationModuleBase.GetBanState(ctx.Guild.Id, member);
-        if (banState is not null)
-        {
-            await _moderationModuleBase.RemoveBanState(banState);
-        }
-
-        if (reason is null)
-        {
-            reason = await ctx.GetString("moderation.defaults.reason");
-        }
-        
-        var ackMsgBuilder = await GetAckEmbed(ctx, member, reason, null);
-        await ctx.RespondAsync(ackMsgBuilder);
-
-        await ctx.Guild.BanMemberAsync(member, 0, reason);
     }
     
     [Command("tempban")]
@@ -143,12 +113,12 @@ public class BanCommand : FridayCommandModule
         await _moderationModuleBase.BanAsync(member, ctx.Member, reason, expiration);
         _ = UnbanButtonHandler(ctx, ackMsgBuilder, ackMsg, member.Id);
     }
-
+    
     [Command("tempban")]
     [RequireGuild]
     [RequireUserPermissions(Permissions.BanMembers)]
     [RequireBotPermissions(Permissions.BanMembers)]
-    [Priority(4)]
+    [Priority(0)]
     public Task Ban(CommandContext ctx, DiscordMember member, string expiration, [RemainingText] string? reason)
     {
         try
@@ -159,6 +129,35 @@ public class BanCommand : FridayCommandModule
         {
             return Ban(ctx, member, expiration + " " + reason);
         }
+    }
+    
+    [Command("ban")]
+    [RequireGuild]
+    [RequireUserPermissions(Permissions.BanMembers)]
+    [RequireBotPermissions(Permissions.BanMembers)]
+    [Priority(10)]
+    public async Task Ban(CommandContext ctx, ulong member, [RemainingText] string? reason)
+    {
+        if (await ctx.Guild.GetMemberAsync(member) is not null)
+        {
+            await Ban(ctx, await ctx.Guild.GetMemberAsync(member), reason);
+            return;
+        }
+        var banState = await _moderationModuleBase.GetBanState(ctx.Guild.Id, member);
+        if (banState is not null)
+        {
+            await _moderationModuleBase.RemoveBanState(banState);
+        }
+
+        if (reason is null)
+        {
+            reason = await ctx.GetString("moderation.defaults.reason");
+        }
+        
+        var ackMsgBuilder = await GetAckEmbed(ctx, member, reason, null);
+        await ctx.RespondAsync(ackMsgBuilder);
+
+        await ctx.Guild.BanMemberAsync(member, 0, reason);
     }
     
     [Command("ban")]
@@ -189,14 +188,18 @@ public class BanCommand : FridayCommandModule
         
         var dmMsgBuilder = await GetDmAckEmbed(ctx, member, reason, null);
         
-        try
+        _ = Task.Run(async () =>
         {
-            await member.SendMessageAsync(dmMsgBuilder);
-        }catch
-        {
-            // ignored. Can't send DM to user.
-        }
-
+            try
+            {
+                await member.SendMessageAsync(dmMsgBuilder);
+            }
+            catch
+            {
+                //ignored
+            }
+        });
+        
         try
         {
             await ctx.Guild.BanMemberAsync(member, 0, reason);
