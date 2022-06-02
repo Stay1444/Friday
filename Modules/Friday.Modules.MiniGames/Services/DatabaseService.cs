@@ -56,7 +56,7 @@ public class DatabaseService
         await using var connection = _provider.GetConnection();
         await connection.OpenAsync();
         await using var command = connection.CreateCommand();
-        command.CommandText = "SELECT max_score, total_score, played, playtime_seconds FROM mgs_2048_leaderboard WHERE id = @userId";
+        command.CommandText = "SELECT max_score, total_score, played, playtime_seconds, recorded_username FROM mgs_2048_leaderboard WHERE id = @userId";
         command.Parameters.AddWithValue("@userId", userId);
         await using var reader = await command.ExecuteReaderAsync();
         if (!await reader.ReadAsync())
