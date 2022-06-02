@@ -167,6 +167,18 @@ public class LanguageProvider
             
         return language;
     }
+
+    public async Task<string> GetDesiredLanguage(DiscordUser user)
+    {
+        var userConfig = await _userConfiguration.GetConfiguration(user);
+        var language = "en";
+        if (userConfig.LanguageOverride is not null)
+        {
+            language = userConfig.LanguageOverride;
+        }
+        
+        return language;
+    }
     
     public async Task<string> GetString(DiscordGuild guild, string key, params object[] format)
     {
