@@ -240,7 +240,7 @@ public partial class Commands
                 }
                 
                 
-                x.OnCancelledAsync(async (_, _) =>
+                x.OnCancelledAsync(async (_, msg) =>
                 {
                     var currentStats = await _module.DatabaseService.Get2048Stats(ctx.User.Id);
                             
@@ -251,6 +251,15 @@ public partial class Commands
                     await _module.DatabaseService.Set2048Stats(ctx.User.Id, maxScore,
                         currentStats.totalScore + game.Value.Score, currentStats.played + 1, newTotalPlaytime,
                         ctx.User.GetName());
+
+                    try
+                    {
+                        await msg.DeleteAsync();
+                    }
+                    catch
+                    {
+                        // ignored
+                    }
                 });
                 
                 gamePage.Embed.Transparent();
