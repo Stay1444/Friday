@@ -21,6 +21,8 @@
     <ItemGroup>
       <None Remove="Resources\Fonts\ClearSans-Bold.ttf" />
       <EmbeddedResource Include="Resources\Fonts\ClearSans-Bold.ttf" />
+      <None Remove="Resources\required.sql" />
+      <EmbeddedResource Include="Resources\required.sql" />
     </ItemGroup>
 
 </Project>
