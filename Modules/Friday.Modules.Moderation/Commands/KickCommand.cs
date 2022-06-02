@@ -39,24 +39,23 @@ public class KickCommand : FridayCommandModule
         var ackMsgBuilder = await GetAckEmbed(ctx, member.Id, reason);
         var botMember = await ctx.GetCurrentMember();
         if(!await CanbeKicked(ctx, member, botMember)) return;
-        try
+        _ = Task.Run(async () =>
         {
-            await member.SendMessageAsync(new DiscordEmbedBuilder()
-                .WithTitle($"You have been kicked from {ctx.Guild.Name}")
-                .WithDescription(reason)
-                .Transparent()
-                .AddField("Kicked By", ctx.Member.Mention));
-
-        }
-        catch
-        {
-            // ignored
-        }
+            try
+            {
+                await member.SendMessageAsync(new DiscordEmbedBuilder()
+                    .WithTitle($"You have been kicked from {ctx.Guild.Name}")
+                    .WithDescription(reason)
+                    .Transparent()
+                    .AddField("Kicked By", ctx.Member!.Mention));
+            }
+            catch
+            {
+                // ignored
+            }
+        });
         await member.RemoveAsync(reason);
         await ctx.RespondAsync(ackMsgBuilder);
-        
-        
-        
     }
 
     private async Task<bool> CanbeKicked(CommandContext ctx, DiscordMember member, DiscordMember bot)
@@ -67,7 +66,7 @@ public class KickCommand : FridayCommandModule
             return false;
         }
         
-        if (member.Id == ctx.Member.Id)
+        if (member.Id == ctx.Member!.Id)
         {
             await ctx.RespondAsync(await ctx.GetString("moderation.commands.kick.messages.checks.kickSelf"));
             return false;
@@ -99,7 +98,7 @@ public class KickCommand : FridayCommandModule
         DiscordEmbedBuilder ackEmbedBuilder = new DiscordEmbedBuilder();
         ackEmbedBuilder.WithColor(new DiscordColor(_config.Discord.Color));
         ackEmbedBuilder.WithTitle("Member Kicked Successfully");
-        ackEmbedBuilder.WithFooter(ctx.Member.GetName(), ctx.Member.AvatarUrl);
+        ackEmbedBuilder.WithFooter(ctx.Member!.GetName(), ctx.Member.AvatarUrl);
         ackEmbedBuilder.WithDescription(reason);
         ackEmbedBuilder.AddField("Member", $"<@{member}>");
         ackMsgBuilder.WithEmbed(ackEmbedBuilder);
