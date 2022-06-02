@@ -6,4 +6,14 @@ CREATE TABLE IF NOT EXISTS `mgs_2048_leaderboard` (
     `playtime_seconds` bigint(64) NOT NULL,
     `recorded_username` TEXT NOT NULL,
     PRIMARY KEY (`id`)
-)
+);
+
+CREATE TABLE IF NOT EXISTS `mgs_hangman_leaderboard` (
+    `id` bigint(64) UNIQUE NOT NULL,
+    `won_count` bigint(64) NOT NULL,
+    `lost_count` bigint(64) NOT NULL,
+    `played` bigint(64) NOT NULL,
+    `playtime_seconds` bigint(64) NOT NULL,
+    `recorded_username` TEXT NOT NULL,
+    PRIMARY KEY (`id`)
+);
