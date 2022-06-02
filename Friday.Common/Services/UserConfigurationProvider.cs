@@ -42,4 +42,17 @@ public class UserConfigurationProvider
     {
         return GetConfiguration(member.Id);
     }
+
+    public async Task SaveConfiguration(ulong userId, UserConfiguration configuration)
+    {
+        await using var connection = _db.GetConnection();
+        await connection.OpenAsync();
+        await using var command = connection.CreateCommand();
+        command.CommandText = "UPDATE user_config SET language_override=@lang, prefix_override=@prefix WHERE id=@id";
+        command.Parameters.AddWithValue("@id", userId);
+        command.Parameters.AddWithValue("@lang", configuration.LanguageOverride);
+        command.Parameters.AddWithValue("@prefix", configuration.PrefixOverride);
+        
+        await command.ExecuteNonQueryAsync();
+    }
 }
