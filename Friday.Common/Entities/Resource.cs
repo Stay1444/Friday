@@ -17,7 +17,15 @@ public class Resource
 
     public string Path => this._path;
 
-    public string FileName => Path.Substring(Path.LastIndexOf('.') + 1);
+    public string FileName
+    {
+        get
+        {
+            var parts = this._path.Split('.');
+            
+            return parts[^2] + "." + parts[^1];
+        }
+    }
     
     public Stream GetStream()
     {
@@ -79,7 +87,10 @@ public class Resource
     public static Resource Load(Assembly assembly, string path, ResourceLifeSpan lifeSpan = ResourceLifeSpan.Permanent)
     {
         path = path.Replace("/", ".");
-        path = path.Insert(0, assembly.GetName().Name + ".");
+        if (!path.StartsWith(assembly.GetName().Name + "."))
+        {
+            path = path.Insert(0, assembly.GetName().Name + ".");
+        }
 
         if (ResourcesCache.ContainsKey(path))
         {
