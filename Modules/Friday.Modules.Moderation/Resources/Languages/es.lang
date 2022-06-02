@@ -1,5 +1,5 @@
 ﻿# Defaults
-moderation.defaults.reason=Ningun motivo especificado.
+moderation.defaults.reason=Ningún motivo especificado.
 
 # Commands
 moderation.commands.ban.embeds.ack.title=Miembro Baneado
@@ -13,3 +13,15 @@ moderation.commands.ban.messages.checks.banSelf=No te puedes banear a ti mismo.
 moderation.commands.ban.messages.checks.banMember=No puedes banear a ese miembro.
 moderation.commands.ban.messages.checks.cantBan=No puedo banear a ese miembro.
 moderation.commands.ban.messages.checks.banOwner=No puedes banear al owner del server.
+
+moderation.commands.kick.embeds.ack.title=Miembro Expulsado
+moderation.commands.kick.embeds.ack.field.expiration=Fecha de Expiración
+moderation.commands.kick.embeds.ack.field.member=Miembro
+moderation.commands.kick.embeds.dmAck.title=Has sido expulsado del servidor
+moderation.commands.kick.embeds.ack.button.unkick=Desexpulsar
+moderation.commands.kick.embeds.ack.button.unkickned=Desexpulsado
+moderation.commands.kick.messages.checks.kickBot=:cry: Perdon, no puedo hacer eso.
+moderation.commands.kick.messages.checks.kickSelf=No te puedes expulsar a ti mismo.
+moderation.commands.kick.messages.checks.kickMember=No puedes expulsar a ese miembro.
+moderation.commands.kick.messages.checks.cantKick=No tengo suficientes permisos para expulsar a ese miembro :cry:
+moderation.commands.kick.messages.checks.kickOwner=No puedes expulsar al owner del server.
