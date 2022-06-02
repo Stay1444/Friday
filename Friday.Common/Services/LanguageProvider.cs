@@ -11,6 +11,14 @@ public class LanguageProvider
     private GuildConfigurationProvider _guildConfiguration;
     private List<Assembly> _modules;
     private Dictionary<string, Dictionary<string,string>> _language;
+
+    public static IReadOnlyDictionary<string, (string name, string emote)> LanguageList { get; private set; } =
+        new Dictionary<string, (string name, string emote)>()
+        {
+            { "en", ("English", ":flag_gb:") },
+            { "es", ("Español", ":flag_es:") }
+        };
+
     public LanguageProvider(DatabaseProvider db, UserConfigurationProvider userConfiguration, GuildConfigurationProvider guildConfiguration, FridayAssemblyCollector assemblyCollector)
     {
         _db = db;
