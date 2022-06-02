@@ -99,9 +99,10 @@ public partial class Commands
                 }
             
                 await ctx.Message.CreateReactionAsync(success);
-            }catch
+            }catch(Exception error)
             {
                 await ctx.Message.CreateReactionAsync(failure);
+                await ctx.RespondAsync(error.Message);
             }
             
             return;
