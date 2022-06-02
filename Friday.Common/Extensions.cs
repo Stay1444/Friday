@@ -1,4 +1,6 @@
-﻿using DSharpPlus;
+﻿using System.Globalization;
+using System.Text;
+using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
@@ -252,5 +254,31 @@ public static class Extensions
         }
         
         return count;
+    }
+
+    public static string RemoveDiacritics(this string v)
+    {
+        String normalizedString = v.Normalize(NormalizationForm.FormD);
+        StringBuilder stringBuilder = new StringBuilder();
+
+        foreach (char c in normalizedString)
+        {
+            switch (CharUnicodeInfo.GetUnicodeCategory(c))
+            {
+                case UnicodeCategory.LowercaseLetter:
+                case UnicodeCategory.UppercaseLetter:
+                case UnicodeCategory.DecimalDigitNumber:
+                    stringBuilder.Append(c);
+                    break;
+                case UnicodeCategory.SpaceSeparator:
+                case UnicodeCategory.ConnectorPunctuation:
+                case UnicodeCategory.DashPunctuation:
+                    stringBuilder.Append('_');
+                    break;
+            }
+        }
+        string result = stringBuilder.ToString();
+        return String.Join("_", result.Split(new char[] { '_' }
+            , StringSplitOptions.RemoveEmptyEntries));
     }
 }
