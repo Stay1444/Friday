@@ -37,4 +37,17 @@ public class GuildConfigurationProvider
         
         return guildConfig;
     }
+    
+    public async Task SaveConfiguration(ulong userId, GuildConfiguration configuration)
+    {
+        await using var connection = _db.GetConnection();
+        await connection.OpenAsync();
+        await using var command = connection.CreateCommand();
+        command.CommandText = "UPDATE guild_config SET language=@lang, prefix=@prefix WHERE id=@id";
+        command.Parameters.AddWithValue("@id", userId);
+        command.Parameters.AddWithValue("@lang", configuration.Language);
+        command.Parameters.AddWithValue("@prefix", configuration.Prefix);
+        
+        await command.ExecuteNonQueryAsync();
+    }
 }
