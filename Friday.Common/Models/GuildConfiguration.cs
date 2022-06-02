@@ -2,6 +2,6 @@
 
 public record GuildConfiguration
 {
-    public string Prefix { get; init; } = "f";
-    public string Language { get; init; } = "en";
+    public string Prefix { get; set; } = "f";
+    public string Language { get; set; } = "en";
 }
