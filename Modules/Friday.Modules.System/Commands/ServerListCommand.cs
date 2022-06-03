@@ -1,5 +1,6 @@
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
+using DSharpPlus.CommandsNext.Attributes;
 using Friday.Common;
 using Friday.Common.Attributes;
 using Friday.Common.Entities;
@@ -9,7 +10,7 @@ namespace Friday.Modules.System.Commands;
 
 public class ServerListCommand : FridayCommandModule
 {
-    [RequireFridayModerator]
+    [RequireFridayModerator, Command("serverlist")]
     public async Task Command(CommandContext ctx)
     {
         var shardedClient = ctx.Services.GetService<DiscordShardedClient>();
