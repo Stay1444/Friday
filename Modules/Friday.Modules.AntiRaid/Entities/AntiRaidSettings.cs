@@ -41,6 +41,19 @@ public class AntiRaidSettings
         public bool Enabled { get; set; } = false;
         public ulong ChannelId { get; set; } = 0;
     }
+
+    public class AntiRaidAccountAge
+    {
+        public bool Enabled { get; set; }
+        public TimeSpan MinimumAge { get; set; } = TimeSpan.FromDays(7);
+    }
+
+    public class AntiRaidBotSettings
+    {
+        public bool Enabled { get; set; } = true;
+        public bool Ban { get; set; } = true;
+        public bool AllowVerifiedBots { get; set; } = true;
+    }
     
     public bool Enabled { get; set; }
     public bool AdminsCanBypass { get; set; }
@@ -56,9 +69,8 @@ public class AntiRaidSettings
     public AntiRaidSettingsRoles UpdateRoles { get; set; } = new AntiRaidSettingsRoles();
     public AntiRaidSettingsRoles GrantRoles { get; set; } = new AntiRaidSettingsRoles();
     public AntiRaidSettingsRoles RevokeRoles { get; set; } = new AntiRaidSettingsRoles();
-
-    
     public AntiRaidSettingsBans Bans { get; set; } = new AntiRaidSettingsBans();
-    
     public AntiRaidSettingsKicks Kicks { get; set; } = new AntiRaidSettingsKicks();
+    public AntiRaidAccountAge MinimumAge { get; set; } = new AntiRaidAccountAge();
+    public AntiRaidBotSettings BotSettings { get; set; } = new AntiRaidBotSettings();
 }

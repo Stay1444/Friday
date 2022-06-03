@@ -96,6 +96,7 @@ public partial class Commands
                 button.Disabled = !ctx.IsCallerOwner();
                 button.OnClick(() => { x.SubPage = "permissions"; });
             });
+            x.NewLine();
 
             x.AddSubPageAsync("events", async eventsPage =>
             {
@@ -736,7 +737,135 @@ public partial class Commands
                 button.Style = ButtonStyle.Primary;
                 button.OnClick(() => { x.SubPage = "events"; });
             });
+            
+            x.AddSubPageAsync("account-age", async agePage =>
+            {
+                agePage.Embed.Transparent();
+                agePage.Embed.Title = "AntiRaid - Account Restrictions";
+                agePage.Embed.Color = guildAntiRaid.Settings.MinimumAge.Enabled ? DiscordColor.SpringGreen : DiscordColor.IndianRed;
+                agePage.Embed.AddField("Minimum Age",
+                    $"```\n{guildAntiRaid.Settings.MinimumAge.MinimumAge.ToHumanTimeSpan().Humanize()}\n```");
 
+                agePage.AddButton(back =>
+                {
+                    back.Label = "Back";
+                    back.OnClick(() => x.SubPage = null);
+                });
+                
+                await agePage.AddButton(async button =>
+                {
+                    button.Label = guildAntiRaid.Settings!.MinimumAge.Enabled
+                        ? await ctx.GetString("common.enabled")
+                        : await ctx.GetString("common.disabled");
+                    button.Style = guildAntiRaid.Settings!.MinimumAge.Enabled ? ButtonStyle.Success : ButtonStyle.Danger;
+
+                    button.OnClick(async () =>
+                    {
+                        guildAntiRaid.Settings!.MinimumAge.Enabled = !guildAntiRaid.Settings!.MinimumAge.Enabled;
+                        await guildAntiRaid.SaveSettingsAsync();
+                    });
+                });
+                
+                agePage.AddModal(minimumModal =>
+                {
+                    minimumModal.ButtonStyle = ButtonStyle.Primary;
+                    minimumModal.ButtonLabel = "Minimum Age";
+                    minimumModal.Title = "Minimum Age";
+                    minimumModal.AddField("0", field =>
+                    {
+                        field.Title = "Minimum Age";
+                        field.Value = guildAntiRaid.Settings.MinimumAge.MinimumAge.ToHumanTimeSpan().ToHumanTime();
+                        field.Placeholder = "7d";
+                    });
+                    
+                    minimumModal.OnSubmit(async result =>
+                    {
+                        if (HumanTimeSpan.TryParse(result["0"], out var timeSpan))
+                        {
+                            guildAntiRaid.Settings.MinimumAge.MinimumAge = timeSpan;
+
+                            await guildAntiRaid.SaveSettingsAsync();
+
+                            x.ForceRender();
+                        }
+                    });
+                });
+            });
+
+            x.AddButton(button =>
+            {
+                button.Label = "Account Restrictions";
+                button.Style = ButtonStyle.Primary;
+
+                button.OnClick(() => x.SubPage = "account-age");
+            });
+            
+            x.AddSubPageAsync("bot-restrictions", async botPage =>
+            {
+                botPage.Embed.Transparent();
+                botPage.Embed.Title = "AntiRaid - Bots";
+                botPage.Embed.Color = guildAntiRaid.Settings.BotSettings.Enabled ? DiscordColor.SpringGreen : DiscordColor.IndianRed;
+
+                botPage.Embed.AddField("Punishment", guildAntiRaid.Settings.BotSettings.Ban ? "Ban" : "Kick");
+                botPage.Embed.AddField("Allow Verified Bots",
+                    guildAntiRaid.Settings.BotSettings.AllowVerifiedBots ? "Yes" : "No");
+
+                botPage.AddButton(back =>
+                {
+                    back.Label = "Back";
+                    back.OnClick(() => x.SubPage = null);
+                });
+                
+                await botPage.AddButton(async button =>
+                {
+                    button.Label = guildAntiRaid.Settings!.BotSettings.Enabled
+                        ? await ctx.GetString("common.enabled")
+                        : await ctx.GetString("common.disabled");
+                    button.Style = guildAntiRaid.Settings!.BotSettings.Enabled ? ButtonStyle.Success : ButtonStyle.Danger;
+
+                    button.OnClick(async () =>
+                    {
+                        guildAntiRaid.Settings!.BotSettings.Enabled = !guildAntiRaid.Settings!.BotSettings.Enabled;
+                        await guildAntiRaid.SaveSettingsAsync();
+                    });
+                });
+
+                botPage.AddButton(button =>
+                {
+                    button.Label = guildAntiRaid.Settings.BotSettings.Ban ? "Ban" : "Kick";
+                    button.Style = guildAntiRaid.Settings.BotSettings.Ban ? ButtonStyle.Danger : ButtonStyle.Primary;
+
+                    button.OnClick(async () =>
+                    {
+                        guildAntiRaid.Settings.BotSettings.Ban = !guildAntiRaid.Settings.BotSettings.Ban;
+
+                        await guildAntiRaid.SaveSettingsAsync();
+                    });
+                });
+
+                botPage.AddButton(button =>
+                {
+                    button.Label = "Allow Verified Bots";
+                    button.Style = guildAntiRaid.Settings.BotSettings.AllowVerifiedBots
+                        ? ButtonStyle.Success
+                        : ButtonStyle.Danger;
+
+                    button.OnClick(async () =>
+                    {
+                        guildAntiRaid.Settings.BotSettings.AllowVerifiedBots =
+                            !guildAntiRaid.Settings.BotSettings.AllowVerifiedBots;
+
+                        await guildAntiRaid.SaveSettingsAsync();
+                    });
+                });
+            });
+            x.AddButton(button =>
+            {
+                button.Label = "Bot Restrictions";
+                button.Style = ButtonStyle.Primary;
+
+                button.OnClick(() => x.SubPage = "bot-restrictions");
+            });
             x.AddSubPageAsync("logs", async logsPage =>
             {
                 logsPage.Embed.Title = "AntiRaid - Logs";
