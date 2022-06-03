@@ -17,10 +17,12 @@ public class ServerListCommand : FridayCommandModule
         if (shardedClient is null) return;
 
         var guilds = shardedClient.GetGuilds().OrderByDescending(x => x.MemberCount);
-
+        int count = 0;
         foreach (var guild in guilds)
         {
+            count++;
             await ctx.RespondAsync($"{guild.Name} - {guild.Id} - {guild.MemberCount}");
+            if (count == 10) break;
         }
     }
 }
