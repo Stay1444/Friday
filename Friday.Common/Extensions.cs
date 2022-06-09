@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Data.Common;
+using System.Globalization;
 using System.Text;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
@@ -280,5 +281,20 @@ public static class Extensions
         string result = stringBuilder.ToString();
         return String.Join("_", result.Split(new char[] { '_' }
             , StringSplitOptions.RemoveEmptyEntries));
+    }
+
+    public static bool IsEmpty<T>(this IEnumerable<T> enumerable)
+    {
+        return !enumerable.Any();
+    }
+
+    public static string? ReadNullableString(this DbDataReader r, int i)
+    {
+        if (r.IsDBNull(i))
+        {
+            return null;
+        }
+        
+        return r.GetString(i);
     }
 }

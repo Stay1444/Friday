@@ -1,4 +1,6 @@
-﻿using Emzi0767;
+﻿using DSharpPlus;
+using DSharpPlus.Entities;
+using Emzi0767;
 
 namespace Friday.Common;
 
@@ -62,5 +64,21 @@ public static class Utils
         }
         
         return result;
+    }
+
+    public static DiscordEmoji FromGeneric(DiscordClient client, string? generic)
+    {
+        if (generic == null)
+            throw new ArgumentNullException(nameof(generic));
+        if (generic.StartsWith("<:"))
+        {
+            var name = generic.Substring(2, generic.IndexOf(':', 2) - 2);
+            var id = ulong.Parse(generic.Substring(generic.IndexOf(':', 2) + 1, generic.Length - generic.IndexOf(':', 2) - 2));
+            return DiscordEmoji.FromGuildEmote(client, id);
+        }
+        else
+        {
+            return DiscordEmoji.FromName(client, generic);
+        }
     }
 }
