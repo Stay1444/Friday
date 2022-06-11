@@ -134,6 +134,7 @@ internal static class ReactionRolesEditUI
                 roles.Disabled = ctx.Guild.Roles.Count == 0;
                 roles.MinOptions = 1;
                 if (roles.MaxOptions < 1) roles.MaxOptions = 1;
+                if (roles.MaxOptions > 25) roles.MaxOptions = 25;
                 foreach (var discordRole in ctx.Guild.Roles.Values)
                 {
                     if (ctx.Guild.EveryoneRole.Id == discordRole.Id) continue;
