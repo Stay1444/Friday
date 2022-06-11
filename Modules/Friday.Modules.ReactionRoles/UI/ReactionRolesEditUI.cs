@@ -155,7 +155,7 @@ internal static class ReactionRolesEditUI
                     roles.AddOption(option => {
                         option.Label = "No Roles Found";
                         option.Value = "1";
-                    })
+                    });
                 }
 
                 roles.OnSelect(async selections =>
