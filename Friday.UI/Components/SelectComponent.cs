@@ -20,6 +20,7 @@ public class SelectComponent : FridayUISelectComponent
     public int MinOptions { get; set; } = 1;
     public int MaxOptions { get; set; } = 1;
     private List<SelectComponentOption> _options = new List<SelectComponentOption>();
+    public List<SelectComponentOption> Options => _options;
     private Action<string[]>? _onSelect;
     private Func<string[], Task>? _onSelectAsync;
     internal SelectComponent(FridayUIPage page) : base(page)

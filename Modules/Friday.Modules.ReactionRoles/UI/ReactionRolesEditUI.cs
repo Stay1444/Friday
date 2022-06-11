@@ -137,7 +137,7 @@ internal static class ReactionRolesEditUI
                 foreach (var discordRole in ctx.Guild.Roles.Values)
                 {
                     if (ctx.Guild.EveryoneRole.Id == discordRole.Id) continue;
-
+                    if (discordRole.IsManaged) continue;
                     roles.AddOption(option =>
                     {
                         option.Label = "@" + discordRole.Name;
@@ -151,6 +151,13 @@ internal static class ReactionRolesEditUI
                     });
                 }
                 
+                if (roles.Options.Count == 0) {
+                    roles.AddOption(option => {
+                        option.Label = "No Roles Found";
+                        option.Value = "1";
+                    })
+                }
+
                 roles.OnSelect(async selections =>
                 {
                     if (selections.IsEmpty()) return;
