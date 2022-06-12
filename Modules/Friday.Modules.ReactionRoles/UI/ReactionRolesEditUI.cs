@@ -135,10 +135,13 @@ internal static class ReactionRolesEditUI
                 roles.MinOptions = 1;
                 if (roles.MaxOptions < 1) roles.MaxOptions = 1;
                 if (roles.MaxOptions > 25) roles.MaxOptions = 25;
+                var addedRoles = 0;
                 foreach (var discordRole in ctx.Guild.Roles.Values)
                 {
                     if (ctx.Guild.EveryoneRole.Id == discordRole.Id) continue;
                     if (discordRole.IsManaged) continue;
+                    addedRoles++;
+                    if (addedRoles > 25) break;
                     roles.AddOption(option =>
                     {
                         option.Label = "@" + discordRole.Name;
