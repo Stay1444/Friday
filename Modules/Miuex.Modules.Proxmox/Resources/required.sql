@@ -1,4 +1,4 @@
-CREATE TABLE `vps` (
+CREATE TABLE IF NOT EXISTS `vps` (
                        `id` int NOT NULL AUTO_INCREMENT,
                        `userId` bigint NOT NULL,
                        `nodeId` int DEFAULT NULL,

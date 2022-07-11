@@ -2,7 +2,7 @@
 
 namespace Miuex.Modules.Proxmox.Models;
 
-[Newtonsoft.Json.JsonConverter(typeof(JsonStringEnumConverter))]
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum PveStatus
 {
     /// <summary>
