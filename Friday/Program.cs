@@ -159,7 +159,10 @@ try
         };
 
 
-    var slashCommands = await client.UseSlashCommandsAsync();
+    var slashCommands = await client.UseSlashCommandsAsync(new SlashCommandsConfiguration()
+    {
+        Services = serviceProvider
+    });
 
     foreach (var ex in slashCommands.Values)
     {
