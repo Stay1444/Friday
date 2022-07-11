@@ -2,11 +2,13 @@
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Exceptions;
+using DSharpPlus.Entities;
 using DSharpPlus.Exceptions;
 using DSharpPlus.Interactivity.Extensions;
 using DSharpPlus.Lavalink;
 using DSharpPlus.Net;
 using DSharpPlus.SlashCommands;
+using DSharpPlus.SlashCommands.Attributes;
 using Friday.Common.Entities;
 using Friday.Common.Services;
 using Friday.Helpers;
@@ -170,6 +172,74 @@ try
         {
             moduleBase.RegisterSlashCommands(ex);
         }
+        
+        ex.SlashCommandErrored += async (sender, e) =>
+        {
+            // check if the exception is a checks failed exception (i.e. a permission check failed)
+            if (e.Exception is SlashExecutionChecksFailedException checksFailedException)
+            {
+                var embed = new DiscordEmbedBuilder();
+                embed.WithTitle("Execution checks failed");
+                embed.WithColor(DiscordColor.Red);
+            
+                // iterate over all failed checks
+                foreach (var failedCheck in checksFailedException.FailedChecks)
+                {
+                    if (failedCheck is SlashRequirePermissionsAttribute)
+                    {
+                        embed.Description += ("Not enough permissions.");
+                    }
+                    
+                    if (failedCheck is SlashRequireBotPermissionsAttribute requireBotPermissionsAttribute)
+                    {
+                        embed.Description +=  ("Bot does not have enough permissions. Required: " + requireBotPermissionsAttribute.Permissions.ToPermissionString());
+                    }
+                    
+                    if (failedCheck is SlashRequireUserPermissionsAttribute requireUserPermissionsAttribute)
+                    {
+                        embed.Description += ("You do not have enough permissions. Required: \n```" + requireUserPermissionsAttribute.Permissions.ToPermissionString() + "```");
+                    }
+                    
+                    if (failedCheck is SlashRequireOwnerAttribute)
+                    {
+                        embed.Description += ("Only the bot owner can use this command.");
+                    }
+                    
+                    if (failedCheck is SlashRequireGuildAttribute)
+                    {
+                        embed.Description += ("This command can only be used in a guild.");
+                    }
+                    
+                    if (failedCheck is SlashRequireDirectMessageAttribute)
+                    {
+                        embed.Description += ("This command can only be used in a DM channel.");
+                    }
+
+                    if (string.IsNullOrEmpty(embed.Description))
+                    {
+                        embed.Description = "You cannot execute that command.";
+                    }
+                }
+                
+                await e.Context.CreateResponseAsync(embed: embed, true);
+                return;
+            }
+            else
+            {
+                #if DEBUG
+                
+                DiscordEmbedBuilder exceptionEmbed = new DiscordEmbedBuilder();
+                exceptionEmbed.WithTitle("Exception");
+                exceptionEmbed.WithColor(DiscordColor.Red);
+                exceptionEmbed.AddField("Message", e.Exception.Message);
+                await e.Context.Channel.SendMessageAsync(exceptionEmbed);
+                
+                #endif
+                Console.WriteLine(e.Exception);
+            }
+            
+            
+        };
     }
     
     Log.Information("Starting client");
