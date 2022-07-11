@@ -1,15 +1,14 @@
-﻿using MySql.Data.MySqlClient;
+﻿using Friday.Common.Services;
+using MySql.Data.MySqlClient;
 
 namespace Miuex.Modules.Proxmox.Services;
 
 public class VPSSqlService
 {
-    private readonly string 
-        _connectionString;
-    
-    public VPSSqlService(string connectionString)
+    private DatabaseProvider _provider;
+    public VPSSqlService(DatabaseProvider provider)
     {
-        this._connectionString = connectionString;
+        this._provider = provider;
     }
 
     
@@ -17,7 +16,7 @@ public class VPSSqlService
     //get vps by user and name
     public async Task<(ulong owner, int nodeId, int vmId, string name, DateTime expiration)?> GetVps(string name)
     {
-        await using var conn = new MySqlConnection(_connectionString);
+        await using var conn = _provider.GetConnection();
         await conn.OpenAsync();
 
         await using var cmd = conn.CreateCommand();
@@ -43,7 +42,7 @@ public class VPSSqlService
     
     public async Task<List<(int nodeId, int vmId, string name)>> GetBindedVps(ulong user)
     {
-        await using var conn = new MySqlConnection(_connectionString);
+        await using var conn = _provider.GetConnection();
         await conn.OpenAsync();
 
         await using var cmd = conn.CreateCommand();
@@ -73,7 +72,7 @@ public class VPSSqlService
             return;
         }
         
-        await using var conn = new MySqlConnection(_connectionString);
+        await using var conn = _provider.GetConnection();
         await conn.OpenAsync();
 
         await using var cmd = conn.CreateCommand();
@@ -101,7 +100,7 @@ public class VPSSqlService
             return false; // name already exists
         }
         
-        await using var conn = new MySqlConnection(_connectionString);
+        await using var conn = _provider.GetConnection();
         await conn.OpenAsync();
         await using var cmd = conn.CreateCommand();
         cmd.CommandText = "UPDATE vps SET name = @name WHERE userId = @user AND nodeId = @nodeId AND vmId = @vmId AND expiration = @expiration";
@@ -119,7 +118,7 @@ public class VPSSqlService
     //remove vps using userId, vmId, nodeId
     public async Task RemoveVps(string name)
     {
-        await using var conn = new MySqlConnection(_connectionString);
+        await using var conn = _provider.GetConnection();
         await conn.OpenAsync();
 
         await using var cmd = conn.CreateCommand();
@@ -132,7 +131,7 @@ public class VPSSqlService
     
     public async Task<List<(ulong user, int nodeId, int vmId, string name, DateTime expiration)>> GetAllVps()
     {
-        await using var conn = new MySqlConnection(_connectionString);
+        await using var conn = _provider.GetConnection();
         await conn.OpenAsync();
 
         await using var cmd = conn.CreateCommand();
@@ -163,7 +162,7 @@ public class VPSSqlService
             return;
         }
         
-        await using var conn = new MySqlConnection(_connectionString);
+        await using var conn = _provider.GetConnection();
         await conn.OpenAsync();
         
         await using var cmd = conn.CreateCommand();

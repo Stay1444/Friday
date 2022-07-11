@@ -1,6 +1,7 @@
 ﻿using DSharpPlus;
 using DSharpPlus.SlashCommands;
 using Friday.Common;
+using Friday.Common.Services;
 using Miuex.Modules.Proxmox.Commands;
 using Miuex.Modules.Proxmox.Services;
 
@@ -11,13 +12,13 @@ public class ProxmoxModule : ModuleBase
     public ConfigurationService Configuration { get; }
     public APIService Api { get; }
     public VPSSqlService VpsSqlService { get; }
-    public ProxmoxModule(DiscordShardedClient shardedClient)
+    public ProxmoxModule(DiscordShardedClient shardedClient, DatabaseProvider provider)
     {
         Configuration = new ConfigurationService("conf/proxmox.json");
         Constants.Instance = shardedClient.GetShard(Configuration.GetConfiguration().ServerId);
         Constants.Config = Configuration.GetConfiguration();
         Api = new APIService(Configuration.GetConfiguration());
-        this.VpsSqlService = new VPSSqlService(Configuration.GetConfiguration().ConnectionString!);
+        this.VpsSqlService = new VPSSqlService(provider);
     }
 
     public override void RegisterSlashCommands(SlashCommandsExtension extension)
