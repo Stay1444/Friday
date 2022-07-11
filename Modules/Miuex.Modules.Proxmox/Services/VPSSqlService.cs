@@ -132,7 +132,7 @@ public class VPSSqlService
         await conn.OpenAsync();
 
         await using var cmd = conn.CreateCommand();
-        cmd.CommandText = "SELECT userId, nodeId, vmId, name, expiration FROM vps";
+        cmd.CommandText = "SELECT userId, nodeId, vmId, name FROM vps";
         
         await using var reader = await cmd.ExecuteReaderAsync();
         var result = new List<(ulong user, int nodeId, int vmId, string name)>();
