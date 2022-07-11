@@ -54,7 +54,7 @@ public class AdministrationCommands : ApplicationCommandModule
             }
         }
 
-        await _vpsSqlService.AddVps(user.Id, (int) node, (int) vmId, name, DateTime.Now + TimeSpan.FromDays(365));
+        await _vpsSqlService.AddVps(user.Id, (int) node, (int) vmId, name);
 
         await ctx.CreateResponseAsync($"VM {vm.Name} has been linked to {user.Username}", true);
         await ctx.Log(new DiscordEmbedBuilder().WithTitle("VPS Linked")
@@ -143,7 +143,7 @@ public class AdministrationCommands : ApplicationCommandModule
         }
 
         var vms = new List<VirtualMachine>();
-        var ordered = vpsSqlList.OrderBy(x => x.expiration);
+        var ordered = vpsSqlList.OrderBy(x => x.vmId);
         foreach (var vpsSql in ordered)
         {
             var vm = await _apiService.GetVirtualMachineAsync(vpsSql.nodeId, vpsSql.vmId);
@@ -185,27 +185,6 @@ public class AdministrationCommands : ApplicationCommandModule
                 {
                     await ctx.CreateResponseAsync(new DiscordInteractionResponseBuilder().AddEmbed(pages[0]));
                 }
-    }
-    
-    [SlashCommand("addtime", "Adds time to a vps"), RequireAdminRole]
-    public async Task AddTimeCommand(InteractionContext ctx, [Option("Name", "VPS Name")] string name, [Option("Time", "Time")]TimeSpan? time)
-    {
-        if (time is null)
-        {
-            await ctx.CreateResponseAsync("Missing time");
-            return;
-        }
-        
-        var vpsSql = await _vpsSqlService.GetVps(name);
-        if (vpsSql is null)
-        {
-            await ctx.CreateResponseAsync($"VPS {name} not found");
-            return;
-        }
-        
-        await _vpsSqlService.AddTime(name, time.Value);
-        
-        await ctx.CreateResponseAsync($"Added {time} to {name}. New expiration: {vpsSql.Value.expiration + time}");
     }
     
 }

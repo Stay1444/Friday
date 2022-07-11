@@ -8,9 +8,7 @@ public class RequireAdminRole : SlashCheckBaseAttribute
 {
     public override Task<bool> ExecuteChecksAsync(InteractionContext ctx)
     {
-        var config = ctx.Services.GetService<Configuration>();
-        if (config is null)
-            return Task.FromResult(false);
+        var config = ctx.Services.GetService<ProxmoxModule>()!.Configuration.GetConfiguration();
         
         var guild = ctx.Guild;
         if (guild is null)

@@ -350,7 +350,7 @@ Used%  : {(vms[i].Resources?.Memory ?? 0 * 100).Round(2)}%
             return;
         }
 
-        var success = await _vpsSqlService.RenameVps(ctx.User.Id, sqlVm.Value.nodeId, sqlVm.Value.vmId, newName, sqlVm.Value.expiration);
+        var success = await _vpsSqlService.RenameVps(ctx.User.Id, sqlVm.Value.nodeId, sqlVm.Value.vmId, newName);
         
         if (!success)
         {
