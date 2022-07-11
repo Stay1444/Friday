@@ -28,6 +28,7 @@ public class ProxmoxModule : ModuleBase
         extension.RegisterCommands<VPSCommands>(Configuration.GetConfiguration().ServerId);
         extension.RegisterCommands<AdministrationCommands>(Configuration.GetConfiguration().ServerId);
         extension.RegisterCommands<OtherCommands>(Configuration.GetConfiguration().ServerId);
+        Console.WriteLine("Commands registered");
     }
 
     public override Task OnLoad()
