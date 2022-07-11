@@ -12,10 +12,11 @@ public class ProxmoxModule : ModuleBase
     public ConfigurationService Configuration { get; }
     public APIService Api { get; }
     public VPSSqlService VpsSqlService { get; }
+    private DiscordShardedClient _shardedClient;
     public ProxmoxModule(DiscordShardedClient shardedClient, DatabaseProvider provider)
     {
+        this._shardedClient = shardedClient;
         Configuration = new ConfigurationService("conf/proxmox.json");
-        Constants.Instance = shardedClient.GetShard(Configuration.GetConfiguration().ServerId);
         Constants.Config = Configuration.GetConfiguration();
         Api = new APIService(Configuration.GetConfiguration());
         this.VpsSqlService = new VPSSqlService(provider);
@@ -31,6 +32,7 @@ public class ProxmoxModule : ModuleBase
 
     public override Task OnLoad()
     {
+        Constants.Instance = _shardedClient.GetShard(Configuration.GetConfiguration().ServerId);
         return Task.CompletedTask;
     }
 
