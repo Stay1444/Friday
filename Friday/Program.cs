@@ -106,7 +106,7 @@ try
     var commandsNextExtensions = await client.UseCommandsNextAsync(new CommandsNextConfiguration
     {
         CaseSensitive = false,
-        EnableDefaultHelp = true,
+        EnableDefaultHelp = false,
         EnableDms = true,
         IgnoreExtraArguments = false,
         EnableMentionPrefix = true,
@@ -159,8 +159,16 @@ try
         };
 
 
-    await client.UseSlashCommandsAsync();
+    var slashCommands = await client.UseSlashCommandsAsync();
 
+    foreach (var ex in slashCommands.Values)
+    {
+        foreach (var moduleBase in modules)
+        {
+            moduleBase.RegisterSlashCommands(ex);
+        }
+    }
+    
     Log.Information("Starting client");
 
     await client.StartAsync();
