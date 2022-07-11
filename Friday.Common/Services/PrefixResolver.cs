@@ -55,4 +55,28 @@ public class PrefixResolver
             }
         }
     }
+
+    public async Task<string> GetPrefixAsync(DiscordMember user)
+    {
+        var guildSettings = await _guildConfigurationProvider.GetConfiguration(user.Guild);
+        var userSettings = await _userConfigurationProvider.GetConfiguration(user);
+        var prefix = guildSettings.Prefix;
+        if (userSettings.PrefixOverride is not null)
+        {
+            prefix = userSettings.PrefixOverride;
+        }
+        
+        return prefix;
+    }
+
+    public async Task<string> GetPrefixAsync(DiscordUser user)
+    {
+        var userSettings = await _userConfigurationProvider.GetConfiguration(user);
+        var prefix = "f";
+        if (userSettings.PrefixOverride is not null)
+        {
+            prefix = userSettings.PrefixOverride;
+        }
+        return prefix;
+    }
 }

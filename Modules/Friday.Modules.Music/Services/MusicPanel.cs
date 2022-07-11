@@ -108,7 +108,7 @@ public class MusicPanel : IDisposable
         {
             embed.WithImageUrl(imgUrl);
         }
-
+        
         builder.WithEmbed(embed);
 
         var c1 = new List<DiscordComponent>();

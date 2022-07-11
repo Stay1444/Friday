@@ -100,6 +100,12 @@ public static class ModuleLoader
         }
         
         var module = (ModuleBase?) ActivatorUtilities.CreateInstance(services.BuildServiceProvider(), GetModuleType(moduleAssembly));
+
+        if (module is null)
+        {
+            Log.Error("Module {0} is not valid.", moduleAssembly.GetName().Name);
+            return;
+        }
         
         Log.Information("Module {0} loaded.", moduleAssembly.GetName().Name);
 
@@ -133,7 +139,12 @@ public static class ModuleLoader
     public static Assembly[] GetValidAssemblies()
     {
         var assemblies = new List<Assembly>();
-
+        
+        if (!Directory.Exists("modules"))
+        {
+            Directory.CreateDirectory("modules");
+        }
+        
         foreach (var modulePath in Directory.GetFiles("modules", "*.dll"))
         {
             if (IsValid(Assembly.LoadFrom(modulePath)))

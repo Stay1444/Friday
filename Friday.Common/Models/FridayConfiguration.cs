@@ -7,7 +7,8 @@ public record FridayConfiguration
         public string Token { get; init; } = Guid.Empty.ToString();
         public string Color { get; init; } = "#4287f5";
         
-        public string SupportServer { get; init; } = "https://discord.gg/friday";
+        public string OfficialServer { get; init; } = "https://discord.gg/friday";
+        public string BotInvite { get; init; } = "https://discordapp.com/oauth2/authorize?client_id=0&scope=bot&permissions=8";
     }
 
     public record FridayConfigurationDatabase
@@ -38,7 +39,7 @@ public record FridayConfiguration
     public record FridayConfigurationSimpleCdn
     {
         public string Host { get; init; } = "https://cdn.friday.gg";
-        public string ApiKey { get; init; } = "";
+        public string ApiKey { get; init; } = Guid.Empty.ToString();
     }
     
     public bool Debug { get; init; } = false;
