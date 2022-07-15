@@ -22,6 +22,11 @@ public class ModuleManager : IModuleManager
         this._modules = new List<ModuleInfo>();
     }
 
+    bool IsValid(Assembly assembly)
+    {
+        return assembly.GetTypes().Any(t => t.IsSubclassOf(typeof(ModuleBase)));
+    }
+    
     public void LoadModules()
     {
         if (!Directory.Exists(MODULE_FOLDER))
@@ -29,11 +34,6 @@ public class ModuleManager : IModuleManager
             Directory.CreateDirectory(MODULE_FOLDER);
         }
 
-        bool IsValid(Assembly assembly)
-        {
-            return assembly.GetTypes().Any(t => t.IsSubclassOf(typeof(ModuleBase)));
-        }
-        
         foreach (var assemblyPath in Directory.GetFiles(MODULE_FOLDER, "*.dll"))
         {
             var assembly = Assembly.LoadFrom(assemblyPath);
@@ -83,7 +83,51 @@ public class ModuleManager : IModuleManager
 
     public void LoadCallingModule()
     {
+        var assembly = Assembly.GetCallingAssembly();
+
+        if (!IsValid(assembly))
+        {
+            throw new Exception("The calling assembly is not a valid assembly!");
+        }
         
+        var moduleInfo = new ModuleInfo(assembly.GetName().Name ?? assembly.FullName ?? "Unknown",
+            "1.0.0", new []{ "Unknown" },
+            "Unknown",  null, null, assembly);
+        
+        try
+        {
+            var resource = Resource.Load(assembly, "Resources/module.toml");
+            var config = Toml.ToModel<ModuleConfigModel>(resource.ReadString());
+
+            if (!string.IsNullOrEmpty(config.Name))
+            {
+                moduleInfo.Name = config.Name;
+            }
+
+            if (!string.IsNullOrEmpty(config.Version))
+            {
+                moduleInfo.Version = config.Version;
+            }
+
+            if (config.Authors is not null)
+            {
+                moduleInfo.Authors = config.Authors;
+            }
+
+            if (config.Description is not null)
+            {
+                moduleInfo.Description = config.Description;
+            }
+
+            if (config.Icon is not null)
+            {
+                moduleInfo.Icon = config.Icon;
+            }
+
+            moduleInfo.ConfigModel = config;
+        }catch{ /* ignored */ }
+                
+        _modules.Add(moduleInfo);
     }
 
     public void CreateInstances(ServiceCollection services)
