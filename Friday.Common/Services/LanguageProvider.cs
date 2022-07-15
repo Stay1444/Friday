@@ -1,15 +1,13 @@
-﻿using System.Reflection;
-using DSharpPlus.Entities;
+﻿using DSharpPlus.Entities;
 using Serilog;
 
 namespace Friday.Common.Services;
 
 public class LanguageProvider
 {
-    private DatabaseProvider _db;
     private UserConfigurationProvider _userConfiguration;
     private GuildConfigurationProvider _guildConfiguration;
-    private List<Assembly> _modules;
+    private IModuleManager _moduleManager;
     private Dictionary<string, Dictionary<string,string>> _language;
 
     public static IReadOnlyDictionary<string, (string name, string emote)> LanguageList { get; private set; } =
@@ -19,14 +17,11 @@ public class LanguageProvider
             { "es", ("Español", ":flag_es:") }
         };
 
-    public LanguageProvider(DatabaseProvider db, UserConfigurationProvider userConfiguration, GuildConfigurationProvider guildConfiguration, FridayAssemblyCollector assemblyCollector)
+    public LanguageProvider(UserConfigurationProvider userConfiguration, GuildConfigurationProvider guildConfiguration, IModuleManager moduleManager)
     {
-        _db = db;
         _userConfiguration = userConfiguration;
         _guildConfiguration = guildConfiguration;
-        _modules = new List<Assembly>();
-        _modules.AddRange(assemblyCollector.Modules);
-        _modules.Add(assemblyCollector.FridayAssembly);
+        _moduleManager = moduleManager;
         _language = new Dictionary<string, Dictionary<string, string>>();
         Build();
     }
@@ -36,12 +31,12 @@ public class LanguageProvider
         Log.Information("[LanguageProvider] Building language provider...");
         Log.Information("[LanguageProvider] Loading languages...");
         
-        foreach (var assembly in _modules)
+        foreach (var module in _moduleManager.Modules)
         {
             
-            var resourceNames = assembly.GetManifestResourceNames();
-            var expectedPath = $"{assembly.GetName().Name}.Resources.Languages.";
-            Log.Information("[LanguageProvider] Loading languages from {0}", assembly.GetName().Name);
+            var resourceNames = module.Assembly.GetManifestResourceNames();
+            var expectedPath = $"{module.Assembly.GetName().Name}.Resources.Languages.";
+            Log.Information("[LanguageProvider] Loading languages from {0}", module.Assembly.GetName().Name);
             foreach (var resourceName in resourceNames.Where(x => x.StartsWith(expectedPath)))
             {
                 if (!resourceName.EndsWith(".lang"))
@@ -57,11 +52,11 @@ public class LanguageProvider
                     Log.Information("[LanguageProvider] Registered language {0}", language);
                 }
 
-                using var stream = assembly.GetManifestResourceStream(resourceName);
+                using var stream = module.Assembly.GetManifestResourceStream(resourceName);
                 
                 if (stream == null)
                 {
-                    Log.Error("[LanguageProvider] Failed to load language {0} from {1}", resourceName, assembly.FullName);
+                    Log.Error("[LanguageProvider] Failed to load language {0} from {1}", resourceName, module.Assembly.FullName);
                     continue;
                 }
                 
@@ -87,7 +82,7 @@ public class LanguageProvider
                     var splitLine = actualLine.Split('=');
                     if (splitLine.Length < 2)
                     {
-                        Log.Error("[LanguageProvider] Invalid line in language file {0} from {1}", actualLine, assembly.FullName);
+                        Log.Error("[LanguageProvider] Invalid line in language file {0} from {1}", actualLine, module.Assembly.FullName);
                         continue;
                     }
                     

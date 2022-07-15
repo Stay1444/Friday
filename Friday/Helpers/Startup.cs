@@ -39,8 +39,4 @@ public static class Startup
         return config;
     }
 
-    public static ModuleBase[] LoadModules(ServiceCollection services)
-    {
-        return ModuleLoader.LoadModules(services);
-    }
 }

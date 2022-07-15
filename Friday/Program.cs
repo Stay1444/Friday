@@ -12,6 +12,7 @@ using DSharpPlus.SlashCommands.Attributes;
 using Friday.Common.Entities;
 using Friday.Common.Services;
 using Friday.Helpers;
+using Friday.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Extensions.Logging;
@@ -48,35 +49,49 @@ try
 
     services.AddSingleton(client);
 
-    var langModuleAssemblies = ModuleLoader.GetValidAssemblies();
-    var fridayAssemblyProvider =
-        new FridayAssemblyCollector(langModuleAssemblies, Assembly.GetAssembly(typeof(Program))!);
-    services.AddSingleton(fridayAssemblyProvider);
+    var moduleManager = new ModuleManager();
+    
+    // Load modules | Module.dll
+    moduleManager.LoadModules();
+
+    // Load this project as a module
+    // In the future we could add commands here, but this is currently used because this contains basic language files.
+    moduleManager.LoadCallingModule();
+
+    services.AddSingleton(moduleManager);
+    
     var dbProvider = new DatabaseProvider(config);
     services.AddSingleton(dbProvider);
+    
     services.AddSingleton(new FridayModeratorService(dbProvider));
     services.AddSingleton(new FridayVerifiedServerService(dbProvider));
+    
     var guildConfigProvider = new GuildConfigurationProvider(dbProvider);
     services.AddSingleton(guildConfigProvider);
+    
     var userConfigProvider = new UserConfigurationProvider(dbProvider);
     services.AddSingleton(userConfigProvider);
+    
     var prefixResolver = new PrefixResolver(dbProvider, guildConfigProvider, userConfigProvider);
     services.AddSingleton(prefixResolver);
-    services.AddSingleton(new LanguageProvider(dbProvider, userConfigProvider, guildConfigProvider,
-        fridayAssemblyProvider));
+    
+    services.AddSingleton(new LanguageProvider(userConfigProvider, guildConfigProvider,
+        moduleManager));
+    
     services.AddSingleton(new SimpleCdnClient(config.SimpleCdn.Host, Guid.Parse(config.SimpleCdn.ApiKey)));
     Log.Information("Loading modules");
 
-    var modules = Startup.LoadModules(services);
-    if (!modules.Any())
+    moduleManager.CreateInstances(services);
+    
+    if (!moduleManager.Modules.Any())
         Log.Information("No modules found");
     else
-        Log.Information("Loaded {0} modules", modules.Length);
+        Log.Information("Loaded {0} modules", moduleManager.Modules.Count);
 
-    foreach (var module in modules)
+    foreach (var module in moduleManager.Modules)
         try
         {
-            var resource = Resource.Load(module.GetType().Assembly, "Resources/required.sql");
+            var resource = Resource.Load(module.Assembly, "Resources/required.sql");
             var sql = resource.ReadString();
             if (string.IsNullOrEmpty(sql)) continue;
             await dbProvider.ExecuteAsync(sql);
@@ -89,10 +104,6 @@ try
         {
             Log.Error(e, "Failed to load required.sql");
         }
-
-    var fridayResource = Resource.Load(typeof(Program).Assembly, "Resources/required.sql");
-    var fridaySql = fridayResource.ReadString();
-    await dbProvider.ExecuteAsync(fridaySql);
 
     var serviceProvider = services.BuildServiceProvider();
 
@@ -116,7 +127,7 @@ try
         PrefixResolver = prefixResolver.ResolvePrefixAsync
     });
 
-    foreach (var module in modules) commandsNextExtensions.RegisterCommands(module.GetType().Assembly);
+    foreach (var module in moduleManager.Modules) commandsNextExtensions.RegisterCommands(module.Assembly);
 
     Log.Information("Commands next created successfully");
 
@@ -135,18 +146,15 @@ try
                     await error.Context.Channel.SendMessageAsync(badRequestException.JsonMessage);
                     return;
                 #endif 
-                
-                File.WriteAllText($"issues/{Guid.NewGuid()}", badRequestException.JsonMessage + Environment.NewLine + error.Exception + Environment.NewLine + error.Exception.StackTrace);
-                
             }
 
             if (error.Exception is ChecksFailedException checksFailedException)
             {
                 foreach (var failedCheck in checksFailedException.FailedChecks)
-                foreach (var moduleBase in modules)
-                    if (moduleBase.GetType().Assembly == failedCheck.GetType().Assembly)
+                foreach (var module in moduleManager.Modules)
+                    if (module.Assembly == failedCheck.GetType().Assembly)
                     {
-                        await moduleBase.HandleFailedChecks(failedCheck.GetType(), e, error);
+                        await module.Instance!.HandleFailedChecks(failedCheck.GetType(), e, error);
                         break;
                     }
             }
@@ -168,9 +176,9 @@ try
 
     foreach (var ex in slashCommands.Values)
     {
-        foreach (var moduleBase in modules)
+        foreach (var module in moduleManager.Modules)
         {
-            moduleBase.RegisterSlashCommands(ex);
+            module.Instance!.RegisterSlashCommands(ex);
         }
         
         ex.SlashCommandErrored += async (sender, e) =>
@@ -289,11 +297,10 @@ try
     {
         if (!modulesLoaded)
         {
-            foreach (var moduleBase in modules)
+            foreach (var module in moduleManager.Modules)
             {
-                await moduleBase.OnLoad();
+                await module.Instance!.OnLoad();
             }
-            
             modulesLoaded = true;
         }
     };
