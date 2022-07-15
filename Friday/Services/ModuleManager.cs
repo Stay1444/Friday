@@ -134,43 +134,52 @@ public class ModuleManager : IModuleManager
     {
         void CreateInstance(ModuleInfo module)
         {
-            if (module.ConfigModel is not null && module.ConfigModel.Require.Any())
+            try
             {
-                foreach (var requiredAssembly in module.ConfigModel.Require)
+                if (module.ConfigModel is not null && module.ConfigModel.Require.Any())
                 {
-                    if (!_modules.Any(x => x.Assembly.GetName().Name == requiredAssembly && x.Instance == null))
+                    foreach (var requiredAssembly in module.ConfigModel.Require)
                     {
-                        continue;
+                        if (!_modules.Any(x => x.Assembly.GetName().Name == requiredAssembly && x.Instance == null))
+                        {
+                            continue;
+                        }
+
+                        CreateInstance(_modules.First(x => x.Assembly.GetName().Name == requiredAssembly));
                     }
-                    
-                    CreateInstance(_modules.First(x => x.Assembly.GetName().Name == requiredAssembly));
                 }
-            }
-            
-            Type GetModuleType(Assembly assembly)
-            {
-                return assembly.GetTypes().First(t => t.IsSubclassOf(typeof(ModuleBase)));
-            }
-            
-            var instance = (ModuleBase?) ActivatorUtilities.CreateInstance(services.BuildServiceProvider(), GetModuleType(module.Assembly));
 
-            if (instance is null)
-            {
-                Log.Error("Error loading {asm}", module.Assembly.GetName().Name);
-                return;
-            }
+                Type GetModuleType(Assembly assembly)
+                {
+                    return assembly.GetTypes().First(t => t.IsSubclassOf(typeof(ModuleBase)));
+                }
 
-            module.Instance = instance;
-            services.AddSingleton(instance.GetType(), instance);
-            
-            Log.Information("Module {name} ({assembly}) by {authors} loaded!", module.Name, module.Assembly.GetName().Name, string.Join(", ", module.Authors));
+                var instance = (ModuleBase?) ActivatorUtilities.CreateInstance(services.BuildServiceProvider(),
+                    GetModuleType(module.Assembly));
+                if (instance is null)
+                {
+                    Log.Error("Error loading {asm}", module.Assembly.GetName().Name);
+                    return;
+                }
+
+                module.Instance = instance;
+                services.AddSingleton(instance.GetType(), instance);
+                Log.Information("Module {name} ({assembly}) by {authors} loaded!", module.Name,
+                    module.Assembly.GetName().Name, string.Join(", ", module.Authors));
+            }
+            catch (Exception error)
+            {
+                Log.Error(error, "Fatal error while loading {assembly}", module.Assembly.FullName);
+            }
         }
         
         foreach (var moduleInfo in _modules)
         {
             if (moduleInfo.Instance is not null) continue;
             CreateInstance(moduleInfo);
-        }   
+        }
+
+        _modules.RemoveAll(x => x.Instance == null);
     }
     
     

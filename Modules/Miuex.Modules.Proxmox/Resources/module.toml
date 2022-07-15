@@ -1,0 +1,4 @@
+﻿name="Proxmox"
+version="0.1"
+authors=["Stay1444"]
+description="Proxmox VPS control module."
