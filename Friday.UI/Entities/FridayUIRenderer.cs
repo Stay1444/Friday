@@ -57,6 +57,11 @@ internal class FridayUIRenderer
             {
                 dComponents.Add(selectComponent);
             }
+
+            if (componentResult is DiscordLinkButtonComponent linkButtonComponent)
+            {
+                dComponents.Add(componentResult);
+            }
         }
 
         if (!page.UsedMessageBuilder)

@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Runtime.Loader;
 using Friday.Common;
 using Friday.Common.Entities;
 using Friday.Common.Services;
@@ -26,7 +27,7 @@ public class ModuleManager : IModuleManager
     {
         return assembly.GetTypes().Any(t => t.IsSubclassOf(typeof(ModuleBase)));
     }
-    
+
     public void LoadModules()
     {
         if (!Directory.Exists(MODULE_FOLDER))

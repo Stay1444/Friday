@@ -58,7 +58,7 @@ try
     // In the future we could add commands here, but this is currently used because this contains basic language files.
     moduleManager.LoadCallingModule();
 
-    services.AddSingleton(moduleManager);
+    services.AddSingleton<IModuleManager>(moduleManager);
     
     var dbProvider = new DatabaseProvider(config);
     services.AddSingleton(dbProvider);
@@ -304,8 +304,6 @@ try
             modulesLoaded = true;
         }
     };
-    
-    
     await Task.Delay(-1);
 }
 catch (Exception e)

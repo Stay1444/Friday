@@ -1,4 +1,3 @@
-using DSharpPlus;
 using Friday.UI.Components;
 using Friday.UI.Entities;
 
@@ -16,6 +15,20 @@ public static class Components
     public static async Task AddButton(this FridayUIPage page, Func<ButtonComponent, Task> modifyAsync)
     {
         var component = new ButtonComponent(page);
+        await modifyAsync(component);
+        page.Add(component);
+    }
+
+    public static void AddButtonUrl(this FridayUIPage page, Action<ButtonLinkComponent> modify)
+    {
+        var component = new ButtonLinkComponent(page);
+        modify(component);
+        page.Add(component);
+    }
+
+    public static async Task AddButtonUrl(this FridayUIPage page, Func<ButtonLinkComponent, Task> modifyAsync)
+    {
+        var component = new ButtonLinkComponent(page);
         await modifyAsync(component);
         page.Add(component);
     }

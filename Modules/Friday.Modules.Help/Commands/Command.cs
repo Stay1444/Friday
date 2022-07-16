@@ -1,8 +1,10 @@
 ﻿using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
+using Friday.Common;
 using Friday.Common.Entities;
 using Friday.Common.Models;
+using Friday.Common.Services;
 using Friday.UI;
 using Friday.UI.Entities;
 using Friday.UI.Extensions;
@@ -12,9 +14,13 @@ namespace Friday.Modules.Help.Commands;
 public class Command : FridayCommandModule
 {
     private FridayConfiguration _configuration;
-    public Command(FridayConfiguration configuration)
+    private IModuleManager _moduleManager;
+    private HelpModule _module;
+    public Command(FridayConfiguration configuration, IModuleManager moduleManager, HelpModule module)
     {
         _configuration = configuration;
+        _moduleManager = moduleManager;
+        _module = module;
     }
 
     [Command("help")]
@@ -26,83 +32,45 @@ public class Command : FridayCommandModule
             x.Embed.WithAuthor(ctx.User.Username, null, ctx.User.AvatarUrl);
             x.Embed.WithTitle("Friday - Help");
             x.Embed.WithDescription(
-                $"[Join the official Friday Discord server]({_configuration.Discord.OfficialServer})\n\n" +
-                $"[Invite Friday to your server]({_configuration.Discord.BotInvite})");
+                $"Select a module below to view its commands!\n\n" +
+                $"You can also use `{ctx.Prefix}help <command>`");
             x.Embed.WithColor(new DiscordColor(_configuration.Discord.Color));
 
             x.AddSelect(select =>
             {
                 select.Placeholder = "Select a module";
-                
-                select.AddOption(option =>
-                {
-                    option.Label = "Moderation";
-                    option.Emoji = DiscordEmoji.FromName(ctx.Client, ":shield:");
-                    option.Value = "moderation";
-                });
 
-                select.AddOption(option =>
+                foreach (var module in _moduleManager.Modules)
                 {
-                    option.Label = "Backups";
-                    option.Emoji = DiscordEmoji.FromName(ctx.Client, ":package:");
-                    option.Value = "backups";
-                });
-                
-                select.AddOption(option =>
-                {
-                    option.Label = "Music";
-                    option.Emoji = DiscordEmoji.FromName(ctx.Client, ":musical_note:");
-                    option.Value = "music";
-                });
+                    var commands = _module.Scanner.ResolveCommandsAsync(module, ctx);
+                    if (commands.Count < 1) continue;
+                    select.AddOption(option =>
+                    {
+                        option.Label = module.Name;
+                        option.Value = module.Assembly.GetName().Name;
+                        option.Description = $"{commands.Count} commands";
+                        if (module.Icon is not null)
+                        {
+                            var emoji = DiscordEmojiUtils.FromGeneric(module.Icon, ctx.Client);
+                            if (emoji is not null)
+                            {
+                                option.Emoji = emoji;
+                            }
+                        }
+                    });
+                }
+            });
 
-                select.AddOption(option =>
-                {
-                    option.Label = "Reaction Roles";
-                    option.Emoji = DiscordEmoji.FromName(ctx.Client, ":robot:");
-                    option.Value = "reactionroles";
-                });
-
-                select.AddOption(option =>
-                {
-                    option.Label = "Anti Raid";
-                    option.Emoji = DiscordEmoji.FromName(ctx.Client, ":crossed_swords:");
-                    option.Value = "antiraid";
-                });
-
-                select.AddOption(option =>
-                {
-                    option.Label = "Channel Stats";
-                    option.Emoji = DiscordEmoji.FromName(ctx.Client, ":chart_with_upwards_trend:");
-                    option.Value = "channelstats";
-                });
-                
-                select.AddOption(option =>
-                {
-                    option.Label = "Utilities";
-                    option.Emoji = DiscordEmoji.FromName(ctx.Client, ":wrench:");
-                    option.Value = "utilities";
-                });
-                
-                select.AddOption(option =>
-                {
-                    option.Label = "Developer";
-                    option.Emoji = DiscordEmoji.FromName(ctx.Client, ":tools:");
-                    option.Value = "developer";
-                });
-
-                select.AddOption(option =>
-                {
-                    option.Label = "Miscellaneous";
-                    option.Emoji = DiscordEmoji.FromName(ctx.Client, ":question:");
-                    option.Value = "miscellaneous";
-                });
-                
-                select.AddOption(option =>
-                {
-                    option.Label = "Games";
-                    option.Emoji = DiscordEmoji.FromName(ctx.Client, ":game_die:");
-                    option.Value = "games";
-                });
+            x.NewLine();
+            x.AddButtonUrl(btn =>
+            {
+                btn.Label = "Official Server";
+                btn.Url = _configuration.Discord.OfficialServer;
+            });
+            x.AddButtonUrl(btn =>
+            {
+                btn.Label = "Invite";
+                btn.Url = _configuration.Discord.BotInvite;
             });
         });
 
