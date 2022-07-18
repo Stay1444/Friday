@@ -11,7 +11,7 @@ public partial class Commands
 {
     [Command("addemotes"), Aliases("addemote"), RequireGuild, FridayRequirePermission(Permissions.Administrator),
      Cooldown(5, 10, CooldownBucketType.Guild), Priority(5)]
-    public async Task AddEmotesCommand(CommandContext ctx, DiscordEmoji emoji, string? name = null)
+    public async Task cmd_AddEmotesCommand(CommandContext ctx, DiscordEmoji emoji, string? name = null)
     {
         var success = DiscordEmoji.FromName(ctx.Client, ":white_check_mark:");
         var failure = DiscordEmoji.FromName(ctx.Client, ":x:");

@@ -15,7 +15,7 @@ public partial class Commands
 {
     [Description("AntiRaid settings")]
     [GroupCommand]
-    public async Task AntiRaidSettingsCommand(CommandContext ctx)
+    public async Task cmd_AntiRaidSettingsCommand(CommandContext ctx)
     {
         var guildAntiRaid = await _module.GetAntiRaid(ctx.Guild);
 

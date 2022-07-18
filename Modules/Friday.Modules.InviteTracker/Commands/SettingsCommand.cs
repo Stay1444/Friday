@@ -12,7 +12,7 @@ namespace Friday.Modules.InviteTracker.Commands;
 public partial class Commands
 {
     [GroupCommand]
-    public async Task SettingsCommand(CommandContext ctx)
+    public async Task cmd_SettingsCommand(CommandContext ctx)
     {
         var guildSettings = await _module.GetConfiguration(ctx.Guild);
         var uiBuilder = new FridayUIBuilder

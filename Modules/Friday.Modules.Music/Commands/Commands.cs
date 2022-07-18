@@ -1,10 +1,8 @@
-﻿using DSharpPlus.CommandsNext;
-using DSharpPlus.CommandsNext.Attributes;
-using DSharpPlus.Entities;
-using DSharpPlus.Lavalink;
+﻿using Friday.Common.Entities;
 
 namespace Friday.Modules.Music.Commands;
-public partial class Commands : BaseCommandModule
-{
 
+public partial class Commands : FridayCommandModule
+{
+    
 }

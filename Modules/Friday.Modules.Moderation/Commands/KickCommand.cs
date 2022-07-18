@@ -28,7 +28,7 @@ public class KickCommand : FridayCommandModule
     [RequireGuild]
     [FridayRequirePermission(Permissions.KickMembers)]
     [RequireBotPermissions(Permissions.KickMembers)]
-    public async Task Kick(CommandContext ctx, DiscordMember member, [RemainingText] string? reason = null)
+    public async Task cmd_Kick(CommandContext ctx, DiscordMember member, [RemainingText] string? reason = null)
     {
         if (string.IsNullOrEmpty(reason))
         {

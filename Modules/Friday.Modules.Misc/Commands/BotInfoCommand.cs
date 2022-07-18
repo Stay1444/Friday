@@ -10,7 +10,7 @@ namespace Friday.Modules.Misc.Commands;
 public partial class Commands
 {
     [Command("botinfo")]
-    public async Task BotInfoCommand(CommandContext ctx)
+    public async Task cmd_BotInfoCommand(CommandContext ctx)
     {
         var embedBuilder = new DiscordEmbedBuilder();
         embedBuilder.Transparent();

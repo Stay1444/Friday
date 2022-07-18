@@ -28,7 +28,7 @@ public class Commands : FridayCommandModule
     
 
     [GroupCommand]
-    public async Task Main(CommandContext ctx)
+    public async Task cmd_Main(CommandContext ctx)
     {
         var backups = await _module.Database.GetBackupsAsync(ctx.User.Id);
         GuildConfig? config = null;
@@ -377,7 +377,7 @@ public class Commands : FridayCommandModule
 
     [Command("settings"), Aliases("cfg", "config")]
     [FridayRequireGuildOwner, RequireGuild]
-    public async Task Settings(CommandContext ctx)
+    public async Task cmd_Settings(CommandContext ctx)
     {
         var uiBuilder = new FridayUIBuilder();
         var settings = await _module.Database.GetGuildConfigAsync(ctx.Guild.Id);

@@ -10,7 +10,7 @@ public partial class Commands
 {
     
     [Command("serverinfo"), RequireGuild]
-    public async Task ServerInfoCommand(CommandContext ctx)
+    public async Task cmd_ServerInfoCommand(CommandContext ctx)
     {
         
         var embedBuilder = new DiscordEmbedBuilder();

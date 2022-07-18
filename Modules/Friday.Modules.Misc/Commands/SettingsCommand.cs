@@ -13,7 +13,7 @@ namespace Friday.Modules.Misc.Commands;
 public partial class Commands
 {
     [Command("settings"), Aliases("config", "cfg")]
-    public async Task SettingsCommand(CommandContext ctx)
+    public async Task cmd_SettingsCommand(CommandContext ctx)
     {
         var uiBuilder = new FridayUIBuilder
         {

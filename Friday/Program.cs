@@ -11,6 +11,7 @@ using DSharpPlus.SlashCommands;
 using DSharpPlus.SlashCommands.Attributes;
 using Friday.Common.Entities;
 using Friday.Common.Services;
+using Friday.FFmpeg;
 using Friday.Helpers;
 using Friday.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -79,6 +80,8 @@ try
         moduleManager));
     
     services.AddSingleton(new SimpleCdnClient(config.SimpleCdn.Host, Guid.Parse(config.SimpleCdn.ApiKey)));
+
+    services.AddSingleton(new FFmpegManager("ffmpeg"));
     Log.Information("Loading modules");
 
     moduleManager.CreateInstances(services);

@@ -10,7 +10,7 @@ public partial class Commands
 {
     [Command("calc")]
     [Description("Calculates a math expression")]
-    public async Task Calc(CommandContext ctx, [RemainingText] string expression)
+    public async Task cmd_Calc(CommandContext ctx, [RemainingText] string expression)
     {
         try
         {

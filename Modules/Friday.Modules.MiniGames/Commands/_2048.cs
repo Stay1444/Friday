@@ -15,7 +15,7 @@ public partial class Commands
 {
     [Command("2048")]
     [Description("Play 2048")]
-    public async Task TwentyFortyEight(CommandContext ctx)
+    public async Task cmd_TwentyFortyEight(CommandContext ctx)
     {
         var uiBuilder = new FridayUIBuilder();
         uiBuilder.OnRenderAsync(async x =>

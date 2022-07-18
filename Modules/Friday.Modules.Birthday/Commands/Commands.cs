@@ -21,7 +21,7 @@ public class Commands : FridayCommandModule
     }
 
     [Command("birthday")]
-    public async Task BirthdayCommand(CommandContext ctx)
+    public async Task cmd_BirthdayCommand(CommandContext ctx)
     {
         if (!await _module.DoesUserHaveBirthdayAsync(ctx.User))
         {

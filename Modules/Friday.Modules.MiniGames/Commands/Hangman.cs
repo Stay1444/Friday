@@ -13,9 +13,9 @@ namespace Friday.Modules.MiniGames.Commands;
 public partial class Commands
 {
     
-    [Command("hangman"), Aliases("ahorcado")]
+    [Command("hangman")]
     [Description("Hangman game")]
-    public async Task HangmanCommand(CommandContext ctx)
+    public async Task cmd_HangmanCommand(CommandContext ctx)
     {
         string userLang;
 

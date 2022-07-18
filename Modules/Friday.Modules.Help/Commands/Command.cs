@@ -24,7 +24,7 @@ public class Command : FridayCommandModule
     }
 
     [Command("help")]
-    public async Task HelpCommand(CommandContext ctx)
+    public async Task cmd_HelpCommand(CommandContext ctx)
     {
         var uiBuilder = new FridayUIBuilder();
         uiBuilder.OnRender(x =>

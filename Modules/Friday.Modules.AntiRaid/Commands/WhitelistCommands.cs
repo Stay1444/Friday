@@ -12,7 +12,7 @@ namespace Friday.Modules.AntiRaid.Commands;
 public partial class Commands
 {
     [Command("whitelist"), RequireGuild, FridayRequireGuildOwner]
-    public async Task Whitelist(CommandContext ctx, [Description("User to whitelist")] DiscordMember member)
+    public async Task cmd_Whitelist(CommandContext ctx, [Description("User to whitelist")] DiscordMember member)
     {
         var db = _module.AntiRaidDatabase;
         var uiBuilder = new FridayUIBuilder().OnRenderAsync(async x =>

@@ -30,12 +30,12 @@ public class BanCommand : FridayCommandModule
     [FridayRequirePermission(Permissions.BanMembers)]
     [RequireBotPermissions(Permissions.BanMembers)]
     [Priority(15)]
-    public async Task Ban(CommandContext ctx, ulong member, DateTime expiration, [RemainingText] string? reason)
+    public async Task cmd_Ban(CommandContext ctx, ulong member, DateTime expiration, [RemainingText] string? reason)
     {
         if (await ctx.Guild.GetMemberAsync(member) is not null)
         {
             // member is in guild
-            await Ban(ctx, await ctx.Guild.GetMemberAsync(member), expiration, reason);
+            await cmd_Ban(ctx, await ctx.Guild.GetMemberAsync(member), expiration, reason);
             return;
         }
         
@@ -62,15 +62,15 @@ public class BanCommand : FridayCommandModule
     [RequireUserPermissions(Permissions.BanMembers)]
     [RequireBotPermissions(Permissions.BanMembers)]
     [Priority(10)]
-    public Task Ban(CommandContext ctx, ulong member, string expiration, [RemainingText] string? reason)
+    public Task cmd_Ban(CommandContext ctx, ulong member, string expiration, [RemainingText] string? reason)
     {
         try
         {
             TimeSpan duration = Utils.ParseVulgarTimeSpan(expiration);
-            return Ban(ctx, member, DateTime.UtcNow + duration, reason);
+            return cmd_Ban(ctx, member, DateTime.UtcNow + duration, reason);
         }catch(ArgumentException)
         {
-            return Ban(ctx, member, expiration + " " + reason);
+            return cmd_Ban(ctx, member, expiration + " " + reason);
         }
     }
     
@@ -79,7 +79,7 @@ public class BanCommand : FridayCommandModule
     [RequireUserPermissions(Permissions.BanMembers)]
     [RequireBotPermissions(Permissions.BanMembers)]
     [Priority(5)]
-    public async Task Ban(CommandContext ctx, DiscordMember member, DateTime expiration, [RemainingText] string? reason)
+    public async Task cmd_Ban(CommandContext ctx, DiscordMember member, DateTime expiration, [RemainingText] string? reason)
     {
         var botMember = await ctx.GetCurrentMember();
         var banState = await _moderationModuleBase.GetBanState(member);
@@ -119,15 +119,15 @@ public class BanCommand : FridayCommandModule
     [RequireUserPermissions(Permissions.BanMembers)]
     [RequireBotPermissions(Permissions.BanMembers)]
     [Priority(0)]
-    public Task Ban(CommandContext ctx, DiscordMember member, string expiration, [RemainingText] string? reason)
+    public Task cmd_Ban(CommandContext ctx, DiscordMember member, string expiration, [RemainingText] string? reason)
     {
         try
         {
             TimeSpan duration = Utils.ParseVulgarTimeSpan(expiration);
-            return Ban(ctx, member, DateTime.UtcNow + duration, reason);
+            return cmd_Ban(ctx, member, DateTime.UtcNow + duration, reason);
         }catch(ArgumentException)
         {
-            return Ban(ctx, member, expiration + " " + reason);
+            return cmd_Ban(ctx, member, expiration + " " + reason);
         }
     }
     
@@ -136,11 +136,11 @@ public class BanCommand : FridayCommandModule
     [RequireUserPermissions(Permissions.BanMembers)]
     [RequireBotPermissions(Permissions.BanMembers)]
     [Priority(10)]
-    public async Task Ban(CommandContext ctx, ulong member, [RemainingText] string? reason)
+    public async Task cmd_Ban(CommandContext ctx, ulong member, [RemainingText] string? reason)
     {
         if (await ctx.Guild.GetMemberAsync(member) is not null)
         {
-            await Ban(ctx, await ctx.Guild.GetMemberAsync(member), reason);
+            await cmd_Ban(ctx, await ctx.Guild.GetMemberAsync(member), reason);
             return;
         }
         var banState = await _moderationModuleBase.GetBanState(ctx.Guild.Id, member);
@@ -165,7 +165,7 @@ public class BanCommand : FridayCommandModule
     [RequireUserPermissions(Permissions.BanMembers)]
     [RequireBotPermissions(Permissions.BanMembers)]
     [Priority(3)]
-    public async Task Ban(CommandContext ctx, DiscordMember member, [RemainingText] string? reason)
+    public async Task cmd_Ban(CommandContext ctx, DiscordMember member, [RemainingText] string? reason)
     {
         var botMember = await ctx.GetCurrentMember();
         var banState = await _moderationModuleBase.GetBanState(member);
@@ -353,7 +353,7 @@ public class BanCommand : FridayCommandModule
     [RequireUserPermissions(Permissions.BanMembers)]
     [RequireBotPermissions(Permissions.BanMembers)]
     [Priority(1)]
-    public async Task Unban(CommandContext ctx, DiscordUser member)
+    public async Task cmd_Unban(CommandContext ctx, DiscordUser member)
     {
         await _moderationModuleBase.RemoveBanState(member.Id, ctx.Guild.Id);
         try
@@ -372,7 +372,7 @@ public class BanCommand : FridayCommandModule
     [RequireGuild]
     [RequireUserPermissions(Permissions.BanMembers)]
     [RequireBotPermissions(Permissions.BanMembers)]
-    public async Task Unban(CommandContext ctx, ulong memberId)
+    public async Task cmd_Unban(CommandContext ctx, ulong memberId)
     {
         await _moderationModuleBase.RemoveBanState(memberId, ctx.Guild.Id);
         try

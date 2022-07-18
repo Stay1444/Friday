@@ -27,7 +27,7 @@ public class PurgeCommand : FridayCommandModule
     [RequireGuild]
     [FridayRequirePermission(Permissions.ManageMessages)]
     [RequireBotPermissions(Permissions.ManageMessages)]
-    public async Task Purge(CommandContext ctx, [Description("Number of messages to delete")] int amount)
+    public async Task cmd_Purge(CommandContext ctx, [Description("Number of messages to delete")] int amount)
     {
         var messages = await ctx.Channel.GetMessagesAsync(amount);
 

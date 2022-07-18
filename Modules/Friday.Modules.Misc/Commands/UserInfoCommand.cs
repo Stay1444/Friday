@@ -9,7 +9,7 @@ namespace Friday.Modules.Misc.Commands;
 public partial class Commands
 {
     [Command("userinfo"), RequireGuild]
-    public async Task UserInfoCommand(CommandContext ctx, DiscordMember? member = null)
+    public async Task cmd_UserInfoCommand(CommandContext ctx, DiscordMember? member = null)
     {
         if (member == null)
         {

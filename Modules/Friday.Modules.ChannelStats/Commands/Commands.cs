@@ -25,7 +25,7 @@ public class Commands : FridayCommandModule
     }
 
     [GroupCommand, FridayRequirePermission(Permissions.Administrator)]
-    public async Task Main(CommandContext ctx)
+    public async Task cmd_Main(CommandContext ctx)
     {
         var uiBuilder = new FridayUIBuilder();
         var channels = await _module.DatabaseService.GetGuildStatsChannelsAsync(ctx.Guild.Id);
@@ -333,7 +333,7 @@ public class Commands : FridayCommandModule
     [Description("Get information about a variable.")]
     [Aliases("variable")]
     [RequireGuild, FridayRequirePermission(Permissions.Administrator)]
-    public async Task GetVariableAsync(CommandContext ctx, [RemainingText] [Description("The variable to get information about.")] string variableName)
+    public async Task cmd_GetVariableAsync(CommandContext ctx, [RemainingText] [Description("The variable to get information about.")] string variableName)
     {
         var variables = _module.VariablesService.GetVariables();
         if (!variables.ContainsKey(variableName))

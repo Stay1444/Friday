@@ -10,7 +10,7 @@ namespace Friday.Modules.MiniGames.Commands;
 public partial class Commands
 {
     [Command("rps"), RequireGuild]
-    public async Task RockPaperScissors(CommandContext ctx, DiscordMember member)
+    public async Task cmd_RockPaperScissors(CommandContext ctx, DiscordMember member)
     {
         var msgBuilder = new DiscordMessageBuilder();
         var embedBuilder = new DiscordEmbedBuilder();
