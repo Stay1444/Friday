@@ -30,6 +30,7 @@ variables:
   # 3) A relative path to the source code from project repository root.
   # NOTE: Please edit this path so it matches the structure of your project!
   SOURCE_CODE_PATH: 'Friday/'
+  GIT_SUBMODULE_STRATEGY: recursive
 
 # ### Define global cache rule
 #
