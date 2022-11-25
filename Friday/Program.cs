@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using DSharpPlus;
+﻿using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Exceptions;
 using DSharpPlus.Entities;
@@ -11,7 +10,6 @@ using DSharpPlus.SlashCommands;
 using DSharpPlus.SlashCommands.Attributes;
 using Friday.Common.Entities;
 using Friday.Common.Services;
-using Friday.FFmpeg;
 using Friday.Helpers;
 using Friday.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -81,7 +79,6 @@ try
     
     services.AddSingleton(new SimpleCdnClient(config.SimpleCdn.Host, Guid.Parse(config.SimpleCdn.ApiKey)));
 
-    services.AddSingleton(new FFmpegManager("ffmpeg"));
     Log.Information("Loading modules");
 
     moduleManager.CreateInstances(services);
@@ -184,7 +181,7 @@ try
             module.Instance!.RegisterSlashCommands(ex);
         }
         
-        ex.SlashCommandErrored += async (sender, e) =>
+        ex.SlashCommandErrored += async (_, e) =>
         {
             // check if the exception is a checks failed exception (i.e. a permission check failed)
             if (e.Exception is SlashExecutionChecksFailedException checksFailedException)
@@ -233,7 +230,6 @@ try
                 }
                 
                 await e.Context.CreateResponseAsync(embed: embed, true);
-                return;
             }
             else
             {

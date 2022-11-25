@@ -10,7 +10,7 @@
     <ItemGroup>
       <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0-preview.1.22076.8" />
       <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
-      <PackageReference Include="Tomlyn" Version="0.14.0" />
+      <PackageReference Include="YamlDotNet" Version="12.0.2" />
     </ItemGroup>
 
     <ItemGroup>
@@ -25,7 +25,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Friday.FFmpeg\Friday.FFmpeg.csproj" />
       <ProjectReference Include="..\Friday.Common\Friday.Common.csproj" />
       <ProjectReference Include="..\Friday.Network\Friday.Network.csproj" />
       <ProjectReference Include="..\Friday.Rendering\Friday.Rendering.csproj" />
