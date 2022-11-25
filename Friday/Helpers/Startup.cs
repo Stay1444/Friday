@@ -1,8 +1,6 @@
 ﻿using Friday.Common;
 using Friday.Common.Models;
-using Microsoft.Extensions.DependencyInjection;
 using Serilog;
-using Tomlyn;
 
 namespace Friday.Helpers;
 
@@ -28,13 +26,13 @@ public static class Startup
     
     public static FridayConfiguration LoadConfiguration()
     {
-        Directory.CreateDirectory("conf");
-        if (!File.Exists("config.toml"))
+        Directory.CreateDirectory("config");
+        if (!File.Exists("config/friday.yaml"))
         {
-            File.WriteAllText("config.toml", Toml.FromModel(new FridayConfiguration()));
+            File.WriteAllText("config/friday.yaml", FridayYaml.Serializer.Serialize(new FridayConfiguration()));
         }
 
-        var config = Toml.ToModel<FridayConfiguration>(File.ReadAllText("config.toml"));
+        var config = FridayYaml.Deserializer.Deserialize<FridayConfiguration>(File.ReadAllText("config/friday.yaml"));
         
         return config;
     }

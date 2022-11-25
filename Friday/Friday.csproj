@@ -20,8 +20,8 @@
       <EmbeddedResource Include="Resources\required.sql" />
       <None Remove="Resources\Languages\es.lang" />
       <EmbeddedResource Include="Resources\Languages\es.lang" />
-      <None Remove="Resources\module.toml" />
-      <EmbeddedResource Include="Resources\module.toml" />
+      <None Remove="Resources\module.yaml" />
+      <EmbeddedResource Include="Resources\module.yaml" />
     </ItemGroup>
 
     <ItemGroup>

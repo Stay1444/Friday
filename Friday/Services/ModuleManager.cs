@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using System.Runtime.Loader;
 using Friday.Common;
 using Friday.Common.Entities;
 using Friday.Common.Services;
@@ -7,7 +6,6 @@ using Friday.Entities;
 using Friday.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
-using Tomlyn;
 
 namespace Friday.Services;
 
@@ -46,8 +44,8 @@ public class ModuleManager : IModuleManager
 
                 try
                 {
-                    var resource = Resource.Load(assembly, "Resources/module.toml");
-                    var config = Toml.ToModel<ModuleConfigModel>(resource.ReadString());
+                    var resource = Resource.Load(assembly, "Resources/module.yaml");
+                    var config = FridayYaml.Deserializer.Deserialize<ModuleConfigModel>(resource.ReadString());
 
                     if (!string.IsNullOrEmpty(config.Name))
                     {
@@ -75,7 +73,12 @@ public class ModuleManager : IModuleManager
                     }
 
                     moduleInfo.ConfigModel = config;
-                }catch{ /* ignored */ }
+                }
+                catch (Exception error)
+                {
+                    Log.Error(error, "Error while loading module configuration");
+                    return;
+                }
                 
                 _modules.Add(moduleInfo);
             }
@@ -94,11 +97,11 @@ public class ModuleManager : IModuleManager
         var moduleInfo = new ModuleInfo(assembly.GetName().Name ?? assembly.FullName ?? "Unknown",
             "1.0.0", new []{ "Unknown" },
             "Unknown",  null, null, assembly);
-        
+
         try
         {
-            var resource = Resource.Load(assembly, "Resources/module.toml");
-            var config = Toml.ToModel<ModuleConfigModel>(resource.ReadString());
+            var resource = Resource.Load(assembly, "Resources/module.yaml");
+            var config = FridayYaml.Deserializer.Deserialize<ModuleConfigModel>(resource.ReadString());
 
             if (!string.IsNullOrEmpty(config.Name))
             {
@@ -126,7 +129,12 @@ public class ModuleManager : IModuleManager
             }
 
             moduleInfo.ConfigModel = config;
-        }catch{ /* ignored */ }
+        }
+        catch(Exception error)
+        {
+            Log.Error(error, "Error while loading module configuration");
+            return;
+        }
                 
         _modules.Add(moduleInfo);
     }

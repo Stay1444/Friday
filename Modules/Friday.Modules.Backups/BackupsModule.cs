@@ -1,11 +1,9 @@
 using Friday.Common;
 using Friday.Common.Models;
 using Friday.Common.Services;
-using Friday.Modules.Backups.Entities;
 using Friday.Modules.Backups.Services;
 using Serilog;
 using SimpleCDN.Wrapper;
-using Tomlyn;
 
 namespace Friday.Modules.Backups;
 

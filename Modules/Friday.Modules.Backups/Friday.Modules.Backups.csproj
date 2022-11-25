@@ -16,6 +16,8 @@
     <ItemGroup>
       <None Remove="Resources\required.sql" />
       <EmbeddedResource Include="Resources\required.sql" />
+      <None Remove="Resources\module.yaml" />
+      <EmbeddedResource Include="Resources\module.yaml" />
     </ItemGroup>
 
     <ItemGroup>

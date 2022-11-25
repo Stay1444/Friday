@@ -4,7 +4,6 @@ using Friday.Common;
 using Friday.Common.Services;
 using Friday.Modules.Moderation.Models;
 using Serilog;
-using Tomlyn;
 using Timer = System.Timers.Timer;
 
 namespace Friday.Modules.Moderation;
@@ -23,16 +22,11 @@ public class ModerationModuleBase : ModuleBase
         _banTimer = new Timer(60000);
     }
 
-    public override Task OnLoad()
+    public override async Task OnLoad()
     {
         Log.Information("[Moderation] Module loaded.");
         Log.Information("[Moderation] Loading config...");
-        if (!File.Exists("conf/moderation.toml"))
-        {
-            File.WriteAllText("conf/moderation.toml", Toml.FromModel(new ModerationConfiguration()));
-        }
-        
-        _config = Toml.ToModel<ModerationConfiguration>(File.ReadAllText("conf/moderation.toml"));
+        _config = await ReadConfiguration<ModerationConfiguration>();
         Log.Information("[Moderation] Config loaded.");
         Log.Information("[Moderation] Starting ban timer...");
         _banTimer = new Timer(_config.BanCheckIntervalSeconds * 1000);
@@ -40,7 +34,6 @@ public class ModerationModuleBase : ModuleBase
         _banTimer.AutoReset = false;
         _banTimer.Elapsed += (a,b) => _ = BanTimerOnElapsed();
         Log.Information("[Moderation] Ban timer started. Interval: {0} seconds", _config.BanCheckIntervalSeconds);
-        return Task.CompletedTask;
     }
 
     public override Task OnUnload()
