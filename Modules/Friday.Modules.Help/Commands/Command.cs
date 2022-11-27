@@ -48,7 +48,7 @@ public class Command : FridayCommandModule
                     {
                         option.Label = module.Name;
                         option.Value = module.Assembly.GetName().Name;
-                        option.Description = $"{commands.Count} commands";
+                        option.Description = $"{commands.Count} command" + (commands.Count > 1 ? "s" : "");
                         if (module.Icon is not null)
                         {
                             var emoji = DiscordEmojiUtils.FromGeneric(module.Icon, ctx.Client);

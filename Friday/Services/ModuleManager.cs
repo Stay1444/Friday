@@ -26,75 +26,9 @@ public class ModuleManager : IModuleManager
         return assembly.GetTypes().Any(t => t.IsSubclassOf(typeof(ModuleBase)));
     }
 
-    public void LoadModules()
+    private void LoadModule(Assembly assembly, string assemblyPath)
     {
-        if (!Directory.Exists(MODULE_FOLDER))
-        {
-            Directory.CreateDirectory(MODULE_FOLDER);
-        }
-
-        foreach (var assemblyPath in Directory.GetFiles(MODULE_FOLDER, "*.dll"))
-        {
-            var assembly = Assembly.LoadFrom(assemblyPath);
-            if (IsValid(assembly))
-            {
-                var moduleInfo = new ModuleInfo(assembly.GetName().Name ?? Path.GetFileName(assemblyPath),
-                    "1.0.0", new []{ "Unknown" },
-                    "Unknown",  null, null, assembly);
-
-                try
-                {
-                    var resource = Resource.Load(assembly, "Resources/module.yaml");
-                    var config = FridayYaml.Deserializer.Deserialize<ModuleConfigModel>(resource.ReadString());
-
-                    if (!string.IsNullOrEmpty(config.Name))
-                    {
-                        moduleInfo.Name = config.Name;
-                    }
-
-                    if (!string.IsNullOrEmpty(config.Version))
-                    {
-                        moduleInfo.Version = config.Version;
-                    }
-
-                    if (config.Authors is not null)
-                    {
-                        moduleInfo.Authors = config.Authors;
-                    }
-
-                    if (config.Description is not null)
-                    {
-                        moduleInfo.Description = config.Description;
-                    }
-
-                    if (config.Icon is not null)
-                    {
-                        moduleInfo.Icon = config.Icon;
-                    }
-
-                    moduleInfo.ConfigModel = config;
-                }
-                catch (Exception error)
-                {
-                    Log.Error(error, "Error while loading module configuration");
-                    return;
-                }
-                
-                _modules.Add(moduleInfo);
-            }
-        }
-    }
-
-    public void LoadCallingModule()
-    {
-        var assembly = Assembly.GetCallingAssembly();
-
-        if (!IsValid(assembly))
-        {
-            throw new Exception("The calling assembly is not a valid assembly!");
-        }
-        
-        var moduleInfo = new ModuleInfo(assembly.GetName().Name ?? assembly.FullName ?? "Unknown",
+        var moduleInfo = new ModuleInfo(assembly.GetName().Name ?? Path.GetFileName(assemblyPath),
             "1.0.0", new []{ "Unknown" },
             "Unknown",  null, null, assembly);
 
@@ -130,13 +64,36 @@ public class ModuleManager : IModuleManager
 
             moduleInfo.ConfigModel = config;
         }
-        catch(Exception error)
+        catch (Exception error)
         {
             Log.Error(error, "Error while loading module configuration");
             return;
         }
                 
         _modules.Add(moduleInfo);
+    }
+
+    public void LoadModule<T>()
+    {
+        var assembly = typeof(T).Assembly;
+        LoadModule(assembly, "unknown");
+    }
+    
+    public void LoadModules()
+    {
+        if (!Directory.Exists(MODULE_FOLDER))
+        {
+            Directory.CreateDirectory(MODULE_FOLDER);
+        }
+
+        foreach (var assemblyPath in Directory.GetFiles(MODULE_FOLDER, "*.dll"))
+        {
+            var assembly = Assembly.LoadFrom(assemblyPath);
+            if (IsValid(assembly))
+            {
+                LoadModule(assembly, assemblyPath);
+            }
+        }
     }
 
     public void CreateInstances(ServiceCollection services)

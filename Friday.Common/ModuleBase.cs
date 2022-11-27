@@ -52,6 +52,5 @@ public abstract class ModuleBase
         Directory.CreateDirectory(CONFIGURATION_DIRECTORY);
         await File.WriteAllTextAsync(Path.Combine(CONFIGURATION_DIRECTORY, Module.Assembly.GetName().Name!), FridayYaml.Serializer.Serialize(config));
     }
-    
     public virtual void RegisterSlashCommands(SlashCommandsExtension extension) { }
 }

@@ -11,6 +11,7 @@ using Friday.Modules.Backups.Services;
 using Friday.UI;
 using Friday.UI.Entities;
 using Friday.UI.Extensions;
+using Serilog;
 
 namespace Friday.Modules.Backups.Commands;
 
@@ -363,10 +364,22 @@ public class Commands : FridayCommandModule
                     backingUp.Value = true;
                     _ = Task.Run(async () =>
                     {
-                        await _module.BackupService.CreateBackupAsync(ctx.Guild, ctx.User);
-                        backingUp.Value = false;
-                        backups = await _module.Database.GetBackupsAsync(ctx.User.Id);
-                        x.ForceRender();
+                        try
+                        {
+                            await _module.BackupService.CreateBackupAsync(ctx.Guild, ctx.User);
+                            backingUp.Value = false;
+                            backups = await _module.Database.GetBackupsAsync(ctx.User.Id);
+                            x.ForceRender();
+                        }
+                        catch(Exception error)
+                        {
+                            Log.Error(error, "Error while creating backup");
+                            backingUp.Value = false;
+                            x.ForceRender();
+                            await ctx.Channel.SendMessageAsync(new DiscordMessageBuilder()
+                                .WithReply(ctx.Message.Id, true, false)
+                                .WithContent("Unexpected error while creating the backup"));
+                        }
                     });
                 });
             });

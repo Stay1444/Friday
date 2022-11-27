@@ -8,9 +8,14 @@ using DSharpPlus.Lavalink;
 using DSharpPlus.Net;
 using DSharpPlus.SlashCommands;
 using DSharpPlus.SlashCommands.Attributes;
+using Friday.Common;
 using Friday.Common.Entities;
 using Friday.Common.Services;
 using Friday.Helpers;
+using Friday.Modules.Backups;
+using Friday.Modules.Help;
+using Friday.Modules.Misc;
+using Friday.Modules.Music;
 using Friday.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
@@ -19,6 +24,7 @@ using SimpleCDN.Wrapper;
 
 try
 {
+    Constants.ProcessStartTimeUtc.AddMilliseconds(0);
     Startup.CleanTempFiles();
 
     Startup.LoggerStartup();
@@ -53,10 +59,17 @@ try
     // Load modules | Module.dll
     moduleManager.LoadModules();
 
+    
+    
     // Load this project as a module
     // In the future we could add commands here, but this is currently used because this contains basic language files.
-    moduleManager.LoadCallingModule();
-
+    moduleManager.LoadModule<Program>();
+    
+    // Load Friday modules
+    moduleManager.LoadModule<HelpModule>();
+    moduleManager.LoadModule<BackupsModule>();
+    moduleManager.LoadModule<MiscModule>();
+    moduleManager.LoadModule<MusicModule>();
     services.AddSingleton<IModuleManager>(moduleManager);
     
     var dbProvider = new DatabaseProvider(config);

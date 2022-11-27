@@ -15,4 +15,8 @@
       <Folder Include="Services" />
     </ItemGroup>
 
+    <ItemGroup>
+      <EmbeddedResource Include="Resources\module.yaml" />
+    </ItemGroup>
+
 </Project>

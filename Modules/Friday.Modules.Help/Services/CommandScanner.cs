@@ -32,7 +32,11 @@ public class CommandScanner
 
             foreach (var method in methods)
             {
-                
+                _definitions[moduleInfo].Add(new CommandDefinition()
+                {
+                    Name = method.GetCustomAttribute<CommandAttribute>()!.Name!,
+                    Aliases = method.GetCustomAttribute<AliasesAttribute>()?.Aliases.ToArray() ?? Array.Empty<string>()
+                });
             }
         }
     }
@@ -45,6 +49,6 @@ public class CommandScanner
     public IReadOnlyList<CommandDefinition> ResolveCommandsAsync(IModuleInfo moduleInfo, CommandContext ctx)
     {
         var commands = GetCommands(moduleInfo);
-        return new List<CommandDefinition>();
+        return commands;
     }
 }

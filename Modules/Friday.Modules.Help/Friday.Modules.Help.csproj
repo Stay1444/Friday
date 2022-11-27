@@ -16,6 +16,8 @@
       <EmbeddedResource Include="Resources\Language\en.lang" />
       <None Remove="Resources\Language\es.lang" />
       <EmbeddedResource Include="Resources\Language\es.lang" />
+      <None Remove="Resources\module.yaml" />
+      <EmbeddedResource Include="Resources\module.yaml" />
     </ItemGroup>
 
 </Project>

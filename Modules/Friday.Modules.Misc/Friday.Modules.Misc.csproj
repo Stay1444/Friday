@@ -11,4 +11,9 @@
       <ProjectReference Include="..\..\Friday.UI\Friday.UI.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="Resources\module.yaml" />
+      <EmbeddedResource Include="Resources\module.yaml" />
+    </ItemGroup>
+
 </Project>
