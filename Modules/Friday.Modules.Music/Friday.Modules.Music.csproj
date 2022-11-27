@@ -12,11 +12,33 @@
 
     <ItemGroup>
       <Folder Include="Images" />
-      <Folder Include="Services" />
     </ItemGroup>
 
     <ItemGroup>
-      <EmbeddedResource Include="Resources\module.yaml" />
+      <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta14" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Resources\Language\en.lang" />
+      <EmbeddedResource Include="Resources\Language\en.lang" />
+      <None Remove="Resources\Images\youtube.png" />
+      <EmbeddedResource Include="Resources\Images\youtube.png" />
+      <None Remove="Resources\Images\spotify.png" />
+      <EmbeddedResource Include="Resources\Images\spotify.png" />
+      <None Remove="Resources\Images\play_icon.png" />
+      <EmbeddedResource Include="Resources\Images\play_icon.png" />
+      <None Remove="Resources\Images\pause_icon.png" />
+      <EmbeddedResource Include="Resources\Images\pause_icon.png" />
+      <None Remove="Resources\Images\default_thumbnail.png" />
+      <EmbeddedResource Include="Resources\Images\default_thumbnail.png" />
+      <None Remove="Resources\Fonts\Roboto-Regular.ttf" />
+      <EmbeddedResource Include="Resources\Fonts\Roboto-Regular.ttf" />
+      <None Remove="Resources\Fonts\Roboto-Medium.ttf" />
+      <EmbeddedResource Include="Resources\Fonts\Roboto-Medium.ttf" />
+      <None Remove="Resources\Fonts\Roboto-Light.ttf" />
+      <EmbeddedResource Include="Resources\Fonts\Roboto-Light.ttf" />
+      <None Remove="Resources\Fonts\Roboto-Bold.ttf" />
+      <EmbeddedResource Include="Resources\Fonts\Roboto-Bold.ttf" />
     </ItemGroup>
 
 </Project>
