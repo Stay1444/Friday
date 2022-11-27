@@ -160,7 +160,7 @@ public class MusicPanel : IDisposable
         var id = await _musicModuleBase.SimpleCdnClient.UploadAsync("friday_music_panel_image.gif", stream, false,
             DateTime.UtcNow.AddHours(24));
 
-        return _musicModuleBase.SimpleCdnClient.BuildUrl(id).ToString();
+        return _musicModuleBase.SimpleCdnClient.BuildUrl(id) + "/friday_music_panel_image.gif";
     }
 
     private async Task E_ComponentInteractionCreated(DiscordClient client, ComponentInteractionCreateEventArgs e)
