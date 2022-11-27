@@ -30,6 +30,7 @@
       <ProjectReference Include="..\Friday.Rendering\Friday.Rendering.csproj" />
       <ProjectReference Include="..\Friday.UI\Friday.UI.csproj" />
       <ProjectReference Include="..\Modules\Friday.Modules.Backups\Friday.Modules.Backups.csproj" />
+      <ProjectReference Include="..\Modules\Friday.Modules.Birthday\Friday.Modules.Birthday.csproj" />
       <ProjectReference Include="..\Modules\Friday.Modules.Help\Friday.Modules.Help.csproj" />
       <ProjectReference Include="..\Modules\Friday.Modules.Misc\Friday.Modules.Misc.csproj" />
       <ProjectReference Include="..\Modules\Friday.Modules.Music\Friday.Modules.Music.csproj" />

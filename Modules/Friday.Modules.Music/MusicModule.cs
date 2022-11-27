@@ -4,6 +4,7 @@ using Friday.Common;
 using Friday.Modules.Music.Models;
 using Friday.Modules.Music.Services;
 using Serilog;
+using SimpleCDN.Wrapper;
 
 namespace Friday.Modules.Music;
 
@@ -13,9 +14,11 @@ public class MusicModule : ModuleBase
     private DiscordShardedClient _client;
     private MusicConfig? _config;
     public MusicConfig Config => _config ?? throw new InvalidOperationException("Config not loaded");
-    public MusicModule(DiscordShardedClient client)
+    public SimpleCdnClient SimpleCdnClient;
+    public MusicModule(DiscordShardedClient client, SimpleCdnClient simpleCdnClient)
     {
         _client = client;
+        SimpleCdnClient = simpleCdnClient;
     }
 
     public override async Task OnLoad()
@@ -28,7 +31,7 @@ public class MusicModule : ModuleBase
 
     public override Task OnUnload()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 
     public GuildMusic GetGuildMusic(DiscordGuild guild)

@@ -23,9 +23,9 @@ public class Commands : FridayCommandModule
     [Command("birthday")]
     public async Task cmd_BirthdayCommand(CommandContext ctx)
     {
+        var uiBuilder = new FridayUIBuilder();
         if (!await _module.DoesUserHaveBirthdayAsync(ctx.User))
         {
-            var uiBuilder = new FridayUIBuilder();
             uiBuilder.OnRender(x =>
             {
                 x.Embed.Transparent();
@@ -125,10 +125,28 @@ public class Commands : FridayCommandModule
                             x.ForceRender();
                         });
                     });
+
+                    if (birthday.Value is not null)
+                    {
+                        addPage.AddButton(confirm =>
+                        {
+                            confirm.Label = "Confirm";
+                            confirm.Emoji = DiscordEmoji.FromName(ctx.Client, ":white_check_mark:");
+                            confirm.Style = ButtonStyle.Success;
+                            confirm.OnClick(async () =>
+                            {
+                                await _module.DatabaseService.InsertBirthdayAsync(
+                                    new Entities.Birthday(ctx.User.Id, birthday.Value.Value));
+                                x.OnCancelledAsync((_, msg) => msg.DeleteAsync());
+                                x.Stop();
+                            });
+                        });
+                    }
                 });
             });
 
             await ctx.SendUIAsync(uiBuilder);
+            return;
         }
     }
 }

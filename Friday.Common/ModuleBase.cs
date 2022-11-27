@@ -8,7 +8,7 @@ namespace Friday.Common;
 public abstract class ModuleBase
 {
     private const string CONFIGURATION_DIRECTORY = "config";
-    public IModuleInfo? Module { get; } = null;
+    public IModuleInfo? Module { get; set; } = null;
     public abstract Task OnLoad();
     public abstract Task OnUnload();
     
@@ -24,22 +24,22 @@ public abstract class ModuleBase
         {
             if (Module is null) throw new Exception("Not ready");
             Directory.CreateDirectory(CONFIGURATION_DIRECTORY);
-            if (!File.Exists(Path.Combine(CONFIGURATION_DIRECTORY, Module.Assembly.GetName().Name!)))
+            if (!File.Exists(Path.Combine(CONFIGURATION_DIRECTORY, Module.Assembly.GetName().Name! + ".yaml")))
             {
                 var def = new T();
-                await File.WriteAllTextAsync(Path.Combine(CONFIGURATION_DIRECTORY, Module.Assembly.GetName().Name!),
+                await File.WriteAllTextAsync(Path.Combine(CONFIGURATION_DIRECTORY, Module.Assembly.GetName().Name! + ".yaml"),
                     FridayYaml.Serializer.Serialize(def));
                 return def;
             }
 
             var deserialized = FridayYaml.Deserializer.Deserialize<T>(
-                await File.ReadAllTextAsync(Path.Combine(CONFIGURATION_DIRECTORY, Module.Assembly.GetName().Name!)));
+                await File.ReadAllTextAsync(Path.Combine(CONFIGURATION_DIRECTORY, Module.Assembly.GetName().Name! + ".yaml")));
 
             return deserialized;
         }
         catch(Exception error)
         {
-            Log.Error(error, "Error loading module {0} configuration", Module!.Name);
+            Log.Error("Error loading module configuration: {0}", error.Message);
         }
 
         return new T();

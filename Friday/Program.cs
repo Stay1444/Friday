@@ -13,6 +13,7 @@ using Friday.Common.Entities;
 using Friday.Common.Services;
 using Friday.Helpers;
 using Friday.Modules.Backups;
+using Friday.Modules.Birthday;
 using Friday.Modules.Help;
 using Friday.Modules.Misc;
 using Friday.Modules.Music;
@@ -70,6 +71,7 @@ try
     moduleManager.LoadModule<BackupsModule>();
     moduleManager.LoadModule<MiscModule>();
     moduleManager.LoadModule<MusicModule>();
+    moduleManager.LoadModule<BirthdayModule>();
     services.AddSingleton<IModuleManager>(moduleManager);
     
     var dbProvider = new DatabaseProvider(config);

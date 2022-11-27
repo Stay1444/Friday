@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Friday.Common\Friday.Common.csproj" />
+      <ProjectReference Include="..\..\Friday.Network\Friday.Network.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -39,6 +40,8 @@
       <EmbeddedResource Include="Resources\Fonts\Roboto-Light.ttf" />
       <None Remove="Resources\Fonts\Roboto-Bold.ttf" />
       <EmbeddedResource Include="Resources\Fonts\Roboto-Bold.ttf" />
+      <None Remove="Resources\module.yaml" />
+      <EmbeddedResource Include="Resources\module.yaml" />
     </ItemGroup>
 
 </Project>

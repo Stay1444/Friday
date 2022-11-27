@@ -128,6 +128,7 @@ public class ModuleManager : IModuleManager
                     return;
                 }
 
+                instance.Module = module;
                 module.Instance = instance;
                 services.AddSingleton(instance.GetType(), instance);
                 Log.Information("Module {name} ({assembly}) by {authors} loaded!", module.Name,

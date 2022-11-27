@@ -125,6 +125,7 @@ public class PlayingTrackImage
         };
 
         await image.SaveAsGifAsync(stream, encoder);
+        stream.Position = 0;
         return stream;
     }
 

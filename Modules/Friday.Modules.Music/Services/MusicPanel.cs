@@ -157,17 +157,10 @@ public class MusicPanel : IDisposable
 
     private async Task<string> UploadToCdn(MemoryStream stream)
     {
-        ulong cdnId = _musicModuleBase.Config.CdnChannelId;
-        DiscordChannel cdnChannel = await _music.Client.GetChannelAsync(cdnId);
-        stream.Position = 0;
-        var msg = await cdnChannel.SendMessageAsync(new DiscordMessageBuilder().WithFile("img.gif", stream));
-        string url = msg.Attachments.First().Url;
-        _ = Task.Run(async () =>
-        {
-            await Task.Delay(TimeSpan.FromSeconds(5));
-            await msg.DeleteAsync();
-        });
-        return url;
+        var id = await _musicModuleBase.SimpleCdnClient.UploadAsync("friday_music_panel_image.gif", stream, false,
+            DateTime.UtcNow.AddHours(24));
+
+        return _musicModuleBase.SimpleCdnClient.BuildUrl(id).ToString();
     }
 
     private async Task E_ComponentInteractionCreated(DiscordClient client, ComponentInteractionCreateEventArgs e)
