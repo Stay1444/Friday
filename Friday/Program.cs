@@ -165,7 +165,7 @@ try
     var commandsNextExtensions = await client.UseCommandsNextAsync(new CommandsNextConfiguration
     {
         CaseSensitive = false,
-        EnableDefaultHelp = false,
+        EnableDefaultHelp = config.Discord.EnableDefaultHelp,
         EnableDms = true,
         IgnoreExtraArguments = false,
         EnableMentionPrefix = true,
