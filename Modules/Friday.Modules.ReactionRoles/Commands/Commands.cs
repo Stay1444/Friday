@@ -21,9 +21,9 @@ namespace Friday.Modules.ReactionRoles.Commands;
 public class Commands : FridayCommandModule
 {
     private readonly FridayConfiguration _configuration;
-    private readonly ReactionRolesModule _module;
+    private readonly ReactionRoles _module;
 
-    public Commands(ReactionRolesModule module, FridayConfiguration configuration)
+    public Commands(ReactionRoles module, FridayConfiguration configuration)
     {
         _module = module;
         _configuration = configuration;

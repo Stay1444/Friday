@@ -8,11 +8,11 @@ using Friday.Modules.ReactionRoles.Services;
 
 namespace Friday.Modules.ReactionRoles;
 
-public class ReactionRolesModule : ModuleBase
+public class ReactionRoles : ModuleBase
 {
     internal DatabaseHelper DatabaseHelper { get; }
     internal DiscordShardedClient Client;
-    public ReactionRolesModule(DatabaseProvider provider, DiscordShardedClient client)
+    public ReactionRoles(DatabaseProvider provider, DiscordShardedClient client)
     {
         Client = client;
         DatabaseHelper = new DatabaseHelper(provider);

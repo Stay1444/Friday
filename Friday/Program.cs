@@ -17,11 +17,13 @@ using Friday.Modules.Birthday;
 using Friday.Modules.Help;
 using Friday.Modules.Misc;
 using Friday.Modules.Music;
+using Friday.Modules.ReactionRoles;
 using Friday.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Extensions.Logging;
 using SimpleCDN.Wrapper;
+using Zaroz.Modules.ZarozMinecraft;
 
 try
 {
@@ -71,7 +73,9 @@ try
     moduleManager.LoadModule<BackupsModule>();
     moduleManager.LoadModule<MiscModule>();
     moduleManager.LoadModule<MusicModule>();
+    moduleManager.LoadModule<ReactionRoles>();
     moduleManager.LoadModule<BirthdayModule>();
+    moduleManager.LoadModule<ZarozMinecraft>();
     services.AddSingleton<IModuleManager>(moduleManager);
     
     var dbProvider = new DatabaseProvider(config);

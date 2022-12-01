@@ -9,7 +9,7 @@ namespace Friday.Modules.ReactionRoles.UI;
 
 internal static class ReactionRolesEditUI
 {
-    public static async Task ReactionRolesEdit(this FridayUIPage page, CommandContext ctx, ReactionRole reactionRole, ReactionRolesModule module)
+    public static async Task ReactionRolesEdit(this FridayUIPage page, CommandContext ctx, ReactionRole reactionRole, ReactionRoles module)
     {
         page.Embed.Transparent();
         page.Embed.WithTitle("Reaction Roles - Edit");
