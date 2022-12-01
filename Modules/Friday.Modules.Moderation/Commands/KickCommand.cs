@@ -12,13 +12,13 @@ namespace Friday.Modules.Moderation.Commands;
 
 public class KickCommand : FridayCommandModule
 {
-    private ModerationModuleBase _moderationModuleBase;
+    private ModerationModule _moderationModule;
     private FridayConfiguration _config;
     private LanguageProvider _languageProvider;
     
-    public KickCommand(ModerationModuleBase moderationModuleBase, FridayConfiguration config, LanguageProvider languageProvider)
+    public KickCommand(ModerationModule moderationModule, FridayConfiguration config, LanguageProvider languageProvider)
     {
-        _moderationModuleBase = moderationModuleBase;
+        _moderationModule = moderationModule;
         _config = config;
         _languageProvider = languageProvider;
     }

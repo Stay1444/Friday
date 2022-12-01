@@ -22,6 +22,7 @@
       <None Remove="Resources\Fonts\ClearSans-Bold.ttf" />
       <EmbeddedResource Include="Resources\Fonts\ClearSans-Bold.ttf" />
       <None Remove="Resources\required.sql" />
+      <EmbeddedResource Include="Resources\module.yaml" />
       <EmbeddedResource Include="Resources\required.sql" />
       <None Remove="Resources\Hangman\es.txt" />
       <EmbeddedResource Include="Resources\Hangman\es.txt" />

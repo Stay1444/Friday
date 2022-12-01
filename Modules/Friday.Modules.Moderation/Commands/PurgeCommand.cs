@@ -11,14 +11,14 @@ namespace Friday.Modules.Moderation.Commands;
 
 public class PurgeCommand : FridayCommandModule
 {
-    private ModerationModuleBase _moderationModuleBase;
+    private ModerationModule _moderationModule;
     private FridayConfiguration _config;
     private LanguageProvider _languageProvider;
 
-    public PurgeCommand(ModerationModuleBase moderationModuleBase, FridayConfiguration config,
+    public PurgeCommand(ModerationModule moderationModule, FridayConfiguration config,
         LanguageProvider languageProvider)
     {
-        _moderationModuleBase = moderationModuleBase;
+        _moderationModule = moderationModule;
         _config = config;
         _languageProvider = languageProvider;
     }
