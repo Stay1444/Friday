@@ -18,37 +18,7 @@ cache:
   policy: pull-push
 
 stages:
-  - build
-  - build-modules
   - publish
-
-core:build:
-  image: mcr.microsoft.com/dotnet/sdk:latest
-  stage: build
-  tags: ["build", "dotnet"]
-  before_script:
-    - 'dotnet restore Friday/Friday.csproj'
-  script:
-    - 'dotnet build -c Release --no-restore Friday/Friday.csproj'
-
-
-module:reaction_roles:build:
-  image: mcr.microsoft.com/dotnet/sdk:latest
-  stage: build-modules
-  tags: ["build", "dotnet"]
-  
-  needs:
-    - core:build
-  
-  before_script:
-    - 'dotnet restore Modules/Friday.Modules.ReactionRoles/Friday.Modules.ReactionRoles.csproj'
-  script:
-    - 'dotnet build -c Release --no-restore Modules/Friday.Modules.ReactionRoles/Friday.Modules.ReactionRoles.csproj'
-  artifacts:
-    paths:
-      - Modules/Friday.Modules.ReactionRoles/bin/Release/net6.0/Friday.Modules.ReactionRoles.dll
-    expire_in: 1 week
-
 
 publish:image:
   image: docker:latest
@@ -58,14 +28,11 @@ publish:image:
 
   tags: ["build", "docker"]
   
-  needs:
-    - module:reaction_roles:build
-  
   services:
     - docker:dind
   
   before_script:
-    - echo "$HARBOR_PASS" | docker login -u "$HARBOR_USER" "$HARBOR_HOST" --password-stdin
+    - echo "$HARBOR_PASS" | docker login -u "$HARBOR_USER" "$HARBOR_URL" --password-stdin
   script:
     - docker build --pull -t "$CI_REGISTRY_IMAGE:latest" .
     - docker tag $CI_REGISTRY_IMAGE:latest $HARBOR_HOST/$HARBOR_PROJECT/$CI_REGISTRY_IMAGE:latest
