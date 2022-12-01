@@ -13,7 +13,7 @@
       <PackageReference Include="DSharpPlus.Interactivity" Version="4.2.0" />
       <PackageReference Include="DSharpPlus.Lavalink" Version="4.2.0" />
       <PackageReference Include="DSharpPlus.SlashCommands" Version="4.2.0" />
-      <PackageReference Include="MySql.Data" Version="8.0.28" />
+      <PackageReference Include="MySqlConnector" Version="2.2.1" />
       <PackageReference Include="Serilog" Version="2.11.0-dev-01380" />
       <PackageReference Include="Serilog.Sinks.Console" Version="4.0.2-dev-00890" />
       <PackageReference Include="Serilog.Sinks.File" Version="5.0.1-dev-00947" />

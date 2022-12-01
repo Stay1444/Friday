@@ -1,5 +1,4 @@
 ﻿using Friday.Common.Services;
-using MySql.Data.MySqlClient;
 
 namespace Miuex.Modules.Proxmox.Services;
 

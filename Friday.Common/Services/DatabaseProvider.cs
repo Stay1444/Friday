@@ -1,7 +1,7 @@
 ﻿using Dapper;
 using Friday.Common.Attributes;
 using Friday.Common.Models;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 
 namespace Friday.Common.Services;
 
