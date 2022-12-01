@@ -23,6 +23,11 @@ public static class Startup
             .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Hour)
             .CreateLogger();
     }
+
+    public static bool DoesConfigurationExist()
+    {
+        return File.Exists("config/friday.yaml");
+    }
     
     public static FridayConfiguration LoadConfiguration()
     {

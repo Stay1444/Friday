@@ -27,7 +27,7 @@ using Zaroz.Modules.ZarozMinecraft;
 
 try
 {
-    Constants.ProcessStartTimeUtc.AddMilliseconds(0);
+    _ = Constants.ProcessStartTimeUtc.AddMilliseconds(0);
     Startup.CleanTempFiles();
 
     Startup.LoggerStartup();
@@ -36,6 +36,15 @@ try
 
     Log.Information("Reading config...");
 
+    if (!Startup.DoesConfigurationExist())
+    {
+        Startup.LoadConfiguration();
+        
+        Log.Information("Configuration file created. Please edit it and restart the container.");
+        
+        await Task.Delay(-1);
+    }
+    
     var config = Startup.LoadConfiguration();
 
     Log.Information("Config read successfully");
@@ -69,13 +78,9 @@ try
     moduleManager.LoadModule<Program>();
     
     // Load Friday modules
-    moduleManager.LoadModule<HelpModule>();
     moduleManager.LoadModule<BackupsModule>();
     moduleManager.LoadModule<MiscModule>();
-    moduleManager.LoadModule<MusicModule>();
-    moduleManager.LoadModule<ReactionRoles>();
     moduleManager.LoadModule<BirthdayModule>();
-    moduleManager.LoadModule<ZarozMinecraft>();
     services.AddSingleton<IModuleManager>(moduleManager);
     
     var dbProvider = new DatabaseProvider(config);

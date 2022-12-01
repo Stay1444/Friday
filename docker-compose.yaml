@@ -1,0 +1,28 @@
+﻿version: '3'
+
+services:
+  friday:
+    build: .
+    restart: unless-stopped
+    container_name: friday_bot
+    networks:
+      friday:
+    volumes:
+      - friday-data:/var/lib/friday/
+  mariadb:
+    image: mariadb:latest
+    restart: unless-stopped
+    container_name: friday_db
+    networks:
+      friday:
+    volumes:
+      - friday-db:/var/lib/mysql
+    environment:
+      - MARIADB_ROOT_PASSWORD=root
+
+volumes:
+  friday-data:
+  friday-db:
+
+networks:
+  friday:
