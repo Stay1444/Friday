@@ -13,11 +13,7 @@ public record FridayConfiguration
 
     public record FridayConfigurationDatabase
     {
-        public string Database { get; init; } = "Friday";
-        public string Username { get; init; } = "root";
-        public string Password { get; init; } = "root";
-        public string Host { get; init; } = "localhost";
-        public ushort Port { get; init; } = 3306;
+        public string ConnectionString { get; init; } = "Server=127.0.0.1;Port=3306;Database=friday;Username=root;Password=root;";
     }
 
     public record FridayConfigurationLavalink

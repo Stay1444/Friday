@@ -33,8 +33,7 @@ public class DatabaseProvider
     
     public MySqlConnection GetConnection()
     {
-        string connectionString = @$"Server={_configuration.Database.Host};Port={_configuration.Database.Port};Database={_configuration.Database.Database};Username={_configuration.Database.Username};Password={_configuration.Database.Password};";
-        return new MySqlConnection(connectionString);
+        return new MySqlConnection(_configuration.Database.ConnectionString);
     }
 
     public async Task<IEnumerable<T>> QueryAsync<T>(string sql, object? parameters = null)
