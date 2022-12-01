@@ -84,6 +84,27 @@ try
     services.AddSingleton<IModuleManager>(moduleManager);
     
     var dbProvider = new DatabaseProvider(config);
+
+    {
+        Log.Information("Testing database connection...");
+        var dbClient = dbProvider.GetConnection();
+        try
+        {
+            if (dbClient.Ping())
+            {
+                Log.Information("Database connection successful");
+            }
+            else
+            {
+                Log.Error("Could not ping database");
+            }
+        }
+        finally
+        {
+            await dbClient.DisposeAsync();
+        }
+    }
+    
     services.AddSingleton(dbProvider);
     
     services.AddSingleton(new FridayModeratorService(dbProvider));
