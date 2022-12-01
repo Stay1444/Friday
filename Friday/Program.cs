@@ -90,6 +90,7 @@ try
         var dbClient = dbProvider.GetConnection();
         try
         {
+            await dbClient.OpenAsync();
             if (dbClient.Ping())
             {
                 Log.Information("Database connection successful");
