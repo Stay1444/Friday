@@ -287,8 +287,11 @@ public class Commands : FridayCommandModule
             RoleIds = roles.Select(x => x.Id).ToList(),
             Behaviour = ReactionRoleBehaviour.Toggle
         };
-        
-        var message = await channel.GetMessageAsync(messageId);
+        DiscordMessage? message = null;
+        try
+        {
+            message = await channel.GetMessageAsync(messageId);
+        }catch { /* ignored */ }
 
         if (message == null)
         {
