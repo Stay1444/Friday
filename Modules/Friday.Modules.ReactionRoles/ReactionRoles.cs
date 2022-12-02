@@ -1,6 +1,7 @@
 ﻿using DSharpPlus;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
+using DSharpPlus.Exceptions;
 using Friday.Common;
 using Friday.Common.Services;
 using Friday.Modules.ReactionRoles.Entities;
@@ -12,9 +13,11 @@ public class ReactionRoles : ModuleBase
 {
     internal DatabaseHelper DatabaseHelper { get; }
     internal DiscordShardedClient Client;
-    public ReactionRoles(DatabaseProvider provider, DiscordShardedClient client)
+    private LanguageProvider _languageProvider;
+    public ReactionRoles(DatabaseProvider provider, DiscordShardedClient client, LanguageProvider languageProvider)
     {
         Client = client;
+        _languageProvider = languageProvider;
         DatabaseHelper = new DatabaseHelper(provider);
     }
     
@@ -52,13 +55,20 @@ public class ReactionRoles : ModuleBase
                     if (reactionRole.Behaviour == ReactionRoleBehaviour.Add || reactionRole.Behaviour == ReactionRoleBehaviour.Toggle)
                     {
                         if (member.Roles.Contains(role)) continue;
-                        
+
                         try
                         {
                             await member.GrantRoleAsync(role, "Reaction Role");
-                        }catch
+                        }
+                        catch (UnauthorizedException)
                         {
-                            // ignored
+                            reactionRole.Warning = await _languageProvider.GetString(member, "rr.warns.not-enough-permissions");
+                            await DatabaseHelper.UpdateReactionRoleAsync(reactionRole);
+                        }
+                        catch
+                        {
+                            reactionRole.Warning = await _languageProvider.GetString(member, "rr.warns.unknown");
+                            await DatabaseHelper.UpdateReactionRoleAsync(reactionRole);
                         }
                     }
                     

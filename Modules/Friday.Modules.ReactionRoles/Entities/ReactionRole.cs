@@ -11,6 +11,7 @@ public class ReactionRole
     public string? Emoji { get; set; }
     public string? ButtonId { get; set; }
     public bool SendMessage { get; set; }
+    public string? Warning { get; set; }
 }
 
 public enum ReactionRoleBehaviour

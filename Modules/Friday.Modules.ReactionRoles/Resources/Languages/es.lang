@@ -1,0 +1,17 @@
+﻿rr.msg.channel-not-found=El canal seleccionado no existe!
+rr.msg.role-not-found=El role seleccionado no existe!
+rr.msg.message-not-found=El mensaje seleccionado no existe!
+rr.msg.managed-roles=Roles 'Managed' no pueden ser usados como Reaction Roles!
+rr.msg.everyone-role=El role `@everyone` no se puede usar como Reaction Roles!
+rr.msg.emoji-failed=No se pudo crear la reaccion, comprueba que Friday pueda ver el emote especificado.
+rr.msg.done=Reaction Role creado correctamente
+
+rr.embeds.delete-confirm.title=Eliminar Reaction Role
+rr.embeds.delete-confirm.description=Quieres eliminar todas las reacciones ({0}) tambien?
+rr.embeds.delete-confirm.yes=Si, quiero eliminar todas las reacciones
+rr.embeds.delete-confirm.no=No, no quiero eliminar las reacciones
+
+rr.embeds.new.description=Crea un nuevo Reaction Role usando el siguiente comando: {0}
+
+rr.warns.not-enough-permissions=Friday no tiene suficientes permisos como para dar/quitar este role
+rr.warns.unknown=Algo salió mal

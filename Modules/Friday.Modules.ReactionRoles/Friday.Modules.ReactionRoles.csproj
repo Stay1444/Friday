@@ -13,9 +13,12 @@
 
     <ItemGroup>
       <None Remove="Resources\required.sql" />
+      <EmbeddedResource Include="Resources\Languages\en.lang" />
       <EmbeddedResource Include="Resources\module.yaml" />
       <EmbeddedResource Include="Resources\required.sql" />
       <None Remove="Resources\Languages\en.lang" />
+      <None Remove="Resources\Language\es.lang" />
+      <EmbeddedResource Include="Resources\Languages\es.lang" />
     </ItemGroup>
 
 </Project>

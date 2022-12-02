@@ -28,7 +28,8 @@ public class DatabaseHelper
                 Behaviour = (ReactionRoleBehaviour) reader.GetByte(5),
                 Emoji = reader.ReadNullableString(6),
                 ButtonId = reader.ReadNullableString(7),
-                SendMessage = reader.GetBoolean(8)
+                SendMessage = reader.GetBoolean(8),
+                Warning = reader.ReadNullableString(9)
             });
         }
         
@@ -66,7 +67,7 @@ public class DatabaseHelper
         await connection.OpenAsync();
         await using var command = connection.CreateCommand();
         command.CommandText =
-            "INSERT INTO rr_reaction_roles (guild_id, channel_id, message_id, role_ids, behaviour, emoji, button_id, send_message) VALUES (@guildId, @channelId, @messageId, @roleIds, @behaviour, @emoji, @buttonId, @sendMessage)";
+            "INSERT INTO rr_reaction_roles (guild_id, channel_id, message_id, role_ids, behaviour, emoji, button_id, send_message, warnings) VALUES (@guildId, @channelId, @messageId, @roleIds, @behaviour, @emoji, @buttonId, @sendMessage, @warnings)";
         command.Parameters.AddWithValue("@guildId", guildId);
         command.Parameters.AddWithValue("@channelId", channelId);
         command.Parameters.AddWithValue("@messageId", messageId);
@@ -75,6 +76,7 @@ public class DatabaseHelper
         command.Parameters.AddWithValue("@emoji", reactionRole.Emoji);
         command.Parameters.AddWithValue("@buttonId", reactionRole.ButtonId);
         command.Parameters.AddWithValue("@sendMessage", reactionRole.SendMessage);
+        command.Parameters.AddWithValue("@warnings", reactionRole.Warning);
         await command.ExecuteNonQueryAsync();
     }
 
@@ -84,7 +86,7 @@ public class DatabaseHelper
         await connection.OpenAsync();
         await using var command = connection.CreateCommand();
         command.CommandText =
-            "UPDATE rr_reaction_roles SET role_ids=@roleIds, behaviour=@behaviour, emoji=@emoji, button_id=@buttonId, send_message=@sendMessage WHERE id=@id";
+            "UPDATE rr_reaction_roles SET role_ids=@roleIds, behaviour=@behaviour, emoji=@emoji, button_id=@buttonId, send_message=@sendMessage, warnings=@warnings WHERE id=@id";
 
         command.Parameters.AddWithValue("@id", reactionRole.Id);
         command.Parameters.AddWithValue("@roleIds", string.Join(",", reactionRole.RoleIds));
@@ -92,6 +94,7 @@ public class DatabaseHelper
         command.Parameters.AddWithValue("@emoji", reactionRole.Emoji);
         command.Parameters.AddWithValue("@buttonId", reactionRole.ButtonId);
         command.Parameters.AddWithValue("@sendMessage", reactionRole.SendMessage);
+        command.Parameters.AddWithValue("@warnings", reactionRole.Warning);
         await command.ExecuteNonQueryAsync();
     }
     

@@ -8,5 +8,6 @@ CREATE TABLE IF NOT EXISTS `rr_reaction_roles` (
     `emoji` varchar(128),
     `button_id` varchar(128),
     `send_message` tinyint(1) NOT NULL DEFAULT 0,
+    `warnings` text DEFAULT null,
     PRIMARY KEY (`id`)
 ) DEFAULT CHARSET utf8mb4 COLLATE utf8mb4_bin;
