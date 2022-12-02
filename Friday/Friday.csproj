@@ -39,6 +39,7 @@
       <ProjectReference Include="..\Modules\Friday.Modules.Moderation\Friday.Modules.Moderation.csproj" />
       <ProjectReference Include="..\Modules\Friday.Modules.Music\Friday.Modules.Music.csproj" />
       <ProjectReference Include="..\Modules\Friday.Modules.ReactionRoles\Friday.Modules.ReactionRoles.csproj" />
+      <ProjectReference Include="..\Modules\Friday.Modules.System\Friday.Modules.System.csproj" />
       <ProjectReference Include="..\Modules\Zaroz.Modules.ZarozMinecraft\Zaroz.Modules.ZarozMinecraft.csproj" />
     </ItemGroup>
 

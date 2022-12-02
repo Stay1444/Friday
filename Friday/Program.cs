@@ -22,6 +22,7 @@ using Friday.Modules.Misc;
 using Friday.Modules.Moderation;
 using Friday.Modules.Music;
 using Friday.Modules.ReactionRoles;
+using Friday.Modules.System;
 using Friday.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
@@ -82,6 +83,7 @@ try
     moduleManager.LoadModule<Program>();
     
     // Load Friday modules
+    moduleManager.LoadModule<SystemModule>();
     moduleManager.LoadModule<BackupsModule>();
     moduleManager.LoadModule<MiscModule>();
     moduleManager.LoadModule<ModerationModule>();

@@ -10,4 +10,8 @@
       <ProjectReference Include="..\..\Friday.Common\Friday.Common.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <EmbeddedResource Include="Resources\module.yaml" />
+    </ItemGroup>
+
 </Project>
