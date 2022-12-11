@@ -257,6 +257,11 @@ public static class Extensions
         return count;
     }
 
+    public static int GetGuildCount(this DiscordShardedClient client)
+    {
+        return client.ShardClients.Sum(shardClient => shardClient.Value.Guilds.Values.Count());
+    }
+
     public static string RemoveDiacritics(this string v)
     {
         String normalizedString = v.Normalize(NormalizationForm.FormD);

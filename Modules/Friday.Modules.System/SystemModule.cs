@@ -30,16 +30,30 @@ public class SystemModule : ModuleBase
         return Task.CompletedTask;
     }
 
+    private int _lastIter = 0;
     private async Task Timer()
     {
         Console.WriteLine("Timer started");
         while (!_timerCtSource.IsCancellationRequested)
         {
-            await _client.UpdateStatusAsync(new DiscordActivity
+            if (_lastIter == 0)
             {
-                ActivityType = ActivityType.Watching,
-                Name = $"fhelp | {_client.GetUserCount()} users"
-            }, UserStatus.DoNotDisturb);
+                await _client.UpdateStatusAsync(new DiscordActivity
+                {
+                    ActivityType = ActivityType.Watching,
+                    Name = $"fhelp | {_client.GetUserCount()} users"
+                }, UserStatus.DoNotDisturb);
+                _lastIter = 1;
+            }else if (_lastIter == 1)
+            {
+                await _client.UpdateStatusAsync(new DiscordActivity()
+                {
+                    ActivityType = ActivityType.Watching,
+                    Name = $"fhelp | {_client.GetGuildCount()} servers"
+                });
+                _lastIter = 0;
+            }
+
             await Task.Delay(TimeSpan.FromMinutes(5));
         }
     }
