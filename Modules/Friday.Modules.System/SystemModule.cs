@@ -50,7 +50,7 @@ public class SystemModule : ModuleBase
                 {
                     ActivityType = ActivityType.Watching,
                     Name = $"fhelp | {_client.GetGuildCount()} servers"
-                });
+                }, UserStatus.DoNotDisturb);
                 _lastIter = 0;
             }
 
