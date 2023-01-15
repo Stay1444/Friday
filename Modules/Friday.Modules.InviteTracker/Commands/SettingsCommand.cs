@@ -39,6 +39,43 @@ public partial class Commands
                     await _module.SetConfiguration(ctx.Guild, guildSettings);
                 });
             });
+
+            x.AddModal(modal =>
+                    {
+                        modal.Title = "Channel Id";
+                        modal.ButtonLabel = "Select by Channel Id";
+                        modal.ButtonStyle = ButtonStyle.Primary;
+                        modal.ButtonEmoji = DiscordEmoji.FromName(ctx.Client, ":pencil2:");
+                        
+                        modal.AddField("id", field =>
+                        {
+                            field.Required = true;
+                            field.MinimumLength = 1;
+                            field.MaximumLength = 16;
+                            field.Style = TextInputStyle.Short;
+                            field.Title = "Id";
+                        });
+
+                        modal.OnSubmit(fields =>
+                        {
+                            if (fields.IsEmpty()) return;
+                            
+                            var idString = fields["id"];
+
+                            if (!ulong.TryParse(idString, out var id))
+                            {
+                                return;
+                            }
+
+                            if (ctx.Guild.Channels.ContainsKey(id)) {
+                                guildSettings.JoinLogChannel = id;
+                                await _module.SetConfiguration(ctx.Guild, guildSettings);
+                            }
+
+                            x.ForceRender();
+                        });
+                    });
+
             x.NewLine();
             await x.AddSelect(async select =>
             {
@@ -56,6 +93,10 @@ public partial class Commands
                         option.Value = channel.Id.ToString();
                         option.IsDefault = guildSettings.JoinLogChannel == channel.Id;
                     });
+
+                    if (select.Options.Count > 24) {
+                        break;
+                    }
                 }
 
                 select.OnSelect(async result =>
