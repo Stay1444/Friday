@@ -13,14 +13,12 @@ using Friday.Common.Entities;
 using Friday.Common.Services;
 using Friday.Helpers;
 using Friday.Modules.Backups;
-using Friday.Modules.Birthday;
 using Friday.Modules.ChannelStats;
 using Friday.Modules.Help;
 using Friday.Modules.InviteTracker;
 using Friday.Modules.MiniGames;
 using Friday.Modules.Misc;
 using Friday.Modules.Moderation;
-using Friday.Modules.Music;
 using Friday.Modules.ReactionRoles;
 using Friday.Modules.System;
 using Friday.Services;
@@ -28,7 +26,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using Serilog.Extensions.Logging;
 using SimpleCDN.Wrapper;
-using Zaroz.Modules.ZarozMinecraft;
 
 try
 {
@@ -76,7 +73,6 @@ try
     // Load modules | Module.dll
     moduleManager.LoadModules();
 
-    
     
     // Load this project as a module
     // In the future we could add commands here, but this is currently used because this contains basic language files.

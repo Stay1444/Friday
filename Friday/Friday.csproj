@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
@@ -30,17 +30,14 @@
       <ProjectReference Include="..\Friday.Rendering\Friday.Rendering.csproj" />
       <ProjectReference Include="..\Friday.UI\Friday.UI.csproj" />
       <ProjectReference Include="..\Modules\Friday.Modules.Backups\Friday.Modules.Backups.csproj" />
-      <ProjectReference Include="..\Modules\Friday.Modules.Birthday\Friday.Modules.Birthday.csproj" />
       <ProjectReference Include="..\Modules\Friday.Modules.ChannelStats\Friday.Modules.ChannelStats.csproj" />
       <ProjectReference Include="..\Modules\Friday.Modules.Help\Friday.Modules.Help.csproj" />
       <ProjectReference Include="..\Modules\Friday.Modules.InviteTracker\Friday.Modules.InviteTracker.csproj" />
       <ProjectReference Include="..\Modules\Friday.Modules.MiniGames\Friday.Modules.MiniGames.csproj" />
       <ProjectReference Include="..\Modules\Friday.Modules.Misc\Friday.Modules.Misc.csproj" />
       <ProjectReference Include="..\Modules\Friday.Modules.Moderation\Friday.Modules.Moderation.csproj" />
-      <ProjectReference Include="..\Modules\Friday.Modules.Music\Friday.Modules.Music.csproj" />
       <ProjectReference Include="..\Modules\Friday.Modules.ReactionRoles\Friday.Modules.ReactionRoles.csproj" />
       <ProjectReference Include="..\Modules\Friday.Modules.System\Friday.Modules.System.csproj" />
-      <ProjectReference Include="..\Modules\Zaroz.Modules.ZarozMinecraft\Zaroz.Modules.ZarozMinecraft.csproj" />
     </ItemGroup>
 
 </Project>

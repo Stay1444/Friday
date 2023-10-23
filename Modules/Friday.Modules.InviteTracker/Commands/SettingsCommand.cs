@@ -56,7 +56,7 @@ public partial class Commands
                             field.Title = "Id";
                         });
 
-                        modal.OnSubmit(fields =>
+                        modal.OnSubmit(async fields =>
                         {
                             if (fields.IsEmpty()) return;
                             
