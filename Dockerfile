@@ -18,7 +18,7 @@ VOLUME ["/var/lib/friday/"]
 
 RUN mkdir -p /bin/friday
 
-COPY --from=builder /tmp/friday/Friday/bin/Release/net6.0/ /bin/friday/
+COPY --from=builder /tmp/friday/Friday/bin/Release/net7.0/ /bin/friday/
 
 RUN chmod +x /bin/friday/Friday
 
