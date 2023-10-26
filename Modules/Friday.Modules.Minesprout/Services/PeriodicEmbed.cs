@@ -6,6 +6,7 @@ using Friday.Modules.Minesprout.UI;
 using Friday.UI;
 using Friday.UI.Entities;
 using Serilog;
+using Serilog.Context;
 
 namespace Friday.Modules.Minesprout.Services;
 
@@ -58,6 +59,7 @@ public class PeriodicEmbed
 
         ui.OnRenderAsync(async x =>
         {
+            Log.Information("Rendering Periodic Embed");
             var servers = x.GetState("servers", await _minesproutClient.GetServersAsync(true, 0, 5));
             var serverId = servers.Value?.Servers.FirstOrDefault()?.Id;
 
@@ -82,11 +84,13 @@ public class PeriodicEmbed
                 Log.Information("Minesprout: Refreshing Periodic Embed");
                 if (_cts.IsCancellationRequested)
                 {
+                    
                     x.Stop();
                 }
 
                 servers.Value = await _minesproutClient.GetServersAsync(true, 0, 5);
-                
+                    // todo, dont do forcerender if the server hasn't changed.
+                    // if forcerender is called and nothing has changed trhis won't execute again
                 x.ForceRender();
             });
         });

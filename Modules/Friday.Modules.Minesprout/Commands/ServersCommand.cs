@@ -21,7 +21,7 @@ public partial class Commands
     {
         var uiBuilder = new FridayUIBuilder
         {
-            Duration = TimeSpan.FromSeconds(60)
+            Duration = TimeSpan.MaxValue
         };
 
         var serverCount = await _minesproutClient.GetServerCountAsync();
