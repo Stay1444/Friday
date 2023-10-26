@@ -7,10 +7,11 @@ namespace Friday.Common.Services;
 public class GuildConfigurationProvider
 {
     private DatabaseProvider _db;
-
-    public GuildConfigurationProvider(DatabaseProvider databaseProvider)
+    private FridayConfiguration _configuration;
+    public GuildConfigurationProvider(DatabaseProvider databaseProvider, FridayConfiguration configuration)
     {
         _db = databaseProvider;
+        _configuration = configuration;
     }
 
     public Task<GuildConfiguration> GetConfiguration(DiscordGuild guild)
@@ -26,7 +27,7 @@ public class GuildConfigurationProvider
             Log.Debug("No configuration found for guild {guildId}, creating...", guildId);
             try
             {
-                await _db.ExecuteAsync("INSERT INTO guild_config (id, prefix, language) VALUES (@Id, @Prefix, @Language)", new { Id = guildId, Prefix = "f", Language = "en" });
+                await _db.ExecuteAsync("INSERT INTO guild_config (id, prefix, language) VALUES (@Id, @Prefix, @Language)", new { Id = guildId, Prefix = _configuration.Discord.DefaultPrefix, Language = "en" });
             }catch(Exception e)
             {
                 Log.Error(e, "Failed to create configuration for guild {guildId}", guildId);
