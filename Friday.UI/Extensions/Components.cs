@@ -38,7 +38,6 @@ public static class Components
         var component = new ModalComponent(page);
         modify(component);
         page.Add(component);
-        
     }
     
     public static void AddSelect(this FridayUIPage page, Action<SelectComponent> modify)

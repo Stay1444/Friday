@@ -5,6 +5,8 @@ services:
     build: .
     restart: unless-stopped
     container_name: friday_bot
+    ports:
+      - 8080:4050
     networks:
       friday:
     volumes:

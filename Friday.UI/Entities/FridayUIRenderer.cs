@@ -60,7 +60,7 @@ internal class FridayUIRenderer
 
             if (componentResult is DiscordLinkButtonComponent linkButtonComponent)
             {
-                dComponents.Add(componentResult);
+                dComponents.Add(linkButtonComponent);
             }
         }
 
@@ -143,7 +143,7 @@ internal class FridayUIRenderer
         return false;
     }
     
-    internal async Task RenderAsync(DiscordClient client, DiscordChannel channel, DiscordUser user)
+    internal async Task RenderAsync(DiscordClient client, DiscordChannel channel, DiscordUser? user)
     {
         DiscordMessage? message = null;
         DiscordInteraction? interaction = null;
@@ -172,7 +172,7 @@ internal class FridayUIRenderer
                             message = await interaction.GetOriginalResponseAsync();
                             interaction = null;
                         }
-                        catch (DSharpPlus.Exceptions.NotFoundException)
+                        catch (NotFoundException)
                         {
                             message = await message.ModifyAsync(msgBuilder);
                         }
@@ -183,12 +183,12 @@ internal class FridayUIRenderer
                 var cancellationTokenSource = _builder.CancellationTokenSource;
                 Task<InteractivityResult<ComponentInteractionCreateEventArgs>>? buttonTask = null;
                 Task<InteractivityResult<ComponentInteractionCreateEventArgs>>? selectTask = null;
-                if (HasButtons(msgBuilder))
+                if (HasButtons(msgBuilder) && user is not null)
                 {
                     buttonTask = interactivity.WaitForButtonAsync(message, user, cancellationTokenSource.Token);
                 }
                 
-                if (HasSelects(msgBuilder))
+                if (HasSelects(msgBuilder) && user is not null)
                 {
                     selectTask = interactivity.WaitForSelectAsync(message, x => x.User.Id == user.Id, cancellationTokenSource.Token);
                 }
@@ -284,7 +284,7 @@ internal class FridayUIRenderer
                             .WithEmbed(new DiscordEmbedBuilder()
                                 .Transparent()
                                 .WithTitle("FridayUI Error")
-                                .WithDescription($"An error occured while rendering the page.\n```json\n{badRequestException.Errors.MaxLength(1024)}```\nPlease contact the developer.")
+                                .WithDescription($"An error occured while rendering the page.\n```json\n{badRequestException.Errors?.MaxLength(1024)}```\nPlease contact the developer.")
                                 .WithColor(DiscordColor.Red)));
                     }else
                     {
@@ -303,7 +303,7 @@ internal class FridayUIRenderer
                             .WithEmbed(new DiscordEmbedBuilder()
                                 .Transparent()
                                 .WithTitle("FridayUI Error")
-                                .WithDescription($"An error occured rendering the page.\n```json\n{badRequestException.Errors.MaxLength(1024)}```\nPlease contact the developer.")
+                                .WithDescription($"An error occured rendering the page.\n```json\n{badRequestException.Errors?.MaxLength(1024)}```\nPlease contact the developer.")
                                 .WithColor(DiscordColor.Red)));
                     }else
                     {

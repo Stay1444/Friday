@@ -16,11 +16,13 @@ using Friday.Modules.Backups;
 using Friday.Modules.ChannelStats;
 using Friday.Modules.Help;
 using Friday.Modules.InviteTracker;
+using Friday.Modules.Minesprout;
 using Friday.Modules.MiniGames;
 using Friday.Modules.Misc;
 using Friday.Modules.Moderation;
 using Friday.Modules.ReactionRoles;
 using Friday.Modules.System;
+using Friday.Modules.Tickets;
 using Friday.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
@@ -80,6 +82,7 @@ try
     
     // Load Friday modules
     moduleManager.LoadModule<SystemModule>();
+    /*
     moduleManager.LoadModule<BackupsModule>();
     moduleManager.LoadModule<MiscModule>();
     moduleManager.LoadModule<ModerationModule>();
@@ -87,7 +90,9 @@ try
     moduleManager.LoadModule<MiniGamesModule>();
     moduleManager.LoadModule<InviteTrackerModule>();
     moduleManager.LoadModule<ChannelStatsModule>();
-    
+    moduleManager.LoadModule<TicketModuleBase>();
+    */
+    moduleManager.LoadModule<MinesproutModule>();
     services.AddSingleton<IModuleManager>(moduleManager);
     
     var dbProvider = new DatabaseProvider(config);
@@ -345,17 +350,18 @@ try
     }
 
     bool modulesLoaded = false;
-    client.Ready += async (_, _) =>
+
+    await Task.Delay(1000);
+    
+    if (!modulesLoaded)
     {
-        if (!modulesLoaded)
+        foreach (var module in moduleManager.Modules)
         {
-            foreach (var module in moduleManager.Modules)
-            {
-                await module.Instance!.OnLoad();
-            }
-            modulesLoaded = true;
+            await module.Instance!.OnLoad();
         }
-    };
+        modulesLoaded = true;
+    }
+    
     await Task.Delay(-1);
 }
 catch (Exception e)

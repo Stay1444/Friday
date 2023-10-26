@@ -23,6 +23,7 @@ public abstract class ModuleBase
         try
         {
             if (Module is null) throw new Exception("Not ready");
+            
             Directory.CreateDirectory(CONFIGURATION_DIRECTORY);
             if (!File.Exists(Path.Combine(CONFIGURATION_DIRECTORY, Module.Assembly.GetName().Name! + ".yaml")))
             {

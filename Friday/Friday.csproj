@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0-preview.1.22076.8" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0-rc.2.23479.6" />
       <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
       <PackageReference Include="YamlDotNet" Version="12.0.2" />
     </ItemGroup>
@@ -33,11 +33,13 @@
       <ProjectReference Include="..\Modules\Friday.Modules.ChannelStats\Friday.Modules.ChannelStats.csproj" />
       <ProjectReference Include="..\Modules\Friday.Modules.Help\Friday.Modules.Help.csproj" />
       <ProjectReference Include="..\Modules\Friday.Modules.InviteTracker\Friday.Modules.InviteTracker.csproj" />
+      <ProjectReference Include="..\Modules\Friday.Modules.Minesprout\Friday.Modules.Minesprout.csproj" />
       <ProjectReference Include="..\Modules\Friday.Modules.MiniGames\Friday.Modules.MiniGames.csproj" />
       <ProjectReference Include="..\Modules\Friday.Modules.Misc\Friday.Modules.Misc.csproj" />
       <ProjectReference Include="..\Modules\Friday.Modules.Moderation\Friday.Modules.Moderation.csproj" />
       <ProjectReference Include="..\Modules\Friday.Modules.ReactionRoles\Friday.Modules.ReactionRoles.csproj" />
       <ProjectReference Include="..\Modules\Friday.Modules.System\Friday.Modules.System.csproj" />
+      <ProjectReference Include="..\Modules\Friday.Modules.Tickets\Friday.Modules.Tickets.csproj" />
     </ItemGroup>
 
 </Project>

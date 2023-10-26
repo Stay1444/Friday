@@ -23,4 +23,10 @@ public static class FridayUI
         var renderer = new FridayUIRenderer(builder);
         await renderer.RenderAsync(client, channel, user);
     }
+
+    public static async Task SendUIAsync(this DiscordChannel channel, DiscordClient client, FridayUIBuilder builder)
+    {
+        var renderer = new FridayUIRenderer(builder);
+        await renderer.RenderAsync(client, channel, null);
+    }
 }

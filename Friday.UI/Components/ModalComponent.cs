@@ -1,7 +1,9 @@
 using DSharpPlus;
 using DSharpPlus.Entities;
+using DSharpPlus.Exceptions;
 using DSharpPlus.Interactivity.Extensions;
 using Friday.UI.Entities;
+using Serilog;
 
 namespace Friday.UI.Components;
 
@@ -46,30 +48,38 @@ public class ModalComponent : FridayUIButtonComponent
         
         _ = Task.Run(async () =>
         {
-            var builder = new DiscordInteractionResponseBuilder();
-            builder.WithCustomId(Id);
-            builder.WithTitle(Title);
-
-            foreach (var field in _fields)
+            try
             {
-                builder.AddComponents(new TextInputComponent(field.Value.Title, field.Key, field.Value.Placeholder,
-                    field.Value.Value, field.Value.Required, field.Value.Style, field.Value.MinimumLength,
-                    field.Value.MaximumLength));
+                var builder = new DiscordInteractionResponseBuilder();
+                builder.WithCustomId(Id);
+                builder.WithTitle(Title);
+                foreach (var field in _fields)
+                {
+                    builder.AddComponents(new TextInputComponent(field.Value.Title, field.Key, field.Value.Placeholder,
+                        field.Value.Value, field.Value.Required, field.Value.Style, field.Value.MinimumLength,
+                        field.Value.MaximumLength));
+                }
+
+                await interaction.CreateResponseAsync(InteractionResponseType.Modal, builder);
+                var result = await Page.Client.GetInteractivity().WaitForModalAsync(Id, TimeSpan.FromSeconds(60));
+                if (result.TimedOut) return;
+                await result.Result.Interaction.CreateResponseAsync(InteractionResponseType.DeferredMessageUpdate);
+                if (this._onSubmitAsync is not null)
+                {
+                    await this._onSubmitAsync(result.Result.Values);
+                }
+                else
+                {
+                    this._onSubmit?.Invoke(result.Result.Values);
+                }
             }
-
-            await interaction.CreateResponseAsync(InteractionResponseType.Modal, builder);
-
-            var result = await Page.Client.GetInteractivity().WaitForModalAsync(Id, TimeSpan.FromSeconds(60));
-
-            if (result.TimedOut) return;
-            await result.Result.Interaction.CreateResponseAsync(InteractionResponseType.DeferredMessageUpdate);
-            if (this._onSubmitAsync is not null)
+            catch (BadRequestException exception)
             {
-                await this._onSubmitAsync(result.Result.Values);
+                Log.Error(exception.Message + exception.JsonMessage + exception.Errors + " Bad request exception");
             }
-            else if (this._onSubmit != null)
+            catch (Exception exception)
             {
-                this._onSubmit(result.Result.Values);
+                Log.Error("Error creating modal {exception}", exception);
             }
         });
         
@@ -78,7 +88,7 @@ public class ModalComponent : FridayUIButtonComponent
 
     internal override DiscordComponent? GetDiscordComponent()
     {
-        return new DiscordButtonComponent(ButtonStyle, Id, ButtonLabel, ButtonDisabled, ButtonEmoji == null ? null : new DiscordComponentEmoji(ButtonEmoji));
+        return new DiscordButtonComponent(ButtonStyle, Id, ButtonLabel ?? "", ButtonDisabled, ButtonEmoji is null ? null : new DiscordComponentEmoji(ButtonEmoji));
     }
 
     internal ModalComponent(FridayUIPage page) : base(page)

@@ -29,9 +29,9 @@ public class PurgeCommand : FridayCommandModule
     [RequireBotPermissions(Permissions.ManageMessages)]
     public async Task cmd_Purge(CommandContext ctx, [Description("Number of messages to delete")] int amount)
     {
-        var messages = await ctx.Channel.GetMessagesAsync(amount);
-
-        var messagesList = messages.ToList();
+        var messages = ctx.Channel.GetMessagesAsync(amount);
+/*
+        var messagesList = messages.GetAsyncEnumerator();
         // REMOVE ALL MESSAGES OLDER THAN 2 WEEKS FROM THE LIST
 
         var olderThanTwoWeeks = messagesList.Count(x => x.CreationTimestamp < DateTimeOffset.Now.AddDays(-14));
@@ -46,6 +46,6 @@ public class PurgeCommand : FridayCommandModule
         }else
         {
             await ctx.RespondAsync($"Done. {olderThanTwoWeeks} messages older than 2 weeks were not removed.");
-        }
+        }*/
     }
 }

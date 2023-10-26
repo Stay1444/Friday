@@ -18,6 +18,7 @@ public class InviteTrackerModule : ModuleBase
         Client = client;
         LanguageProvider = languageProvider;
     }
+    
     internal LanguageProvider LanguageProvider { get; }
     internal DiscordShardedClient Client { get; }
     private readonly InviteTrackerDatabase _database;

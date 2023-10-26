@@ -5,9 +5,9 @@ COPY . /tmp/friday
 RUN dotnet restore /tmp/friday/Friday.sln
 RUN dotnet build --configuration Release /tmp/friday/Friday/Friday.csproj
 
-FROM mcr.microsoft.com/dotnet/runtime:7.0
+FROM mcr.microsoft.com/dotnet/aspnet:7.0
 
-ENV APTLIST="nano"
+ENV APTLIST="nano ffmpeg"
 
 RUN apt-get -yqq update && \
     apt-get -yqq install $APTLIST && \

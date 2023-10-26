@@ -1,6 +1,5 @@
 ﻿using DSharpPlus;
 using DSharpPlus.Entities;
-using Emzi0767;
 
 namespace Friday.Common;
 
@@ -27,7 +26,7 @@ public static class Utils
         {
             char c = time[i];
             //check if c is a number
-            if (c.IsBasicDigit()) continue;
+            if (char.IsDigit(c)) continue;
             
             if (!validUnits.Contains(c))
             {

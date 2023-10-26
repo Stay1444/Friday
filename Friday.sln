@@ -1,5 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# 
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{B8D1B724-7F5F-493F-82C3-1DEB90582CB6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Friday", "Friday\Friday.csproj", "{E3CECC7A-13FF-4629-8213-21DF38219744}"
@@ -59,6 +60,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Friday.Modules.Music", "Modules\Friday.Modules.Music\Friday.Modules.Music.csproj", "{993E9DCA-9419-4239-A099-1F0A99DBA066}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zaroz.Modules.ZarozMinecraft", "Modules\Zaroz.Modules.ZarozMinecraft\Zaroz.Modules.ZarozMinecraft.csproj", "{E0A464E2-4BD2-4851-B5D7-D2B1A1DF64ED}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Friday.Modules.Minesprout", "Modules\Friday.Modules.Minesprout\Friday.Modules.Minesprout.csproj", "{3BD2B121-09CF-4B77-895F-6247A7D3FBB0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -178,6 +181,10 @@ Global
 		{E0A464E2-4BD2-4851-B5D7-D2B1A1DF64ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E0A464E2-4BD2-4851-B5D7-D2B1A1DF64ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E0A464E2-4BD2-4851-B5D7-D2B1A1DF64ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3BD2B121-09CF-4B77-895F-6247A7D3FBB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BD2B121-09CF-4B77-895F-6247A7D3FBB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BD2B121-09CF-4B77-895F-6247A7D3FBB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BD2B121-09CF-4B77-895F-6247A7D3FBB0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{8B5E4C31-92E8-474E-8D8F-EFDB905D1DFE} = {B8D1B724-7F5F-493F-82C3-1DEB90582CB6}
@@ -201,5 +208,6 @@ Global
 		{F751C7AD-652B-4541-A3C2-41324795CA93} = {B8D1B724-7F5F-493F-82C3-1DEB90582CB6}
 		{993E9DCA-9419-4239-A099-1F0A99DBA066} = {B8D1B724-7F5F-493F-82C3-1DEB90582CB6}
 		{E0A464E2-4BD2-4851-B5D7-D2B1A1DF64ED} = {B8D1B724-7F5F-493F-82C3-1DEB90582CB6}
+		{3BD2B121-09CF-4B77-895F-6247A7D3FBB0} = {B8D1B724-7F5F-493F-82C3-1DEB90582CB6}
 	EndGlobalSection
 EndGlobal
