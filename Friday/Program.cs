@@ -79,12 +79,13 @@ try
     // Load this project as a module
     // In the future we could add commands here, but this is currently used because this contains basic language files.
     moduleManager.LoadModule<Program>();
-    
+
     // Load Friday modules
     moduleManager.LoadModule<SystemModule>();
+    moduleManager.LoadModule<MiscModule>();
+
     /*
     moduleManager.LoadModule<BackupsModule>();
-    moduleManager.LoadModule<MiscModule>();
     moduleManager.LoadModule<ModerationModule>();
     moduleManager.LoadModule<ReactionRoles>();
     moduleManager.LoadModule<MiniGamesModule>();
@@ -123,7 +124,7 @@ try
     services.AddSingleton(new FridayModeratorService(dbProvider));
     services.AddSingleton(new FridayVerifiedServerService(dbProvider));
     
-    var guildConfigProvider = new GuildConfigurationProvider(dbProvider);
+    var guildConfigProvider = new GuildConfigurationProvider(dbProvider, config);
     services.AddSingleton(guildConfigProvider);
     
     var userConfigProvider = new UserConfigurationProvider(dbProvider);
