@@ -12,4 +12,7 @@ public interface IMinesproutServer
     public string MainMode { get; }
     public string Type { get; }
     public string Country { get; }
+
+    public string? Intro { get; }
+    public string? Website { get; }
 }

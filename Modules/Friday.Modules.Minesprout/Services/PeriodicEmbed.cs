@@ -59,7 +59,14 @@ public class PeriodicEmbed
         ui.OnRenderAsync(async x =>
         {
             var servers = x.GetState("servers", await _minesproutClient.GetServersAsync(true, 0, 5));
-            var server = servers.Value?.Servers.FirstOrDefault();
+            var serverId = servers.Value?.Servers.FirstOrDefault()?.Id;
+
+            if (serverId is null) {
+                x.Embed.Description = "Could not fetch latest servers";
+                return;
+            }
+
+            var server = await _minesproutClient.GetServerAsync((ulong)serverId.Value);
 
             if (server is null)
             {

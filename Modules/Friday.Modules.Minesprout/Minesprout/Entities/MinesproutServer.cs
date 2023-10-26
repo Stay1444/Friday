@@ -14,6 +14,8 @@ public class MinesproutServer : IMinesproutServer
         public int Id { get; set; }
         public string Country { get; set; }
         public string Type { get; set; }
+        public string? Intro { get; set; }
+        public string? Website { get; set; }
     }
 
     public MinesproutServerStatus? Status { get; set; }
@@ -27,4 +29,8 @@ public class MinesproutServer : IMinesproutServer
     public string MainMode => ServerData.MainMode;
     public string Type => ServerData.Type;
     public string Country => ServerData.Country;
+
+    public string? Intro => ServerData?.Intro;
+
+    public string? Website => ServerData?.Website;
 }

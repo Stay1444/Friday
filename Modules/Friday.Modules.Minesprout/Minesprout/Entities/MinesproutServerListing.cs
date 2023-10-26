@@ -19,4 +19,8 @@ public record MinesproutServerListing : IMinesproutServer
     public required string Type { get; set; }
     public required string Country { get; set; }
     public MinesproutServerStatus? Status { get; set; }
+
+    public string? Intro => null;
+
+    public string? Website => null;
 }

@@ -47,6 +47,14 @@ public static class ServerUI
         page.Embed.AddField("Type", server.Type, true);
         page.Embed.AddField("Country", server.Country, true);
 
+        if (!string.IsNullOrWhiteSpace(server.Website)) {
+            page.Embed.AddField("Website", server.Website);
+        }
+
+        if (!string.IsNullOrWhiteSpace(server.Intro)) {
+            page.Embed.AddField("Intro", server.Intro);
+        }
+
         page.Embed.WithFooter($"{server.Id}", "https://minesprout.net/img/minesproutlogo.png");
     }
 }
