@@ -6,6 +6,7 @@ public record FridayConfiguration
     {
         public string Token { get; init; } = Guid.Empty.ToString();
         public string Color { get; init; } = "#4287f5";
+        public string DefaultPrefix { get; init; } = "f";
         public bool EnableDefaultHelp { get; init; } = true;
         public string OfficialServer { get; init; } = "https://discord.gg/friday";
         public string BotInvite { get; init; } = "https://discordapp.com/oauth2/authorize?client_id=0&scope=bot&permissions=8";

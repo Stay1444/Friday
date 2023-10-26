@@ -1,4 +1,5 @@
 ﻿using DSharpPlus.Entities;
+using Friday.Common.Models;
 
 namespace Friday.Common.Services;
 
@@ -7,8 +8,10 @@ public class PrefixResolver
     private DatabaseProvider _databaseProvider;
     private GuildConfigurationProvider _guildConfigurationProvider;
     private UserConfigurationProvider _userConfigurationProvider;
-    public PrefixResolver(DatabaseProvider databaseProvider, GuildConfigurationProvider guildConfigurationProvider, UserConfigurationProvider userConfigurationProvider)
+    private FridayConfiguration _fridayConfiguration;
+    public PrefixResolver(FridayConfiguration configuration, DatabaseProvider databaseProvider, GuildConfigurationProvider guildConfigurationProvider, UserConfigurationProvider userConfigurationProvider)
     {
+        this._fridayConfiguration = configuration;
         _databaseProvider = databaseProvider;
         _guildConfigurationProvider = guildConfigurationProvider;
         _userConfigurationProvider = userConfigurationProvider;
@@ -39,7 +42,7 @@ public class PrefixResolver
         else
         {
             var userConfig = await _userConfigurationProvider.GetConfiguration(message.Author);
-            string prefix = "f";
+            string prefix = _fridayConfiguration.Discord.DefaultPrefix;
             if (userConfig.PrefixOverride is not null)
             {
                 prefix = userConfig.PrefixOverride;

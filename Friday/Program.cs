@@ -129,7 +129,7 @@ try
     var userConfigProvider = new UserConfigurationProvider(dbProvider);
     services.AddSingleton(userConfigProvider);
     
-    var prefixResolver = new PrefixResolver(dbProvider, guildConfigProvider, userConfigProvider);
+    var prefixResolver = new PrefixResolver(config, dbProvider, guildConfigProvider, userConfigProvider);
     services.AddSingleton(prefixResolver);
     
     services.AddSingleton(new LanguageProvider(userConfigProvider, guildConfigProvider,
