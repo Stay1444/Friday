@@ -12,7 +12,7 @@ public class MiscModule : ModuleBase
 
     public override void RegisterSlashCommands(SlashCommandsExtension extension)
     {
-        extension.RegisterCommands<SlashCommands.SlashCommands>(904721188092276766);
+        extension.RegisterCommands<SlashCommands.SlashCommands>();
     }
 
     public override Task OnUnload()
