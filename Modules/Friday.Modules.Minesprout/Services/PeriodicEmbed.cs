@@ -79,6 +79,7 @@ public class PeriodicEmbed
             _ = Task.Run(async () =>
             {
                 await Task.Delay(TimeSpan.FromSeconds(_module.Configuration.PeriodicEmbed.Interval), _cts.Token);
+                Log.Information("Minesprout: Refreshing Periodic Embed");
                 if (_cts.IsCancellationRequested)
                 {
                     x.Stop();
