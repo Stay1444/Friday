@@ -1,4 +1,5 @@
 using DSharpPlus.Entities;
+using Friday.Common;
 using Friday.Modules.Minesprout.Minesprout;
 using Friday.Modules.Minesprout.Minesprout.Entities;
 using Friday.UI.Entities;
@@ -13,7 +14,7 @@ public static class ServerUI
         page.Embed.Title = server.Name ?? "Unnamed";
         if (!string.IsNullOrWhiteSpace(server.Description))
         {
-            page.Embed.Description = new Converter().Convert(server.Description);
+            page.Embed.Description = new Converter().Convert(server.Description).MaxLength(3072, true);
         }
 
         page.Embed.Color = DiscordColor.SpringGreen;

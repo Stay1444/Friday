@@ -210,11 +210,15 @@ public static class Extensions
         return new string(array) ?? throw new InvalidOperationException();
     }
     
-    public static string MaxLength(this string str, int maxLength)
+    public static string MaxLength(this string str, int maxLength, bool addDots = false)
     {
         if (str.Length > maxLength)
         {
-            return str.Substring(0, maxLength);
+            if (addDots) {
+                return str.Substring(0, maxLength - 3) + "...";
+            } else {
+                return str.Substring(0, maxLength);
+            }
         }
         return str;
     }
