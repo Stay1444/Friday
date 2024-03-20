@@ -15,6 +15,7 @@ public static class FridayUI
 
     public static Task SendUIAsync(this InteractionContext ctx, FridayUIBuilder builder)
     {
+        
         return SendUIAsync(ctx.Client, ctx.Channel, builder, ctx.User);
     }
 
